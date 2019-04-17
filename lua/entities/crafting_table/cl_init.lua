@@ -4,8 +4,25 @@ function ENT:Draw()
     self:DrawModel()
 end
 
-local function DrawItems()
-    cam.Start3D2D( self:GetPos() + Vector( 0, 0, 100 ), Angle( 0, 0, 0 ), 1 )
-        surface.DrawRect(number x, number y, number width, number height)
+local function DrawItems( ent )
+    local leftframe = vgui.Create( "DFrame" )
+    leftframe:SetTitle( "Current items on the table:" )
+    leftframe:SetSize( 500, 700 )
+    leftframe:Center()
+    leftframe:MakePopup()
+    local leftframescroll = vgui.Create( "DScrollPanel", leftframe )
+    leftframescroll:Dock( FILL )
+    for i=1, #ent.CraftingItems() do
+        
+    end
+
+    local rightframe = vgui.Create( "DFrame" )
+    rightframe:SetTitle( "Choose and item to craft:" )
+    rightframe:SetSize( 500, 700 )
+    rightframe:
 end
-hook.Add( "HUDPaint", "DrawItems", DrawItems() )
+
+net.Receive( "CraftingTableMenu", function( len, ply )
+    local ent = net.ReadEntity()
+    DrawItems( ent )
+end )

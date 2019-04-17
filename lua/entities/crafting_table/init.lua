@@ -31,18 +31,20 @@ end
 function ENT:Use( activator, caller )
 	if !caller:IsPlayer() then return end
 	net.Start( "CraftingTableMenu" )
-	net.WriteEntity( caller )
 	net.WriteEntity( self )
 	net.Send( caller )
 end
 
+util.AddNetworkString(  )
 function ENT:StartCrafting()
-	
+	self:EmitSound( "ambient/machines/catapult_throw.wav" )
+
 end
 
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
-		
+		table.insert( self.CraftingItems, tostring( ent:GetClass() ) )
+		self:EmitSound( "physics/metal/metal_solid_impact_hard1.wav" )
 	end
 end
 
