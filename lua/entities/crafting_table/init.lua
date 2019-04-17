@@ -13,7 +13,7 @@ function ENT:SpawnFunction( ply, tr )
 end
 
 function ENT:Initialize()
-    self:SetModel( CRAFT_CONFIG_MODEL )
+    	self:SetModel( CRAFT_CONFIG_MODEL )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
@@ -35,16 +35,17 @@ function ENT:Use( activator, caller )
 	net.Send( caller )
 end
 
-util.AddNetworkString(  )
-function ENT:StartCrafting()
+util.AddNetworkString( "StartCrafting" )
+function ENT:StartCrafting(  )
 	self:EmitSound( "ambient/machines/catapult_throw.wav" )
-
+	
 end
 
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
 		table.insert( self.CraftingItems, tostring( ent:GetClass() ) )
 		self:EmitSound( "physics/metal/metal_solid_impact_hard1.wav" )
+		ent:Remove()
 	end
 end
 
