@@ -2,16 +2,16 @@
 include('shared.lua')
 
 function ENT:Draw()
-    self:DrawModel()
+	self:DrawModel()
 end
 
 local function DrawItems( ent )
 	local mainframe = vgui.Create( "DFrame" )
-    mainframe:SetTitle( "Items currently on the table:" )
-    mainframe:SetSize( 500, 700 )
-    mainframe:Center()
-    mainframe:MakePopup()
-    local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
+	mainframe:SetTitle( "Items currently on the table:" )
+	mainframe:SetSize( 500, 700 )
+	mainframe:Center()
+	mainframe:MakePopup()
+	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
 	for k,v in ipairs( ent.CraftingItems ) do
 		local scrollbutton = vgui.Create( "DButton" )
@@ -23,32 +23,41 @@ end
 
 local function DrawRecipes( ent )
 	local mainframe = vgui.Create( "DFrame" )
-    mainframe:SetTitle( "Choose an item to craft:" )
-    mainframe:SetSize( 500, 700 )
-    mainframe:Center()
-    mainframe:MakePopup()
-    local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
+	mainframe:SetTitle( "Choose an item to craft:" )
+	mainframe:SetSize( 500, 700 )
+	mainframe:Center()
+	mainframe:MakePopup()
+	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
-	
+	for k,v in pairs( CraftingTable ) do
+		local mainbuttons = vgui.Create( "DButton" )
+		mainbuttons:SetText( v.Name )
+		mainbuttons:Dock( TOP )
+		mainbuttons:DockMargin( 0, 0, 0, 5 )
+		mainbuttons.DoClick = function()
+			local ply = LocalPlayer()
+			ply:ChatPrint( "[Crafting Table]: "..v.Description )
+			ply.SelectedCraftingItem = nil
+		end
+	end
 end
 
 local function DrawMainMenu( ent )
-    local mainframe = vgui.Create( "DFrame" )
-    mainframe:SetTitle( "Crafting Table - Main Menu" )
-    mainframe:SetSize( 500, 700 )
-    mainframe:Center()
-    mainframe:MakePopup()
-    local recipesbutton = vgui.Create( "DButton" )
-    recipesbutton:SetText( "View Recipes/Craft an Item" )
-    recipesbutton:SetPos( 25, 50 )
-    recipesbutton:SetSize( 250, 30 )
-    recipesbutton.DoClick = function()
-		DrawRecipes( ent )
-
+	local mainframe = vgui.Create( "DFrame" )
+	mainframe:SetTitle( "Crafting Table - Main Menu" )
+	mainframe:SetSize( 500, 700 )
+	mainframe:Center()
+	mainframe:MakePopup()
+	local recipesbutton = vgui.Create( "DButton" )
+	recipesbutton:SetText( "View Recipes/Craft an Item" )
+	recipesbutton:SetPos( 25, 50 )
+	recipesbutton:SetSize( 250, 30 )
+	recipesbutton.DoClick = function()
+	DrawRecipes( ent )
     end
 end
 
 net.Receive( "CraftingTableMenu", function( len, ply )
-    local ent = net.ReadEntity()
-    DrawMainMenu( ent )
+	local ent = net.ReadEntity()
+	DrawMainMenu( ent )
 end )
