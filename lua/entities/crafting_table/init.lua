@@ -14,7 +14,7 @@ function ENT:SpawnFunction( ply, tr )
 end
 
 function ENT:Initialize()
-    	self:SetModel( CRAFT_CONFIG_MODEL )
+    self:SetModel( CRAFT_CONFIG_MODEL )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
@@ -22,7 +22,12 @@ function ENT:Initialize()
 	self:SetHealth( CRAFT_CONFIG_MAXHEALTH )
 	self:SetMaxHealth( CRAFT_CONFIG_MAXHEALTH )
 	self:SetTrigger( true )
- 
+	self:SetColor( CRAFT_CONFIG_COLOR )
+
+	if CRAFT_CONFIG_MATERIAL != "" then
+		self:SetMaterial( CRAFT_CONFIG_MATERIAL )
+	end
+	
     local phys = self:GetPhysicsObject()
 	if (phys:IsValid()) then
 		phys:Wake()
@@ -39,16 +44,19 @@ end
 util.AddNetworkString( "StartCrafting" )
 net.Receive( "StartCrafting", function( len, ply )
 	local self = net.ReadEntity()
-	self:EmitSound( "ambient/machines/catapult_throw.wav" )
+	self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
 	
 end )
 
 function ENT:StartTouch( ent )
-	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
-		table.insert( self.CraftingItems, tostring( ent:GetClass() ) )
-		self:EmitSound( "physics/metal/metal_solid_impact_hard1.wav" )
-		ent:Remove()
+	for k,v in pairs( CraftingTable ) do
+		if v.Materials != ent:GetClass() then return end --Needs tested, might be able to avoid using a separate allowed ents table with this
 	end
+	--if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
+		table.insert( self.CraftingItems, tostring( ent:GetClass() ) )
+		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
+		ent:Remove()
+	--end
 end
 
 function ENT:OnRemove()

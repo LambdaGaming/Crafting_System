@@ -4,8 +4,7 @@ ENT.Base = "base_gmodentity"
 ENT.PrintName = "Crafting Table"
 ENT.Author = "Lambda Gaming"
 ENT.Spawnable = true
-ENT.AdminOnly = true
-ENT.Category = "Superadmin Only"
+ENT.Category = "Crafting Table"
 
 function ENT:Initialize()
 	self.CraftingItems = {}

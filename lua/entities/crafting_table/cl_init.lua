@@ -40,6 +40,15 @@ local function DrawRecipes( ent )
 			ply.SelectedCraftingItem = nil
 		end
 	end
+	local craftbutton = vgui.Create( "DButton" )
+	craftbutton:SetText( "Craft Selected Item" )
+	craftbutton:SetPos( 25, 150 )
+	craftbutton:SetSize( 250, 30 )
+	craftbutton:DoClick = function()
+		net.Start( "StartCrafting" )
+		net.WriteEntity( ent )
+		net.SendToServer()
+	end
 end
 
 local function DrawMainMenu( ent )
@@ -53,8 +62,22 @@ local function DrawMainMenu( ent )
 	recipesbutton:SetPos( 25, 50 )
 	recipesbutton:SetSize( 250, 30 )
 	recipesbutton.DoClick = function()
-	DrawRecipes( ent )
+		DrawRecipes( ent )
     end
+	local itemsbutton = vgui.Create( "DButton" )
+	itemsbutton:SetText( "View Items Currently on the Table" )
+	itemsbutton:SetPos( 25, 100 )
+	itemsbutton:SetSize( 250, 30 )
+	itemsbutton.DoClick = function()
+		DrawItems( ent )
+	end
+	local closebutton = vgui.Create( "DButton" )
+	closebutton:SetText( "Exit Table" )
+	closebutton:SetPos( 25, 150 )
+	closebutton:SetSize( 150, 15 )
+	closebutton:DoClick = function()
+		mainframe:Close()
+	end
 end
 
 net.Receive( "CraftingTableMenu", function( len, ply )
