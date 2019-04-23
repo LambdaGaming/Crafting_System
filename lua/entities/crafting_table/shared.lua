@@ -1,3 +1,4 @@
+
 ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
 ENT.PrintName = "Crafting Table"
@@ -14,6 +15,7 @@ CraftingTable = {}
 
 CraftingTable["weapon_crowbar"] = {
 	Name = "Crowbar",
+	Description = "Requires 1 pistol.",
 	Materials = {
 		"weapon_pistol"
 	},

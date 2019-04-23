@@ -1,3 +1,4 @@
+
 include('shared.lua')
 
 function ENT:Draw()
@@ -5,40 +6,49 @@ function ENT:Draw()
 end
 
 local function DrawItems( ent )
-    local leftframe = vgui.Create( "DFrame" )
-    leftframe:SetTitle( "Current items on the table:" )
-    leftframe:SetSize( 500, 700 )
-    leftframe:AlignLeft()
-    leftframe:MakePopup()
-    leftframe:ShowCloseButton( false )
-    local leftframescroll = vgui.Create( "DScrollPanel", leftframe )
-    leftframescroll:Dock( FILL )
-    for k,v in pairs( ent.CraftingItems ) do
-        
-    end
+	local mainframe = vgui.Create( "DFrame" )
+    mainframe:SetTitle( "Items currently on the table:" )
+    mainframe:SetSize( 500, 700 )
+    mainframe:Center()
+    mainframe:MakePopup()
+    local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
+	mainframescroll:Dock( FILL )
+	for k,v in ipairs( ent.CraftingItems ) do
+		local scrollbutton = vgui.Create( "DButton" )
+		scrollbutton:SetText( tostring( v ) )
+		scrollbutton:Dock( TOP )
+		scrollbutton:DockMargin( 0, 0, 0, 5 )
+	end
+end
 
-    local rightframe = vgui.Create( "DFrame" )
-    rightframe:SetTitle( "Choose an item to craft:" )
-    rightframe:SetSize( 500, 700 )
-    rightframe:AlignRight()
-    rightframe:MakePopup()
-    rightframe:ShowCloseButton( false )
-    local rightframescroll = vgui.Create( "DScrollPanel", rightframe )
-    rightframescroll:Dock( FILL )
-    for k,v in pairs( ent.CraftingTable ) do
-        
+local function DrawRecipes( ent )
+	local mainframe = vgui.Create( "DFrame" )
+    mainframe:SetTitle( "Choose an item to craft:" )
+    mainframe:SetSize( 500, 700 )
+    mainframe:Center()
+    mainframe:MakePopup()
+    local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
+	mainframescroll:Dock( FILL )
+	
+end
+
+local function DrawMainMenu( ent )
+    local mainframe = vgui.Create( "DFrame" )
+    mainframe:SetTitle( "Crafting Table - Main Menu" )
+    mainframe:SetSize( 500, 700 )
+    mainframe:Center()
+    mainframe:MakePopup()
+    local recipesbutton = vgui.Create( "DButton" )
+    recipesbutton:SetText( "View Recipes/Craft an Item" )
+    recipesbutton:SetPos( 25, 50 )
+    recipesbutton:SetSize( 250, 30 )
+    recipesbutton.DoClick = function()
+		DrawRecipes( ent )
+
     end
-    
-    local centerframe = vgui.Create( "DFrame" )
-    centerframe:SetSize( 300, 50 )
-    centerframe:Center()
-    centerframe:MakePopup()
-    centerframe:SetBackgroundColor( Color( 255, 255, 255, 0 ) )
-    centerframe:ShowCloseButton( false )
-    local craftbutton = vgui.Create(  )
 end
 
 net.Receive( "CraftingTableMenu", function( len, ply )
     local ent = net.ReadEntity()
-    DrawItems( ent )
+    DrawMainMenu( ent )
 end )

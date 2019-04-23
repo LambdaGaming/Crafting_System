@@ -1,3 +1,4 @@
+
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include('shared.lua')
@@ -36,10 +37,11 @@ function ENT:Use( activator, caller )
 end
 
 util.AddNetworkString( "StartCrafting" )
-function ENT:StartCrafting(  )
+net.Receive( "StartCrafting", function( len, ply )
+	local self = net.ReadEntity()
 	self:EmitSound( "ambient/machines/catapult_throw.wav" )
 	
-end
+end )
 
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
