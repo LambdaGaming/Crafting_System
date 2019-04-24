@@ -34,6 +34,7 @@ function ENT:Initialize()
 	end
 end
 
+util.AddNetworkString( "CraftingTableMenu" )
 function ENT:Use( activator, caller )
 	if !caller:IsPlayer() then return end
 	net.Start( "CraftingTableMenu" )
@@ -44,19 +45,20 @@ end
 util.AddNetworkString( "StartCrafting" )
 net.Receive( "StartCrafting", function( len, ply )
 	local self = net.ReadEntity()
+	local ent = net.ReadString()
 	self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
-	
+	local e = ents.Create( ent )
+	e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) )
+	e:Spawn()
+	ply:ChatPrint( "Item crafted." )
 end )
 
 function ENT:StartTouch( ent )
-	for k,v in pairs( CraftingTable ) do
-		if v.Materials != ent:GetClass() then return end --Needs tested, might be able to avoid using a separate allowed ents table with this
-	end
-	--if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
+	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
 		table.insert( self.CraftingItems, tostring( ent:GetClass() ) )
 		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
 		ent:Remove()
-	--end
+	end
 end
 
 function ENT:OnRemove()

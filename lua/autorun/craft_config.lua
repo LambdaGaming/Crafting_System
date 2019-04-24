@@ -6,7 +6,5 @@ CRAFT_CONFIG_COLOR = Color( 255, 255, 255, 255 ) --Color of the table, default i
 CRAFT_CONFIG_PLACE_SOUND = "physics/metal/metal_solid_impact_hard1.wav" --Sound that plays when an item is placed on the table
 CRAFT_CONFIG_CRAFT_SOUND = "ambient/machines/catapult_throw.wav" --Sound that plays when an item is being crafted
 CRAFT_CONFIG_ALLOWED_ENTS = {
-    "weapon_pistol",
-    "weapon_crowbar",
-    "item_battery"
+    "sent_ball"
 }
