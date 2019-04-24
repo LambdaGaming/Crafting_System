@@ -13,7 +13,7 @@ CraftingTable["weapon_crowbar"] = {
 	Name = "Crowbar",
 	Description = "Requires 1 ball.",
 	Materials = {
-		"sent_ball"
+		"sent_ball" = 1
 	},
 	SpawnFunction =
 		function( ply, self )
