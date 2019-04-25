@@ -46,12 +46,16 @@ util.AddNetworkString( "StartCrafting" )
 net.Receive( "StartCrafting", function( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
-	
-	self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
-	local e = ents.Create( ent )
-	e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) )
-	e:Spawn()
-	ply:ChatPrint( "Item crafted." )
+	if table.HasValue( self.CraftingItems, "sent_ball" ) then
+		self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
+		local e = ents.Create( ent )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) )
+		e:Spawn()
+		ply:ChatPrint( "Item crafted." )
+		table.RemoveByValue( self.CraftingItems, "sent_ball" )
+	else
+		ply:ChatPrint( "Required items are not on the table!" )
+	end
 end )
 
 function ENT:StartTouch( ent )
