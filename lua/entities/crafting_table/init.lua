@@ -46,12 +46,13 @@ util.AddNetworkString( "StartCrafting" )
 net.Receive( "StartCrafting", function( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
+	local entname = net.ReadString()
 	if table.HasValue( self.CraftingItems, "sent_ball" ) then
 		self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
 		local e = ents.Create( ent )
 		e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) )
 		e:Spawn()
-		ply:ChatPrint( "Item crafted." )
+		ply:ChatPrint( "Successfully crafted a "..entname.." ." )
 		--table.RemoveByValue( self.CraftingItems, "sent_ball" )
 		table.Empty( self.CraftingItems ) --Removes everything on the table, temporary until I can figure out how to remove just the required ingredients
 	else
