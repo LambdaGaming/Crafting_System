@@ -52,7 +52,8 @@ net.Receive( "StartCrafting", function( len, ply )
 		e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) )
 		e:Spawn()
 		ply:ChatPrint( "Item crafted." )
-		table.RemoveByValue( self.CraftingItems, "sent_ball" )
+		--table.RemoveByValue( self.CraftingItems, "sent_ball" )
+		table.Empty( self.CraftingItems ) --Removes everything on the table, temporary until I can figure out how to remove just the required ingredients
 	else
 		ply:ChatPrint( "Required items are not on the table!" )
 	end
@@ -67,13 +68,19 @@ function ENT:StartTouch( ent )
 end
 
 function ENT:OnTakeDamage( dmg )
-	if self:Health() <= 0 then
-		local e = ents.Create( "env_explosion" )
-		e:SetPos( pos )
-		e:Spawn()
-		e:SetKeyValue( "iMagnitude", mag )
-		e:Fire( "Explode", 0, 0 )
-		self:Remove()
+	if self:Health() <= 0 and !self.Exploding then
+		if CRAFT_CONFIG_SHOULD_EXPLODE then
+			self.Exploding = true --Prevents a bunch of fires from spawning at once causing the server to hang for a few seconds if VFire is installed
+			local e = ents.Create( "env_explosion" )
+			e:SetPos( self:GetPos() )
+			e:Spawn()
+			e:SetKeyValue( "iMagnitude", 200 )
+			e:Fire( "Explode", 0, 0 )
+			self:Remove()
+		else
+			self:EmitSound( "physics/metal/metal_box_break"..math.random( 1, 2 )..".wav" )
+			self:Remove()
+		end
 		return
 	end
 	local damage = dmg:GetDamage()

@@ -36,8 +36,9 @@ local function DrawRecipes( ent )
 		mainbuttons:Dock( TOP )
 		mainbuttons:DockMargin( 0, 0, 0, 5 )
 		mainbuttons.DoClick = function()
-			ply:ChatPrint( "[Crafting Table]: "..v.Description )
+			ply:ChatPrint( "[Crafting Table]: <"..v.Name.."> "..v.Description )
 			ply.SelectedCraftingItem = tostring( k )
+			ply.SelectedCraftingItemName = v.Name
 		end
 	end
 	local craftbutton = vgui.Create( "DButton", mainframe )
@@ -45,10 +46,15 @@ local function DrawRecipes( ent )
 	craftbutton:SetPos( 25, 150 )
 	craftbutton:SetSize( 250, 30 )
 	craftbutton.DoClick = function()
+		if !ply.SelectedCraftingItem then ply:ChatPrint( "[Crafting Table]: Please select an item to craft." ) return end
 		net.Start( "StartCrafting" )
 		net.WriteEntity( ent )
 		net.WriteString( ply.SelectedCraftingItem )
+		net.WriteString( ply.SelectedCraftingItemName )
 		net.SendToServer()
+		mainframe:Close()
+		ply.SelectedCraftingItem = nil
+		ply.SelectedCraftingItemName = nil
 	end
 end
 
