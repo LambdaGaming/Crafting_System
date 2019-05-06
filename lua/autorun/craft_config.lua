@@ -7,5 +7,6 @@ CRAFT_CONFIG_PLACE_SOUND = "physics/metal/metal_solid_impact_hard1.wav" --Sound 
 CRAFT_CONFIG_CRAFT_SOUND = "ambient/machines/catapult_throw.wav" --Sound that plays when an item is being crafted
 CRAFT_CONFIG_SHOULD_EXPLODE = true --Whether or not the table should explode when it's health reaches 0
 CRAFT_CONFIG_ALLOWED_ENTS = {
-    "sent_ball"
+    "sent_ball",
+	"edit_fog"
 }

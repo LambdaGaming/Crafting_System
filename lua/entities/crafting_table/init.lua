@@ -49,9 +49,8 @@ net.Receive( "StartCrafting", function( len, ply )
 	local entname = net.ReadString()
 	if CraftingTable[ent].Materials then
 		for k,v in pairs( CraftingTable[ent].Materials ) do
-			if self[k] < v then --Based off an old crafting system from like 2013, may or may not work
-				//ply:ChatPrint( "[Crafting Table]: Required items are not on the table!" )
-				ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" )]] ) --Testing colored text
+			if self:GetNWInt( k ) < v then
+				ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" )]] )
 				return
 			end
 		end
@@ -61,13 +60,15 @@ net.Receive( "StartCrafting", function( len, ply )
 		e:Spawn()
 		ply:ChatPrint( "[Crafting Table]: Successfully crafted a "..entname.." ." )
 		--table.RemoveByValue( self.CraftingItems, "sent_ball" )
-		table.Empty( self.CraftingItems ) --Removes everything on the table, temporary until I can figure out how to remove just the required ingredients
+		for k,v in pairs( CRAFT_CONFIG_ALLOWED_ENTS ) do
+			self:SetNWInt( k, 0 ) --Removes everything on the table, temporary until I can figure out how to remove just the required ingredients
+		end
 	end
 end )
 
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
-		table.insert( self.CraftingItems, tostring( ent:GetClass() ) )
+		self:SetNWInt( ent:GetClass(), self:GetNWInt( ent:GetClass() ) + 1 )
 		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
 		ent:Remove()
 	end
