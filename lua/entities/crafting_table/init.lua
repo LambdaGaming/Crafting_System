@@ -47,16 +47,21 @@ net.Receive( "StartCrafting", function( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
 	local entname = net.ReadString()
-	if table.HasValue( self.CraftingItems, "sent_ball" ) then
+	if CraftingTable[ent].Materials then
+		for k,v in pairs( CraftingTable[ent].Materials ) do
+			if self[k] < v then --Based off an old crafting system from like 2013, may or may not work
+				//ply:ChatPrint( "[Crafting Table]: Required items are not on the table!" )
+				ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" )]] ) --Testing colored text
+				return
+			end
+		end
 		self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
 		local e = ents.Create( ent )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) ) --Negative Z value so the item spawns under the table, prevents items from spawning on the table and getting consumed
 		e:Spawn()
-		ply:ChatPrint( "Successfully crafted a "..entname.." ." )
+		ply:ChatPrint( "[Crafting Table]: Successfully crafted a "..entname.." ." )
 		--table.RemoveByValue( self.CraftingItems, "sent_ball" )
 		table.Empty( self.CraftingItems ) --Removes everything on the table, temporary until I can figure out how to remove just the required ingredients
-	else
-		ply:ChatPrint( "Required items are not on the table!" )
 	end
 end )
 
