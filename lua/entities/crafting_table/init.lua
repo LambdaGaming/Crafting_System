@@ -47,23 +47,25 @@ net.Receive( "StartCrafting", function( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
 	local entname = net.ReadString()
-	if CraftingTable[ent].Materials then
-		for k,v in pairs( CraftingTable[ent].Materials ) do
+	local CraftMaterials = CraftingTable[ent].Materials
+	local SpawnItem = CraftingTable[ent].SpawnFunction
+	if CraftMaterials then
+		for k,v in pairs( CraftMaterials ) do
 			if self:GetNWInt( k ) < v then
 				ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" )]] )
 				return
 			end
 		end
-		if CraftingTable[ent].SpawnFunction then
-			CraftingTable[ent].SpawnFunction( ply, self )
+		if SpawnItem then
+			SpawnItem( ply, self )
 			self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
 			ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Successfully crafted a "..entname.." ." )]] )
 		else
-			//ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )]] )
+			ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )]] )
 			return
 		end
-		for k,v in pairs( CRAFT_CONFIG_ALLOWED_ENTS ) do
-			self:SetNWInt( k, 0 ) --Removes everything on the table, temporary until I can figure out how to remove just the required ingredients
+		for k,v in pairs( CraftMaterials ) do
+			self:SetNWInt( k, self:GetNWInt( k ) - v ) --Should remove only the required materials, needs tested
 		end
 	end
 end )
