@@ -21,11 +21,13 @@ local function DrawItems( ent )
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
-	for k,v in pairs( ent:GetNWInt( "" ) ) do
-		local scrollbutton = vgui.Create( "DButton", mainframescroll )
-		scrollbutton:SetText( tostring( v ) )
-		scrollbutton:Dock( TOP )
-		scrollbutton:DockMargin( 0, 0, 0, 5 )
+	for k,v in pairs( CRAFT_CONFIG_ALLOWED_ENTS ) do
+		if ent:GetNWInt( "Craft_*" ) == v then
+			local scrollbutton = vgui.Create( "DButton", mainframescroll )
+			scrollbutton:SetText( v.." x1" )
+			scrollbutton:Dock( TOP )
+			scrollbutton:DockMargin( 0, 0, 0, 5 )
+		end
 	end
 end
 

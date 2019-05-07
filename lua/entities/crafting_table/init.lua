@@ -51,7 +51,7 @@ net.Receive( "StartCrafting", function( len, ply )
 	local SpawnItem = CraftingTable[ent].SpawnFunction
 	if CraftMaterials then
 		for k,v in pairs( CraftMaterials ) do
-			if self:GetNWInt( k ) < v then
+			if self:GetNWInt( "Craft_"..k ) < v then
 				ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" )]] )
 				return
 			end
@@ -65,14 +65,14 @@ net.Receive( "StartCrafting", function( len, ply )
 			return
 		end
 		for k,v in pairs( CraftMaterials ) do
-			self:SetNWInt( k, self:GetNWInt( k ) - v ) --Should remove only the required materials, needs tested
+			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v ) --Should remove only the required materials, needs tested
 		end
 	end
 end )
 
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
-		self:SetNWInt( ent:GetClass(), self:GetNWInt( ent:GetClass() ) + 1 )
+		self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
 		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
 		ent:Remove()
 	end
@@ -89,7 +89,7 @@ function ENT:OnTakeDamage( dmg )
 			e:Fire( "Explode", 0, 0 )
 			self:Remove()
 		else
-			self:EmitSound( "physics/metal/metal_box_break"..math.random( 1, 2 )..".wav" )
+			self:EmitSound( CRAFT_CONFIG_DESTROY_SOUND )
 			self:Remove()
 		end
 		return
