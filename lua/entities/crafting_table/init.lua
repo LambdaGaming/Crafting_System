@@ -54,12 +54,14 @@ net.Receive( "StartCrafting", function( len, ply )
 				return
 			end
 		end
-		self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
-		local e = ents.Create( ent )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -10 ) ) --Negative Z value so the item spawns under the table, prevents items from spawning on the table and getting consumed
-		e:Spawn()
-		ply:ChatPrint( "[Crafting Table]: Successfully crafted a "..entname.." ." )
-		--table.RemoveByValue( self.CraftingItems, "sent_ball" )
+		if CraftingTable[ent].SpawnFunction then
+			CraftingTable[ent].SpawnFunction( ply, self )
+			self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
+			ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Successfully crafted a "..entname.." ." )]] )
+		else
+			//ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )]] )
+			return
+		end
 		for k,v in pairs( CRAFT_CONFIG_ALLOWED_ENTS ) do
 			self:SetNWInt( k, 0 ) --Removes everything on the table, temporary until I can figure out how to remove just the required ingredients
 		end
