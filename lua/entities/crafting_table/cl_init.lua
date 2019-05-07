@@ -36,7 +36,7 @@ local function DrawRecipes( ent )
 		mainbuttons:Dock( TOP )
 		mainbuttons:DockMargin( 0, 0, 0, 5 )
 		mainbuttons.DoClick = function()
-			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "<"..v.Name.."> "..v.Description )
+			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
 			ply.SelectedCraftingItem = tostring( k )
 			ply.SelectedCraftingItemName = v.Name
 		end
