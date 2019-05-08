@@ -66,6 +66,7 @@ net.Receive( "StartCrafting", function( len, ply )
 		end
 		for k,v in pairs( CraftMaterials ) do
 			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v ) --Should remove only the required materials, needs tested
+			table.RemoveByValue( self.CraftingItems, v.Name )
 		end
 	end
 end )
@@ -73,6 +74,7 @@ end )
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
 		self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
+		table.insert( self.CraftingItems, ent:GetName() )
 		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
 		ent:Remove()
 	end
