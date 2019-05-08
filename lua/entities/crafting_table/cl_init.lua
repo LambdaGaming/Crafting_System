@@ -19,6 +19,19 @@ local function DrawItems( ent )
 		mainframe:Close()
 		DrawMainMenu( ent )
 	end
+	local frame = vgui.Create( "DFrame" )
+	frame:SetSize( 400, 200 )
+	frame:Center()
+	frame:MakePopup()
+
+	local TextEntry = vgui.Create( "DTextEntry", frame )
+	TextEntry:SetPos( 25, 50 )
+	TextEntry:SetSize( 75, 85 )
+	TextEntry:SetText( "Enter name of item you want to get the amount of:" )
+	TextEntry.OnEnter = function( self )
+		chat.AddText( self:GetValue() )
+	end
+
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
 	for k,v in pairs( ent.CraftingItems ) do
