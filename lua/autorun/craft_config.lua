@@ -31,6 +31,9 @@ CRAFT_CONFIG_MENU_COLOR = Color( 49, 53, 61, 200 )
 --Color of the buttons
 CRAFT_CONFIG_BUTTON_COLOR = Color( 230, 93, 80, 255 )
 
+--Color of the button text
+CRAFT_CONFIG_BUTTON_TEXT_COLOR = color_white --Using a global for optimization, you can also use Color()
+
 --Entities that are allowed to be placed on the table. Don't forget to configure the items in the shared.lua as well! Failure to do so will result in errors!
 CRAFT_CONFIG_ALLOWED_ENTS = {
     "sent_ball",

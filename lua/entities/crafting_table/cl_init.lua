@@ -18,11 +18,16 @@ DrawItems = function( ent )
 	end
 	local backbutton = vgui.Create( "DButton", mainframe )
 	backbutton:SetText( "Back" )
+	backbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	backbutton:SetPos( 0, 0 )
 	backbutton:SetSize( 50, 10 )
+	backbutton.Paint = function( self, w, h )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+	end
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
+		surface.PlaySound( "ui/buttonclickrelease.wav" )
 	end
 
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
@@ -35,8 +40,12 @@ DrawItems = function( ent )
 			else
 				scrollbutton:SetText( a..": "..ent:GetNWInt( "Craft_"..a ) )
 			end
+			scrollbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 			scrollbutton:Dock( TOP )
 			scrollbutton:DockMargin( 0, 0, 0, 5 )
+			scrollbutton.Paint = function( self, w, h )
+				draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+			end
 		end
 	end
 end
@@ -53,6 +62,7 @@ DrawRecipes = function( ent )
 	end
 	local backbutton = vgui.Create( "DButton", mainframe )
 	backbutton:SetText( "Back" )
+	backbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	backbutton:SetPos( 0, 0 )
 	backbutton:SetSize( 50, 10 )
 	backbutton.Paint = function( self, w, h )
@@ -61,12 +71,14 @@ DrawRecipes = function( ent )
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
+		surface.PlaySound( "ui/buttonclickrelease.wav" )
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
 	for k,v in pairs( CraftingTable ) do
 		local mainbuttons = vgui.Create( "DButton", mainframescroll )
 		mainbuttons:SetText( v.Name )
+		mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 		mainbuttons:Dock( TOP )
 		mainbuttons:DockMargin( 0, 0, 0, 5 )
 		mainbuttons.Paint = function( self, w, h )
@@ -76,10 +88,12 @@ DrawRecipes = function( ent )
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
 			ply.SelectedCraftingItem = tostring( k )
 			ply.SelectedCraftingItemName = v.Name
+			surface.PlaySound( "ui/buttonclickrelease.wav" )
 		end
 	end
 	local craftbutton = vgui.Create( "DButton", mainframe )
 	craftbutton:SetText( "Craft Selected Item" )
+	craftbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	craftbutton:SetPos( 25, 150 )
 	craftbutton:SetSize( 250, 30 )
 	craftbutton.Paint = function( self, w, h )
@@ -88,6 +102,7 @@ DrawRecipes = function( ent )
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Please select an item to craft." )
+			surface.PlaySound( "buttons/button2.wav" )
 			return
 		end
 		net.Start( "StartCrafting" )
@@ -112,6 +127,7 @@ DrawMainMenu = function( ent )
 	end
 	local recipesbutton = vgui.Create( "DButton", mainframe )
 	recipesbutton:SetText( "View Recipes/Craft an Item" )
+	recipesbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	recipesbutton:SetPos( 25, 50 )
 	recipesbutton:SetSize( 250, 30 )
 	recipesbutton:CenterHorizontal()
@@ -121,9 +137,11 @@ DrawMainMenu = function( ent )
 	recipesbutton.DoClick = function()
 		DrawRecipes( ent )
 		mainframe:Close()
+		surface.PlaySound( "ui/buttonclickrelease.wav" )
     end
 	local itemsbutton = vgui.Create( "DButton", mainframe )
 	itemsbutton:SetText( "View Items Currently on the Table" )
+	itemsbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	itemsbutton:SetPos( 25, 100 )
 	itemsbutton:SetSize( 250, 30 )
 	itemsbutton:CenterHorizontal()
@@ -133,9 +151,11 @@ DrawMainMenu = function( ent )
 	itemsbutton.DoClick = function()
 		DrawItems( ent )
 		mainframe:Close()
+		surface.PlaySound( "ui/buttonclickrelease.wav" )
 	end
 	local closebutton = vgui.Create( "DButton", mainframe )
 	closebutton:SetText( "Exit Table" )
+	closebutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	closebutton:SetPos( 25, 150 )
 	closebutton:SetSize( 150, 15 )
 	closebutton:CenterHorizontal()
@@ -144,6 +164,7 @@ DrawMainMenu = function( ent )
 	end
 	closebutton.DoClick = function()
 		mainframe:Close()
+		surface.PlaySound( "ui/buttonclickrelease.wav" )
 	end
 end
 

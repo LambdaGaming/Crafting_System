@@ -53,7 +53,10 @@ net.Receive( "StartCrafting", function( len, ply )
 	if CraftMaterials then
 		for k,v in pairs( CraftMaterials ) do
 			if self:GetNWInt( "Craft_"..k ) < v then
-				ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" )]] )
+				ply:SendLua( [[
+					chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" ) 
+					surface.PlaySound( "buttons/button2.wav" )
+				]] )
 				return
 			end
 		end
