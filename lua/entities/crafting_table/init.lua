@@ -43,6 +43,7 @@ function ENT:Use( activator, caller )
 end
 
 util.AddNetworkString( "StartCrafting" )
+util.AddNetworkString( "CraftMessage" )
 net.Receive( "StartCrafting", function( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
@@ -57,11 +58,19 @@ net.Receive( "StartCrafting", function( len, ply )
 			end
 		end
 		if SpawnItem then
+			local validfunction = true
 			SpawnItem( ply, self )
 			self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
-			ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Successfully crafted a "..entname.." ." )]] )
+			net.Start( "CraftMessage" )
+			net.WriteBool( validfunction )
+			net.WriteString( entname )
+			net.Send( ply )
 		else
-			ply:SendLua( [[chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )]] )
+			local validfunction = false
+			net.Start( "CraftMessage" )
+			net.WriteBool( validfunction )
+			net.WriteString( entname )
+			net.Send( ply )
 			return
 		end
 		for k,v in pairs( CraftMaterials ) do
@@ -73,7 +82,6 @@ end )
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
 		self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
-		table.insert( self.CraftingItems, ent:GetName() )
 		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
 		ent:Remove()
 	end

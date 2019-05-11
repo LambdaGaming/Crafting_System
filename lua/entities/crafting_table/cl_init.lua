@@ -47,7 +47,7 @@ DrawRecipes = function( ent )
 	mainframe:MakePopup()
 	local backbutton = vgui.Create( "DButton", mainframe )
 	backbutton:SetText( "Back" )
-	backbutton:SetPos( 0, -10 )
+	backbutton:SetPos( 0, 0 )
 	backbutton:SetSize( 50, 10 )
 	backbutton.DoClick = function()
 		mainframe:Close()
@@ -120,4 +120,14 @@ end
 net.Receive( "CraftingTableMenu", function( len, ply )
 	local ent = net.ReadEntity()
 	DrawMainMenu( ent )
+end )
+
+net.Receive( "CraftMessage", function( len, ply )
+	local validfunction = net.ReadBool()
+	local entname = net.ReadString()
+	if validfunction then
+		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Successfully crafted a "..entname.." ." )
+	else
+		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )
+	end
 end )
