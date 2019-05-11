@@ -27,7 +27,7 @@ DrawItems = function( ent )
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
-		surface.PlaySound( "ui/buttonclickrelease.wav" )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
 
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
@@ -71,7 +71,7 @@ DrawRecipes = function( ent )
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
-		surface.PlaySound( "ui/buttonclickrelease.wav" )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
@@ -88,7 +88,7 @@ DrawRecipes = function( ent )
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
 			ply.SelectedCraftingItem = tostring( k )
 			ply.SelectedCraftingItemName = v.Name
-			surface.PlaySound( "ui/buttonclickrelease.wav" )
+			surface.PlaySound( CRAFT_CONFIG_SELECT_SOUND )
 		end
 	end
 	local craftbutton = vgui.Create( "DButton", mainframe )
@@ -102,7 +102,7 @@ DrawRecipes = function( ent )
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Please select an item to craft." )
-			surface.PlaySound( "buttons/button2.wav" )
+			surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND )
 			return
 		end
 		net.Start( "StartCrafting" )
@@ -137,7 +137,7 @@ DrawMainMenu = function( ent )
 	recipesbutton.DoClick = function()
 		DrawRecipes( ent )
 		mainframe:Close()
-		surface.PlaySound( "ui/buttonclickrelease.wav" )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
     end
 	local itemsbutton = vgui.Create( "DButton", mainframe )
 	itemsbutton:SetText( "View Items Currently on the Table" )
@@ -151,7 +151,7 @@ DrawMainMenu = function( ent )
 	itemsbutton.DoClick = function()
 		DrawItems( ent )
 		mainframe:Close()
-		surface.PlaySound( "ui/buttonclickrelease.wav" )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
 	local closebutton = vgui.Create( "DButton", mainframe )
 	closebutton:SetText( "Exit Table" )
@@ -164,7 +164,7 @@ DrawMainMenu = function( ent )
 	end
 	closebutton.DoClick = function()
 		mainframe:Close()
-		surface.PlaySound( "ui/buttonclickrelease.wav" )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
 end
 

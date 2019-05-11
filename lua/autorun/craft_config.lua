@@ -19,6 +19,15 @@ CRAFT_CONFIG_PLACE_SOUND = "physics/metal/metal_solid_impact_hard1.wav"
 --Sound that plays when an item is being crafted
 CRAFT_CONFIG_CRAFT_SOUND = "ambient/machines/catapult_throw.wav"
 
+--Sound that plays when a button is pressed
+CRAFT_CONFIG_UI_SOUND = "ui/buttonclickrelease.wav"
+
+--Sound that plays when an item is selected
+CRAFT_CONFIG_SELECT_SOUND = "buttons/lightswitch2.wav"
+
+--Sound that plays when crafting fails
+CRAFT_CONFIG_FAIL_SOUND = "buttons/button2.wav"
+
 --Whether or not the table should explode when it's health reaches 0
 CRAFT_CONFIG_SHOULD_EXPLODE = true
 

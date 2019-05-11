@@ -18,9 +18,9 @@ CraftingTable = {}
 		edit_fog = 1
 	},
 	SpawnFunction = --Function to spawn the item, don't modify anything outside of the entity name unless you know what you're doing
-		function( ply, self )
+		function( ply, self ) --In this function you are able to modify the player who is crafting, the table itself, and the item that is being crafted
 			local e = ents.Create( "weapon_crowbar" ) --Replace the entity name with the one at the very top inside the brackets
-			e:SetPos( self:GetPos() - Vector( 0, 0, -10 ) )
+			e:SetPos( self:GetPos() - Vector( 0, 0, -5 ) ) --A negative Z coordinate is added here to prevent items from spawning on top of the table and being consumed, you'll have to change it if you use a different model otherwise keep it as it is
 			e:Spawn()
 		end
 	}
@@ -38,7 +38,7 @@ CraftingTable["weapon_crowbar"] = {
 	SpawnFunction =
 		function( ply, self )
 			local e = ents.Create( "weapon_crowbar" )
-			e:SetPos( self:GetPos() - Vector( 0, 0, -10 ) )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
 			e:Spawn()
 		end
 }
