@@ -6,7 +6,6 @@ ENT.Author = "Lambda Gaming"
 ENT.Spawnable = true
 ENT.Category = "Crafting Table"
 
-ENT.CraftingItems = {}
 CraftingTable = {}
 
 --Template Item

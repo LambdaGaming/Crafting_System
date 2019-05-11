@@ -5,7 +5,9 @@ function ENT:Draw()
 	self:DrawModel()
 end
 
-local function DrawItems( ent )
+local DrawItems, DrawRecipes, DrawMainMenu
+
+DrawItems = function( ent )
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Items currently on the table:" )
 	mainframe:SetSize( 500, 700 )
@@ -19,22 +21,24 @@ local function DrawItems( ent )
 		mainframe:Close()
 		DrawMainMenu( ent )
 	end
-	local frame = vgui.Create( "DFrame" )
-	frame:SetSize( 400, 200 )
-	frame:Center()
-	frame:MakePopup()
 
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
-	for k,v in pairs( CraftingTable ) do //Needs updated to show all possible entities that can be placed on the table with their current values
-		local scrollbutton = vgui.Create( "DButton", mainframescroll )
-		scrollbutton:SetText( v.." x1" )
-		scrollbutton:Dock( TOP )
-		scrollbutton:DockMargin( 0, 0, 0, 5 )
+	for k,v in pairs( CraftingTable ) do
+		for a,b in pairs( v.Materials ) do
+			local scrollbutton = vgui.Create( "DButton", mainframescroll )
+			if ent:GetNWInt( "Craft_"..a ) == nil then
+				scrollbutton:SetText( a..": 0" )
+			else
+				scrollbutton:SetText( a..": "..ent:GetNWInt( "Craft_"..a ) )
+			end
+			scrollbutton:Dock( TOP )
+			scrollbutton:DockMargin( 0, 0, 0, 5 )
+		end
 	end
 end
 
-local function DrawRecipes( ent )
+DrawRecipes = function( ent )
 	local ply = LocalPlayer()
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Choose an item to craft:" )
@@ -82,7 +86,7 @@ local function DrawRecipes( ent )
 	end
 end
 
-local function DrawMainMenu( ent )
+DrawMainMenu = function( ent )
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Crafting Table - Main Menu" )
 	mainframe:SetSize( 500, 700 )

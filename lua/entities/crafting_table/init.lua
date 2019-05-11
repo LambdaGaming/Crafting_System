@@ -66,7 +66,6 @@ net.Receive( "StartCrafting", function( len, ply )
 		end
 		for k,v in pairs( CraftMaterials ) do
 			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v ) --Should remove only the required materials, needs tested
-			table.RemoveByValue( self.CraftingItems, v.Name )
 		end
 	end
 end )
