@@ -82,6 +82,17 @@ net.Receive( "StartCrafting", function( len, ply )
 	end
 end )
 
+util.AddNetworkString( "DropItem" )
+net.Receive( "DropItem", function( len, ply )
+	local ent = net.ReadEntity()
+	local item = net.ReadString()
+	local e = ents.Create( item )
+	e:SetPos( ent:GetPos() + Vector( 0, 60, 0 ) )
+	e:Spawn()
+	ent:SetNWInt( "Craft_"..item, ent:GetNWInt( "Craft_"..item ) - 1 )
+	ent:EmitSound( CRAFT_CONFIG_DROP_SOUND )
+end )
+
 function ENT:StartTouch( ent )
 	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
 		self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )

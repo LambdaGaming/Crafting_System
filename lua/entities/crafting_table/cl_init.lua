@@ -46,6 +46,20 @@ DrawItems = function( ent )
 			scrollbutton.Paint = function( self, w, h )
 				draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 			end
+			scrollbutton.DoClick = function()
+				if ent:GetNWInt( "Craft_"..a ) == nil or ent:GetNWInt( "Craft_"..a ) == 0 then
+					surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND )
+					return
+				end
+				net.Start( "DropItem" )
+				net.WriteEntity( ent )
+				net.WriteString( a )
+				net.SendToServer()
+				timer.Simple( 0.1, function() --Small timer to let the net message go through
+					mainframe:Close()
+					DrawItems( ent )
+				end )
+			end
 		end
 	end
 end

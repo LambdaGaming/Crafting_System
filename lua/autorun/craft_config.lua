@@ -28,6 +28,9 @@ CRAFT_CONFIG_SELECT_SOUND = "buttons/lightswitch2.wav"
 --Sound that plays when crafting fails
 CRAFT_CONFIG_FAIL_SOUND = "buttons/button2.wav"
 
+--Sound that plays when an item is manually removed from the table
+CRAFT_CONFIG_DROP_SOUND = "physics/metal/metal_canister_impact_soft1.wav"
+
 --Whether or not the table should explode when it's health reaches 0
 CRAFT_CONFIG_SHOULD_EXPLODE = true
 
