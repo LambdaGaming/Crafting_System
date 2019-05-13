@@ -8,6 +8,7 @@ end
 local DrawItems, DrawRecipes, DrawMainMenu
 
 DrawItems = function( ent )
+	local itemtable = {}
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Items currently on the table:" )
 	mainframe:SetSize( 500, 500 )
@@ -34,6 +35,7 @@ DrawItems = function( ent )
 	mainframescroll:Dock( FILL )
 	for k,v in pairs( CraftingTable ) do
 		for a,b in pairs( v.Materials ) do
+			if table.HasValue( itemtable, a ) then break end --Prevents two or more of the same materials from being listed if they are used in more than one recipe
 			local scrollbutton = vgui.Create( "DButton", mainframescroll )
 			if ent:GetNWInt( "Craft_"..a ) == nil then
 				scrollbutton:SetText( a..": 0" )
@@ -55,11 +57,12 @@ DrawItems = function( ent )
 				net.WriteEntity( ent )
 				net.WriteString( a )
 				net.SendToServer()
-				timer.Simple( 0.1, function() --Small timer to let the net message go through
+				timer.Simple( 0.3, function() --Small timer to let the net message go through
 					mainframe:Close()
 					DrawItems( ent )
 				end )
 			end
+			table.insert( itemtable, a )
 		end
 	end
 end
