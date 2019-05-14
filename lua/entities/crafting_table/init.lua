@@ -55,7 +55,7 @@ net.Receive( "StartCrafting", function( len, ply )
 			if self:GetNWInt( "Craft_"..k ) < v then
 				ply:SendLua( [[
 					chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" ) 
-					surface.PlaySound( "buttons/button2.wav" )
+					surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND )
 				]] )
 				return
 			end
