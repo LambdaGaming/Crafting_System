@@ -5,9 +5,9 @@ function ENT:Draw()
 	self:DrawModel()
 end
 
-local DrawItems, DrawRecipes, DrawMainMenu
+local DrawItems, DrawRecipes, DrawMainMenu --Initialize these early so the client can see them when using the back buttons
 
-DrawItems = function( ent )
+DrawItems = function( ent ) --Panel that draws the list of materials that are on the table
 	local itemtable = {}
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Items currently on the table:" )
@@ -34,10 +34,12 @@ DrawItems = function( ent )
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
 	for k,v in pairs( CraftingTable ) do
-		for a,b in pairs( v.Materials ) do
-			if table.HasValue( itemtable, a ) then break end --Prevents two or more of the same materials from being listed if they are used in more than one recipe
+		for a,b in pairs( v.Materials ) do --Looks over the keys inside the materials table, luckily Lua is fine converting them to strings
+			if table.HasValue( itemtable, a ) then 
+				break --Prevents two or more of the same materials from being listed if they are used in more than one recipe
+			end
 			local scrollbutton = vgui.Create( "DButton", mainframescroll )
-			if ent:GetNWInt( "Craft_"..a ) == nil then
+			if ent:GetNWInt( "Craft_"..a ) == nil then --If networked int doesn't exist then just set it's value to 0 until it does
 				scrollbutton:SetText( a..": 0" )
 			else
 				scrollbutton:SetText( a..": "..ent:GetNWInt( "Craft_"..a ) )
@@ -51,15 +53,15 @@ DrawItems = function( ent )
 			scrollbutton.DoClick = function()
 				if ent:GetNWInt( "Craft_"..a ) == nil or ent:GetNWInt( "Craft_"..a ) == 0 then
 					surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND )
-					return
+					return --Prevents players from having negative ingredients
 				end
 				net.Start( "DropItem" )
 				net.WriteEntity( ent )
 				net.WriteString( a )
-				net.SendToServer()
+				net.SendToServer() --Sends the net message to drop the specified item and remove it from the table
 				timer.Simple( 0.3, function() --Small timer to let the net message go through
 					mainframe:Close()
-					DrawItems( ent )
+					DrawItems( ent ) --Refreshes the panel so it updates the number of materials
 				end )
 			end
 			table.insert( itemtable, a )
@@ -67,7 +69,7 @@ DrawItems = function( ent )
 	end
 end
 
-DrawRecipes = function( ent )
+DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	local ply = LocalPlayer()
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Choose an item to craft:" )
@@ -92,7 +94,7 @@ DrawRecipes = function( ent )
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
-	for k,v in pairs( CraftingTable ) do
+	for k,v in pairs( CraftingTable ) do --Looks over all recipes in the main CraftingTable table
 		local mainbuttons = vgui.Create( "DButton", mainframescroll )
 		mainbuttons:SetText( v.Name )
 		mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
@@ -103,8 +105,8 @@ DrawRecipes = function( ent )
 		end
 		mainbuttons.DoClick = function()
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
-			ply.SelectedCraftingItem = tostring( k )
-			ply.SelectedCraftingItemName = v.Name
+			ply.SelectedCraftingItem = tostring( k ) --Temporarily saves the entity class name for the net message that goes through when the player presses the craft button
+			ply.SelectedCraftingItemName = v.Name --Temporarily saves the actual name so it doesn't print the entity class name
 			surface.PlaySound( CRAFT_CONFIG_SELECT_SOUND )
 			mainframe:Close()
 			DrawRecipes( ent ) --Refreshes the button so it shows the currently selected item
@@ -139,16 +141,16 @@ DrawRecipes = function( ent )
 		end
 		net.Start( "StartCrafting" )
 		net.WriteEntity( ent )
-		net.WriteString( ply.SelectedCraftingItem )
-		net.WriteString( ply.SelectedCraftingItemName )
-		net.SendToServer()
+		net.WriteString( ply.SelectedCraftingItem ) --Sends the entity class name that was saved earlier
+		net.WriteString( ply.SelectedCraftingItemName ) --Sends the actual name that was saved earlier
+		net.SendToServer() --Sends the message to craft the item
 		mainframe:Close()
-		ply.SelectedCraftingItem = nil
-		ply.SelectedCraftingItemName = nil
+		ply.SelectedCraftingItem = nil --Resets the entity class name
+		ply.SelectedCraftingItemName = nil --Resets the actual name
 	end
 end
 
-DrawMainMenu = function( ent )
+DrawMainMenu = function( ent ) --Panel that draws the main menu
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Crafting Table - Main Menu" )
 	mainframe:SetSize( 500, 300 )
@@ -166,7 +168,7 @@ DrawMainMenu = function( ent )
 	recipesbutton.Paint = function( self, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
-	recipesbutton.DoClick = function()
+	recipesbutton.DoClick = function() --Button to open the recipes panel
 		DrawRecipes( ent )
 		mainframe:Close()
 		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
@@ -180,7 +182,7 @@ DrawMainMenu = function( ent )
 	itemsbutton.Paint = function( self, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
-	itemsbutton.DoClick = function()
+	itemsbutton.DoClick = function() --Button to open the current ingredients panel
 		DrawItems( ent )
 		mainframe:Close()
 		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
@@ -194,7 +196,7 @@ DrawMainMenu = function( ent )
 	closebutton.Paint = function( self, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
-	closebutton.DoClick = function()
+	closebutton.DoClick = function() --Button to close the menu, probably not needed since all of the panels have a close button at the top but i'm leaving it here to make it look less empty
 		mainframe:Close()
 		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
@@ -208,7 +210,7 @@ end )
 net.Receive( "CraftMessage", function( len, ply ) --Have to network the entname into here since the client can't see it serverside
 	local validfunction = net.ReadBool()
 	local entname = net.ReadString()
-	if validfunction then
+	if validfunction then --Checks to make sure the spawn function exists, I might have it go through a default spawn function at some point instead of just erroring
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Successfully crafted a "..entname.." ." )
 	else
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )
