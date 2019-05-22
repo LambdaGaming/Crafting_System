@@ -11,3 +11,8 @@ This is a simple, yet highly customizable crafting table made to work with all g
   <li>Customizable health. Includes adjustable max health and whether or not the table should explode when it's health reaches 0.</li>
   <li>Customizable item spawn function. (Which basically means you can code what happens when the player selects to craft a specific item without having to dig through the table's code.)</li>
 </ul>
+
+To-Do
+<ul>
+  <li>Add own materials so the addon has better "plug and play" support. (Will do a workshop release once this is done, planning on having it support the default DarkRP weapons by default.)</li>
+</ul>
