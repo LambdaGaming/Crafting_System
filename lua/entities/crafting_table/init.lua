@@ -94,7 +94,7 @@ net.Receive( "DropItem", function( len, ply )
 end )
 
 function ENT:StartTouch( ent )
-	if table.HasValue( CRAFT_CONFIG_ALLOWED_ENTS, ent:GetClass() ) then
+	if CRAFT_CONFIG_ALLOWED_ENTS[ent:GetClass()] then
 		self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
 		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
 		local effectdata = EffectData()
