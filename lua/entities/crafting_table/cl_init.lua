@@ -36,7 +36,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	for k,v in pairs( CraftingTable ) do
 		for a,b in pairs( v.Materials ) do --Looks over the keys inside the materials table, luckily Lua is fine converting them to strings
 			if table.HasValue( itemtable, a ) then 
-				break --Prevents two or more of the same materials from being listed if they are used in more than one recipe
+				continue --Prevents two or more of the same materials from being listed if they are used in more than one recipe
 			end
 			local scrollbutton = vgui.Create( "DButton", mainframescroll )
 			if ent:GetNWInt( "Craft_"..a ) == nil then --If networked int doesn't exist then just set it's value to 0 until it does
