@@ -6,6 +6,11 @@ ENT.Author = "Lambda Gaming"
 ENT.Spawnable = true
 ENT.Category = "Crafting Table"
 
+CreateConVar( "Craft_Config_MaxHealth", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The max health of the crafting table." )
+CreateConVar( "Craft_Config_Model", "models/props_wasteland/controlroom_desk001b.mdl", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The model of the crafting table." )
+CreateConVar( "Craft_Config_Material", "", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The material of the crafting table. Leave blank if you want the default model texture." )
+CreateConVar( "Craft_Config_Color", "255 255 255 255", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Color of the crafting table, white means no change." )
+
 CraftingTable = {}
 
 --Template Item

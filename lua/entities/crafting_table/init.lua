@@ -14,18 +14,18 @@ function ENT:SpawnFunction( ply, tr )
 end
 
 function ENT:Initialize()
-    self:SetModel( CRAFT_CONFIG_MODEL )
+    self:SetModel( GetConVar( "Craft_Config_Model" ):GetString() )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType( SIMPLE_USE )
-	self:SetHealth( CRAFT_CONFIG_MAXHEALTH )
-	self:SetMaxHealth( CRAFT_CONFIG_MAXHEALTH )
+	self:SetHealth( GetConVar( "Craft_Config_MaxHealth" ):GetInt() )
+	self:SetMaxHealth( GetConVar( "Craft_Config_MaxHealth" ):GetInt() )
 	self:SetTrigger( true )
-	self:SetColor( CRAFT_CONFIG_COLOR )
+	self:SetColor( string.ToColor( GetConVar( "Craft_Config_Color" ) ):GetString() )
 
-	if CRAFT_CONFIG_MATERIAL != "" then
-		self:SetMaterial( CRAFT_CONFIG_MATERIAL )
+	if GetConVar( "Craft_Config_Material" ):GetString() != "" then
+		self:SetMaterial( GetConVar( "Craft_Config_Material" ):GetString() )
 	end
 	
     local phys = self:GetPhysicsObject()
