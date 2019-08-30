@@ -63,7 +63,7 @@ net.Receive( "StartCrafting", function( len, ply )
 		if SpawnItem then
 			local validfunction = true
 			SpawnItem( ply, self )
-			self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND )
+			self:EmitSound( GetConVar( "Craft_Config_Craft_Sound" ):GetString() )
 			net.Start( "CraftMessage" )
 			net.WriteBool( validfunction )
 			net.WriteString( entname )
@@ -96,7 +96,7 @@ end )
 function ENT:StartTouch( ent )
 	if CRAFT_CONFIG_ALLOWED_ENTS[ent:GetClass()] then
 		self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
-		self:EmitSound( CRAFT_CONFIG_PLACE_SOUND )
+		self:EmitSound( GetConVar( "Craft_Config_Place_Sound" ):GetString() )
 		local effectdata = EffectData()
 		effectdata:SetOrigin( ent:GetPos() )
 		effectdata:SetScale( 2 )

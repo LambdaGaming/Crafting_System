@@ -10,6 +10,8 @@ CreateConVar( "Craft_Config_MaxHealth", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }
 CreateConVar( "Craft_Config_Model", "models/props_wasteland/controlroom_desk001b.mdl", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The model of the crafting table." )
 CreateConVar( "Craft_Config_Material", "", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The material of the crafting table. Leave blank if you want the default model texture." )
 CreateConVar( "Craft_Config_Color", "255 255 255 255", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Color of the crafting table, white means no change." )
+CreateConVar( "Craft_Config_Place_Sound", "physics/metal/metal_solid_impact_hard1.wav", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Sound that plays when an item is placed on the table." )
+CreateConVar( "Craft_Config_Craft_Sound", "ambient/machines/catapult_throw.wav", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Sound that plays when an item is crafted." )
 
 CraftingTable = {}
 

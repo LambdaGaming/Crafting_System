@@ -1,23 +1,10 @@
 
 --Customize your crafting table here. I added comments above every constant for people who are inexperienced with Lua
 
---Health of the table
-CRAFT_CONFIG_MAXHEALTH = 100
-
---Model of the table
-CRAFT_CONFIG_MODEL = "models/props_wasteland/controlroom_desk001b.mdl"
-
---Material of the table, leave as "" if you want to keep the default model texture
-CRAFT_CONFIG_MATERIAL = ""
-
---Color of the table, default is white (which means no change)
-CRAFT_CONFIG_COLOR = Color( 255, 255, 255, 255 )
-
---Sound that plays when an item is placed on the table
-CRAFT_CONFIG_PLACE_SOUND = "physics/metal/metal_solid_impact_hard1.wav"
-
---Sound that plays when an item is being crafted
-CRAFT_CONFIG_CRAFT_SOUND = "ambient/machines/catapult_throw.wav"
+--[[
+	NOTE: Some of the table customizations have been moved to ConVars, meaning you can change them through the server console.
+	If you wish to have all of the configs in this file and don't want them as ConVars, download the version from the old branch here: https://github.com/LambdaGaming/Crafting_System/tree/old
+--]]
 
 --Sound that plays when a button is pressed
 CRAFT_CONFIG_UI_SOUND = "ui/buttonclickrelease.wav"

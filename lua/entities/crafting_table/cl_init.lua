@@ -216,12 +216,3 @@ net.Receive( "CraftMessage", function( len, ply ) --Have to network the entname 
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )
 	end
 end )
-
-hook.Add( "PopulateToolMenu", "CraftingOptions", function()
-	spawnmenu.AddToolMenuOption( "Options", "Crafting Table", "Craft_Options", "Table Config", "", "", function( panel )
-		panel:NumSlider( "Max Health", "Craft_Config_MaxHealth", 0, 1000, 0 )
-		panel:TextEntry( "Table Model", "Craft_Config_Model" )
-		panel:TextEntry( "Table Material", "Craft_Config_Material" )
-		panel:TextEntry( "Table Color", "Craft_Config_Color" )
-	end )
-end )
