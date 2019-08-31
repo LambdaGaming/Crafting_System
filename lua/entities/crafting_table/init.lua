@@ -22,7 +22,7 @@ function ENT:Initialize()
 	self:SetHealth( GetConVar( "Craft_Config_MaxHealth" ):GetInt() )
 	self:SetMaxHealth( GetConVar( "Craft_Config_MaxHealth" ):GetInt() )
 	self:SetTrigger( true )
-	self:SetColor( string.ToColor( GetConVar( "Craft_Config_Color" ) ):GetString() )
+	self:SetColor( CRAFT_CONFIG_COLOR )
 
 	if GetConVar( "Craft_Config_Material" ):GetString() != "" then
 		self:SetMaterial( GetConVar( "Craft_Config_Material" ):GetString() )

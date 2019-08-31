@@ -15,15 +15,15 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	mainframe:Center()
 	mainframe:MakePopup()
 	mainframe.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Menu_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_MENU_COLOR )
 	end
 	local backbutton = vgui.Create( "DButton", mainframe )
 	backbutton:SetText( "Back" )
-	backbutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+	backbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	backbutton:SetPos( 350, 3 )
 	backbutton:SetSize( 50, 20 )
 	backbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
 	backbutton.DoClick = function()
 		mainframe:Close()
@@ -44,11 +44,11 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 			else
 				scrollbutton:SetText( a..": "..ent:GetNWInt( "Craft_"..a ) )
 			end
-			scrollbutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+			scrollbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 			scrollbutton:Dock( TOP )
 			scrollbutton:DockMargin( 0, 0, 0, 5 )
 			scrollbutton.Paint = function( self, w, h )
-				draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+				draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 			end
 			scrollbutton.DoClick = function()
 				if ent:GetNWInt( "Craft_"..a ) == nil or ent:GetNWInt( "Craft_"..a ) == 0 then
@@ -77,15 +77,15 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	mainframe:Center()
 	mainframe:MakePopup()
 	mainframe.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Menu_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_MENU_COLOR )
 	end
 	local backbutton = vgui.Create( "DButton", mainframe )
 	backbutton:SetText( "Back" )
-	backbutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+	backbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	backbutton:SetPos( 350, 3 )
 	backbutton:SetSize( 50, 20 )
 	backbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
 	backbutton.DoClick = function()
 		mainframe:Close()
@@ -97,11 +97,11 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	for k,v in pairs( CraftingTable ) do --Looks over all recipes in the main CraftingTable table
 		local mainbuttons = vgui.Create( "DButton", mainframescroll )
 		mainbuttons:SetText( v.Name )
-		mainbuttons:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+		mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 		mainbuttons:Dock( TOP )
 		mainbuttons:DockMargin( 0, 0, 0, 5 )
 		mainbuttons.Paint = function( self, w, h )
-			draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+			draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 		end
 		mainbuttons.DoClick = function()
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
@@ -118,20 +118,20 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	else
 		selectedbutton:SetText( "Currently Selected Item: N/A" )
 	end
-	selectedbutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+	selectedbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	selectedbutton:SetPos( 5, 465 )
 	selectedbutton:SetSize( 245, 30 )
 	selectedbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
 	local craftbutton = vgui.Create( "DButton", mainframe )
 	craftbutton:SetText( "Craft Selected Item" )
-	craftbutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+	craftbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	craftbutton:Dock( BOTTOM )
 	craftbutton:DockMargin( 250, 0, 0, 0 )
 	craftbutton:SetSize( 245, 30 )
 	craftbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
@@ -157,16 +157,16 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	mainframe:Center()
 	mainframe:MakePopup()
 	mainframe.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Menu_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_MENU_COLOR )
 	end
 	local recipesbutton = vgui.Create( "DButton", mainframe )
 	recipesbutton:SetText( "View Recipes/Craft an Item" )
-	recipesbutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+	recipesbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	recipesbutton:SetPos( 25, 50 )
 	recipesbutton:SetSize( 250, 30 )
 	recipesbutton:CenterHorizontal()
 	recipesbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
 	recipesbutton.DoClick = function() --Button to open the recipes panel
 		DrawRecipes( ent )
@@ -175,12 +175,12 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
     end
 	local itemsbutton = vgui.Create( "DButton", mainframe )
 	itemsbutton:SetText( "View Items Currently on the Table" )
-	itemsbutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+	itemsbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	itemsbutton:SetPos( 25, 100 )
 	itemsbutton:SetSize( 250, 30 )
 	itemsbutton:CenterHorizontal()
 	itemsbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
 	itemsbutton.DoClick = function() --Button to open the current ingredients panel
 		DrawItems( ent )
@@ -189,12 +189,12 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	end
 	local closebutton = vgui.Create( "DButton", mainframe )
 	closebutton:SetText( "Exit Table" )
-	closebutton:SetTextColor( string.ToColor( GetConVar( "Craft_Config_Button_Text_Color" ):GetString() ) )
+	closebutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 	closebutton:SetPos( 25, 150 )
 	closebutton:SetSize( 150, 15 )
 	closebutton:CenterHorizontal()
 	closebutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, string.ToColor( GetConVar( "Craft_Config_Button_Color" ):GetString() ) )
+		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 	end
 	closebutton.DoClick = function() --Button to close the menu, probably not needed since all of the panels have a close button at the top but i'm leaving it here to make it look less empty
 		mainframe:Close()

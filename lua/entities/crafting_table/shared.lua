@@ -10,7 +10,6 @@ ENT.Category = "Crafting Table"
 CreateConVar( "Craft_Config_MaxHealth", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The max health of the crafting table." )
 CreateConVar( "Craft_Config_Model", "models/props_wasteland/controlroom_desk001b.mdl", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The model of the crafting table." )
 CreateConVar( "Craft_Config_Material", "", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The material of the crafting table. Leave blank if you want the default model texture." )
-CreateConVar( "Craft_Config_Color", "255 255 255 255", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Color of the crafting table, white means no change." )
 CreateConVar( "Craft_Config_Place_Sound", "physics/metal/metal_solid_impact_hard1.wav", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Sound that plays when an item is placed on the table." )
 CreateConVar( "Craft_Config_Craft_Sound", "ambient/machines/catapult_throw.wav", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Sound that plays when an item is crafted." )
 CreateConVar( "Craft_Config_UI_Sound", "ui/buttonclickrelease.wav", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Sound that plays when a button is pressed." )
@@ -19,9 +18,6 @@ CreateConVar( "Craft_Config_Fail_Sound", "buttons/button2.wav", { FCVAR_ARCHIVE,
 CreateConVar( "Craft_Config_Drop_Sound", "physics/metal/metal_canister_impact_soft1.wav", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Sound that plays when an ingredient is dropped." )
 CreateConVar( "Craft_Config_Should_Explode", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Whether or not the table should explode when it's health reaches 0. 1 for true, 0 for false." )
 CreateConVar( "Craft_Config_Destroy_Sound", "physics/metal/metal_box_break1.wav", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Sound that plays when the table is destroyed." )
-CreateConVar( "Craft_Config_Menu_Color", "49 53 61 200", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Color of the menu background." )
-CreateConVar( "Craft_Config_Button_Color", "230 93 80 255", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Color of the menu buttons." )
-CreateConVar( "Craft_Config_Button_Text_Color", "255 255 255 255", { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Color of the menu button text." )
 
 CraftingTable = {}
 
