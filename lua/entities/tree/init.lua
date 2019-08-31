@@ -26,8 +26,8 @@ function ENT:Initialize()
 		phys:Wake()
 	end
 
-	self:SetHealth( CRAFT_CONFIG_TREE_HEALTH )
-	self:SetMaxHealth( CRAFT_CONFIG_TREE_HEALTH )
+	self:SetHealth( GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
+	self:SetMaxHealth( GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
 	self:SetNWBool( "IsHidden", false )
 end
 
@@ -47,7 +47,7 @@ local function HideEnt( ent )
 		ent:SetMoveType( MOVETYPE_NONE )
 		ent:SetColor( Color( 255, 255, 255, 0 ) )
 		ent:SetNWBool( "IsHidden", true )
-		timer.Create( "Hidden_"..ent:EntIndex(), CRAFT_CONFIG_MINE_RESPAWN_TIME, 1, function() UnhideEnt( ent ) end )
+		timer.Create( "Hidden_"..ent:EntIndex(), GetConVar( "Craft_Config_Rock_Respawn" ):GetInt(), 1, function() UnhideEnt( ent ) end )
 	end
 end
 
