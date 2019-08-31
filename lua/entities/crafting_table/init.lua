@@ -55,7 +55,7 @@ net.Receive( "StartCrafting", function( len, ply )
 			if self:GetNWInt( "Craft_"..k ) < v then
 				ply:SendLua( [[
 					chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" ) 
-					surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND )
+					surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
 				]] )
 				return
 			end
@@ -90,7 +90,7 @@ net.Receive( "DropItem", function( len, ply )
 	e:SetPos( ent:GetPos() + Vector( 0, 70, 0 ) )
 	e:Spawn()
 	ent:SetNWInt( "Craft_"..item, ent:GetNWInt( "Craft_"..item ) - 1 )
-	ent:EmitSound( CRAFT_CONFIG_DROP_SOUND )
+	ent:EmitSound( GetConVar( "Craft_Config_Drop_Sound" ):GetString() )
 end )
 
 function ENT:StartTouch( ent )
@@ -107,7 +107,7 @@ end
 
 function ENT:OnTakeDamage( dmg )
 	if self:Health() <= 0 and !self.Exploding then
-		if CRAFT_CONFIG_SHOULD_EXPLODE then
+		if GetConVar( "Craft_Config_Should_Explode" ):GetBool() then
 			self.Exploding = true --Prevents a bunch of fires from spawning at once causing the server to hang for a few seconds if VFire is installed
 			local e = ents.Create( "env_explosion" )
 			e:SetPos( self:GetPos() )
@@ -116,7 +116,7 @@ function ENT:OnTakeDamage( dmg )
 			e:Fire( "Explode", 0, 0 )
 			self:Remove()
 		else
-			self:EmitSound( CRAFT_CONFIG_DESTROY_SOUND )
+			self:EmitSound( GetConVar( "Craft_Config_Destroy_Sound" ):GetString() )
 			self:Remove()
 		end
 		return
