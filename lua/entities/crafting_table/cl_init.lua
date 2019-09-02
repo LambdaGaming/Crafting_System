@@ -94,22 +94,37 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
-	for k,v in pairs( CraftingTable ) do --Looks over all recipes in the main CraftingTable table
-		local mainbuttons = vgui.Create( "DButton", mainframescroll )
-		mainbuttons:SetText( v.Name )
-		mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
-		mainbuttons:Dock( TOP )
-		mainbuttons:DockMargin( 0, 0, 0, 5 )
-		mainbuttons.Paint = function( self, w, h )
-			draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+	for a,b in ipairs( CraftingCategory ) do
+		local categorybutton = vgui.Create( "DButton", mainframescroll )
+		categorybutton:SetSize( nil, 35 ) --X is ignored it's docked to the frame already
+		categorybutton:SetText( b.Name )
+		categorybutton:SetFont( "Trebuchet24" )
+		categorybutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+		categorybutton:Dock( TOP )
+		categorybutton:DockMargin( 0, 15, 0, 5 )
+		categorybutton.Paint = function( self, w, h )
+			draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_CATEGORY_COLOR )
 		end
-		mainbuttons.DoClick = function()
-			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
-			ply.SelectedCraftingItem = tostring( k ) --Temporarily saves the entity class name for the net message that goes through when the player presses the craft button
-			ply.SelectedCraftingItemName = v.Name --Temporarily saves the actual name so it doesn't print the entity class name
-			surface.PlaySound( GetConVar( "Craft_Config_Select_Sound" ):GetString() )
-			mainframe:Close()
-			DrawRecipes( ent ) --Refreshes the button so it shows the currently selected item
+		for k,v in pairs( CraftingTable ) do --Looks over all recipes in the main CraftingTable table
+			if v.Category != b.Name then --Puts items into their respective categories
+				continue
+			end
+			local mainbuttons = vgui.Create( "DButton", mainframescroll )
+			mainbuttons:SetText( v.Name )
+			mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+			mainbuttons:Dock( TOP )
+			mainbuttons:DockMargin( 0, 0, 0, 5 )
+			mainbuttons.Paint = function( self, w, h )
+				draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+			end
+			mainbuttons.DoClick = function()
+				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
+				ply.SelectedCraftingItem = tostring( k ) --Temporarily saves the entity class name for the net message that goes through when the player presses the craft button
+				ply.SelectedCraftingItemName = v.Name --Temporarily saves the actual name so it doesn't print the entity class name
+				surface.PlaySound( GetConVar( "Craft_Config_Select_Sound" ):GetString() )
+				mainframe:Close()
+				DrawRecipes( ent ) --Refreshes the button so it shows the currently selected item
+			end
 		end
 	end
 	local selectedbutton = vgui.Create( "DButton", mainframe )
