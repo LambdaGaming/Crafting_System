@@ -30,23 +30,28 @@ CraftingCategory = {} --Initializes the category table, don't touch
 ]]
 
 CraftingCategory[1] = {
-	Name = "Pistols"
+	Name = "Pistols",
+	Color = Color( 49, 53, 61, 255 )
 }
 
 CraftingCategory[2] = {
-	Name = "SMGs"
+	Name = "SMGs",
+	Color = Color( 49, 53, 61, 255 )
 }
 
 CraftingCategory[3] = {
-	Name = "Rifles"
+	Name = "Rifles",
+	Color = Color( 49, 53, 61, 255 )
 }
 
 CraftingCategory[4] = {
-	Name = "Shotguns"
+	Name = "Shotguns",
+	Color = Color( 49, 53, 61, 255 )
 }
 
 CraftingCategory[5] = {
-	Name = "Tools"
+	Name = "Tools",
+	Color = Color( 49, 53, 61, 255 )
 }
 
 --Template Crafting Item

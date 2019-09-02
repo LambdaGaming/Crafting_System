@@ -18,9 +18,6 @@ CRAFT_CONFIG_BUTTON_COLOR = Color( 230, 93, 80, 255 )
 --Color of the button text
 CRAFT_CONFIG_BUTTON_TEXT_COLOR = color_white --Using a global for optimization, you can also use Color()
 
---Color of the categories
-CRAFT_CONFIG_CATEGORY_COLOR = Color( 49, 53, 61, 255 )
-
 --List of models the rocks can have
 CRAFT_CONFIG_ROCK_MODELS = {
 	"models/props_debris/barricade_short01a.mdl",

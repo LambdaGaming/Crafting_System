@@ -103,7 +103,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		categorybutton:Dock( TOP )
 		categorybutton:DockMargin( 0, 15, 0, 5 )
 		categorybutton.Paint = function( self, w, h )
-			draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_CATEGORY_COLOR )
+			draw.RoundedBox( 0, 0, 0, w, h, b.Color )
 		end
 		for k,v in pairs( CraftingTable ) do --Looks over all recipes in the main CraftingTable table
 			if v.Category != b.Name then --Puts items into their respective categories
