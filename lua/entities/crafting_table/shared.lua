@@ -25,7 +25,8 @@ CraftingCategory = {} --Initializes the category table, don't touch
 --Template Category
 --[[
 	CraftingCategory[1] = { --Be sure to change the number, the lower the number, the higher up in the list it is
-		Name = "Pistols" --Name of the category
+		Name = "Pistols", --Name of the category
+		Color = Color( 49, 53, 61, 255 ) --Color of the category box
 	}
 ]]
 
