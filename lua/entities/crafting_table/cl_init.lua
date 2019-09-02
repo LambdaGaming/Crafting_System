@@ -96,7 +96,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	mainframescroll:Dock( FILL )
 	for a,b in ipairs( CraftingCategory ) do
 		local categorybutton = vgui.Create( "DButton", mainframescroll )
-		categorybutton:SetSize( nil, 35 ) --X is ignored it's docked to the frame already
+		categorybutton:SetSize( nil, 35 ) --X is ignored since it's docked to the frame already
 		categorybutton:SetText( b.Name )
 		categorybutton:SetFont( "Trebuchet24" )
 		categorybutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
