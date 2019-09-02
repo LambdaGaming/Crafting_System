@@ -9,9 +9,5 @@ This is a simple, yet highly customizable crafting table made to work with all g
   <li>Customizable sounds, UI colors, table appearance, table health, and item spawn function. Some elements such as sounds, table appearance, and table health can be customized in-game as long as you're on a singleplayer game or a listen server.</li>
   <li>Comes with DarkRP weapon support by default.</li>
   <li>Comes with rock and tree entities that players can mine with a crowbar to obtain crafting ingredients.</li>
-</ul>
-
-To-Do
-<ul>
-  <li>Adding categories to help sort large amounts of items.</li>
+  <li>Includes category support for large amounts of items.</li>
 </ul>
