@@ -93,7 +93,7 @@ net.Receive( "DropItem", function( len, ply )
 	ent:EmitSound( GetConVar( "Craft_Config_Drop_Sound" ):GetString() )
 end )
 
-function ENT:StartTouch( ent )
+function ENT:Touch( ent )
 	if CRAFT_CONFIG_ALLOWED_ENTS[ent:GetClass()] then
 		self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
 		self:EmitSound( GetConVar( "Craft_Config_Place_Sound" ):GetString() )

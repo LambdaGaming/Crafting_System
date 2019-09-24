@@ -198,10 +198,11 @@ CraftingTable["ls_sniper"] = {
 
 CraftingTable["weapon_ak472"] = {
 	Name = "AK-47",
-	Description = "Requires 4 iron.",
+	Description = "Requires 4 iron and 2 wood.",
 	Category = "Rifles",
 	Materials = {
-		iron = 4
+		iron = 4,
+		wood = 2
 	},
 	SpawnFunction =
 		function( ply, self )
