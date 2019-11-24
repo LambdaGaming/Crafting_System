@@ -90,7 +90,7 @@ CraftingCategory[5] = {
 	}
 ]]
 
---On top of configuring your item here, don't forget to add the entity name to the list of allowed ents in craft_config.lua! Failure to do so will result in errors!
+--If you are adding new ingredients, make sure you configure them above before adding them as materials in the items below. Failure to do so will result in errors!
 
 CraftingTable["weapon_glock2"] = {
 	Name = "Glock",
