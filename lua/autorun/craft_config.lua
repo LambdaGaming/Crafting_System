@@ -45,9 +45,3 @@ CRAFT_CONFIG_TREE_INGREDIENTS = {
 CRAFT_CONFIG_MINE_WHITELIST = {
 	["weapon_crowbar"] = true
 }
-
---List of entities that are allowed to be placed on the table. Don't forget to configure the items in the shared.lua as well! Failure to do so will result in errors!
-CRAFT_CONFIG_ALLOWED_ENTS = {
-    ["iron"] = true,
-	["wood"] = true
-}
