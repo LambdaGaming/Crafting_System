@@ -207,9 +207,8 @@ end
 
 net.Receive( "CraftingTableMenu", function( len, ply ) --Receiving the net message to open the main crafting table menu
 	local ent = net.ReadEntity()
-	
-	if ply:GetEyeTrace().Entity ~= ent then return end
-	
+	local trace = ply:GetEyeTrace().Entity
+	if trace != ent then return end
 	DrawMainMenu( ent )
 end )
 
