@@ -119,7 +119,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 				draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 			end
 			mainbuttons.DoClick = function()
-				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", Color( 255, 255, 255 ), v.Description )
+				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
 				ply.SelectedCraftingItem = tostring( k ) --Temporarily saves the entity class name for the net message that goes through when the player presses the craft button
 				ply.SelectedCraftingItemName = v.Name --Temporarily saves the actual name so it doesn't print the entity class name
 				surface.PlaySound( GetConVar( "Craft_Config_Select_Sound" ):GetString() )
@@ -151,7 +151,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	end
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
-			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Please select an item to craft." )
+			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Please select an item to craft." )
 			surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
 			return
 		end
@@ -205,8 +205,9 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	end
 end
 
-net.Receive( "CraftingTableMenu", function( len, ply ) --Receiving the net message to open the main crafting table menu
+net.Receive( "CraftingTableMenu", function( len ) --Receiving the net message to open the main crafting table menu
 	local ent = net.ReadEntity()
+	local ply = net.ReadEntity()
 	local trace = ply:GetEyeTrace().Entity
 	if trace != ent then return end
 	DrawMainMenu( ent )
@@ -216,8 +217,8 @@ net.Receive( "CraftMessage", function( len, ply ) --Have to network the entname 
 	local validfunction = net.ReadBool()
 	local entname = net.ReadString()
 	if validfunction then --Checks to make sure the spawn function exists, I might have it go through a default spawn function at some point instead of just erroring
-		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Successfully crafted a "..entname.." ." )
+		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Successfully crafted a "..entname.." ." )
 	else
-		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )
+		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "ERROR! Missing SpawnFunction for "..entname.." ("..ent..")" )
 	end
 end )

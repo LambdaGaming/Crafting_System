@@ -3,10 +3,10 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include('shared.lua')
 
-function ENT:SpawnFunction( ply, tr )
+function ENT:SpawnFunction( ply, tr, name )
 	if !tr.Hit then return end
 	local SpawnPos = tr.HitPos + tr.HitNormal * 2
-	local ent = ents.Create( "crafting_table" )
+	local ent = ents.Create( name )
 	ent:SetPos( SpawnPos )
 	ent:Spawn()
 	ent:Activate()
@@ -29,17 +29,18 @@ function ENT:Initialize()
 	end
 	
     local phys = self:GetPhysicsObject()
-	if (phys:IsValid()) then
+	if phys:IsValid() then
 		phys:Wake()
 	end
 end
 
 util.AddNetworkString( "CraftingTableMenu" )
 function ENT:Use( activator, caller )
-	if !caller:IsPlayer() then return end
+	if !activator:IsPlayer() then return end
 	net.Start( "CraftingTableMenu" )
 	net.WriteEntity( self )
-	net.Send( caller )
+	net.WriteEntity( activator )
+	net.Send( activator )
 end
 
 util.AddNetworkString( "StartCrafting" )
@@ -54,7 +55,7 @@ net.Receive( "StartCrafting", function( len, ply )
 		for k,v in pairs( CraftMaterials ) do
 			if self:GetNWInt( "Craft_"..k ) < v then
 				ply:SendLua( [[
-					chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 255, 255, 255 ), "Required items are not on the table!" ) 
+					chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Required items are not on the table!" ) 
 					surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
 				]] )
 				return
