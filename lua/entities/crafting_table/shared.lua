@@ -96,6 +96,13 @@ CraftingCategory[5] = {
 			local e = ents.Create( "weapon_crowbar" ) --Replace the entity name with the one at the very top inside the brackets
 			e:SetPos( self:GetPos() - Vector( 0, 0, -5 ) ) --A negative Z coordinate is added here to prevent items from spawning on top of the table and being consumed, you'll have to change it if you use a different model otherwise keep it as it is
 			e:Spawn()
+			if !util.IsAllInWorld( e ) then --If the model of your item is larger than the table, consider using this to detect when it spawns outside of the map
+				e:Remove()
+				ply:ChatPrint( "Crafted entity spawned outside of the map. You have been refunded. Please reposition the table." )
+				for k,v in pairs( CraftingTable["weapon_crowbar"].Materials ) do
+					self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) + v )
+				end
+			end
 		end
 	}
 ]]

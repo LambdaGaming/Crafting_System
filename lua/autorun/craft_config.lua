@@ -45,3 +45,18 @@ CRAFT_CONFIG_TREE_INGREDIENTS = {
 CRAFT_CONFIG_MINE_WHITELIST = {
 	["weapon_crowbar"] = true
 }
+
+
+--Don't touch anything below this line unless you know what you're doing
+function util.IsAllInWorld( ent ) --Function to see if part of the entity is outside of the world, not just it's origin
+	if IsValid( ent ) and IsEntity( ent ) then
+		local inworld = ent:IsInWorld()
+		local vec1, vec2 = ent:GetCollisionBounds()
+		local realvec1, realvec2 = util.LocalToWorld( ent, vec1 ), util.LocalToWorld( ent, vec2 )
+		if inworld and util.IsInWorld( realvec1 ) and util.IsInWorld( realvec2 ) then
+			return true
+		end
+		return false
+	end
+	return false
+end
