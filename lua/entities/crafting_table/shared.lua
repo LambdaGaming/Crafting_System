@@ -71,6 +71,11 @@ CraftingCategory[5] = {
 	Color = Color( 49, 53, 61, 255 )
 }
 
+CraftingCategory[6] = {
+	Name = "Explosives",
+	Color = Color( 49, 53, 61, 255 )
+}
+
 --Template Crafting Item
 --[[
 	CraftingTable["weapon_crowbar"] = { --Add the entity name of the item in the brackets with quotes
@@ -109,157 +114,313 @@ CraftingCategory[5] = {
 
 --If you are adding new ingredients, make sure you configure them above before adding them as materials in the items below. Failure to do so will result in errors!
 
-CraftingTable["weapon_glock2"] = {
-	Name = "Glock",
-	Description = "Requires 1 iron.",
-	Category = "Pistols",
-	Materials = {
-		iron = 1
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_glock2" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+if DarkRP then
+	CraftingTable["weapon_glock2"] = {
+		Name = "Glock",
+		Description = "Requires 1 iron.",
+		Category = "Pistols",
+		Materials = {
+			iron = 1
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_glock2" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_m42"] = {
-	Name = "M4",
-	Description = "Requires 3 iron.",
-	Category = "Rifles",
-	Materials = {
-		iron = 3
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_m42" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_m42"] = {
+		Name = "M4",
+		Description = "Requires 3 iron.",
+		Category = "Rifles",
+		Materials = {
+			iron = 3
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_m42" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_mac102"] = {
-	Name = "MAC 10",
-	Description = "Requires 2 iron.",
-	Category = "SMGs",
-	Materials = {
-		iron = 2
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_mac102" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_mac102"] = {
+		Name = "MAC 10",
+		Description = "Requires 2 iron.",
+		Category = "SMGs",
+		Materials = {
+			iron = 2
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_mac102" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_mp52"] = {
-	Name = "MP5",
-	Description = "Requires 2 iron.",
-	Category = "SMGs",
-	Materials = {
-		iron = 2
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_mp52" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_mp52"] = {
+		Name = "MP5",
+		Description = "Requires 2 iron.",
+		Category = "SMGs",
+		Materials = {
+			iron = 2
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_mp52" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_p2282"] = {
-	Name = "P228",
-	Description = "Requires 1 iron.",
-	Category = "Pistols",
-	Materials = {
-		iron = 1
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_p2282" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_p2282"] = {
+		Name = "P228",
+		Description = "Requires 1 iron.",
+		Category = "Pistols",
+		Materials = {
+			iron = 1
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_p2282" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_pumpshotgun2"] = {
-	Name = "Pump Shotgun",
-	Description = "Requires 4 iron.",
-	Category = "Shotguns",
-	Materials = {
-		iron = 4
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_pumpshotgun2" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_pumpshotgun2"] = {
+		Name = "Pump Shotgun",
+		Description = "Requires 4 iron.",
+		Category = "Shotguns",
+		Materials = {
+			iron = 4
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_pumpshotgun2" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["lockpick"] = {
-	Name = "Lockpick",
-	Description = "Requires 1 iron.",
-	Category = "Tools",
-	Materials = {
-		iron = 1
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "lockpick" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["lockpick"] = {
+		Name = "Lockpick",
+		Description = "Requires 1 iron.",
+		Category = "Tools",
+		Materials = {
+			iron = 1
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "lockpick" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["ls_sniper"] = {
-	Name = "Silenced Sniper Rifle",
-	Description = "Requires 5 iron.",
-	Category = "Rifles",
-	Materials = {
-		iron = 5
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "ls_sniper" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["ls_sniper"] = {
+		Name = "Silenced Sniper Rifle",
+		Description = "Requires 5 iron.",
+		Category = "Rifles",
+		Materials = {
+			iron = 5
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "ls_sniper" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_ak472"] = {
-	Name = "AK-47",
-	Description = "Requires 4 iron and 2 wood.",
-	Category = "Rifles",
-	Materials = {
-		iron = 4,
-		wood = 2
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_ak472" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_ak472"] = {
+		Name = "AK-47",
+		Description = "Requires 4 iron and 2 wood.",
+		Category = "Rifles",
+		Materials = {
+			iron = 4,
+			wood = 2
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_ak472" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_deagle2"] = {
-	Name = "Deagle",
-	Description = "Requires 2 iron.",
-	Category = "Pistols",
-	Materials = {
-		iron = 2
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_deagle" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_deagle2"] = {
+		Name = "Deagle",
+		Description = "Requires 2 iron.",
+		Category = "Pistols",
+		Materials = {
+			iron = 2
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_deagle" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
 
-CraftingTable["weapon_fiveseven2"] = {
-	Name = "FiveSeven",
-	Description = "Requires 1 iron.",
-	Category = "Pistols",
-	Materials = {
-		iron = 1
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_fiveseven2" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
-}
+	CraftingTable["weapon_fiveseven2"] = {
+		Name = "FiveSeven",
+		Description = "Requires 1 iron.",
+		Category = "Pistols",
+		Materials = {
+			iron = 1
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_fiveseven2" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+else
+	CraftingTable["weapon_pistol"] = {
+		Name = "9mm Pistol",
+		Description = "Requires 1 iron.",
+		Category = "Pistols",
+		Materials = {
+			iron = 1
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_pistol" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_357"] = {
+		Name = ".357 Revolver",
+		Description = "Requires 2 iron.",
+		Category = "Pistols",
+		Materials = {
+			iron = 2
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_357" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_smg1"] = {
+		Name = "SMG",
+		Description = "Requires 3 iron.",
+		Category = "SMGs",
+		Materials = {
+			iron = 3
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_smg1" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_ar2"] = {
+		Name = "Pulse Rifle",
+		Description = "Requires 4 iron.",
+		Category = "Rifles",
+		Materials = {
+			iron = 4
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_ar2" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_shotgun"] = {
+		Name = "Shotgun",
+		Description = "Requires 4 iron.",
+		Category = "Shotguns",
+		Materials = {
+			iron = 4
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_shotgun" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_crossbow"] = {
+		Name = "Crossbow",
+		Description = "Requires 5 iron.",
+		Category = "Rifles",
+		Materials = {
+			iron = 5
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_crossbow" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_rpg"] = {
+		Name = "RPG",
+		Description = "Requires 6 iron.",
+		Category = "Explosives",
+		Materials = {
+			iron = 6
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_rpg" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_frag"] = {
+		Name = "Frag Grenade",
+		Description = "Requires 5 iron.",
+		Category = "Explosives",
+		Materials = {
+			iron = 5
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_frag" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_slam"] = {
+		Name = "S.L.A.M.",
+		Description = "Requires 6 iron.",
+		Category = "Explosives",
+		Materials = {
+			iron = 6
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_slam" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_crowbar"] = {
+		Name = "Crowbar",
+		Description = "Requires 1 iron.",
+		Category = "Tools",
+		Materials = {
+			iron = 1
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_crowbar" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+
+	CraftingTable["weapon_stunstick"] = {
+		Name = "Stunstick",
+		Description = "Requires 2 iron.",
+		Category = "Tools",
+		Materials = {
+			iron = 2
+		},
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "weapon_stunstick" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+		end
+	}
+end
