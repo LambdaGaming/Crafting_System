@@ -110,9 +110,19 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 			if v.Category != b.Name then --Puts items into their respective categories
 				continue
 			end
+			local changedtextcolor
+			for c,d in pairs( v.Materials ) do
+				if ent:GetNWInt( "Craft_"..c ) >= d then
+					changedtextcolor = CRAFT_CONFIG_BUTTON_TEXT_COLOR
+				elseif ent:GetNWInt( "Craft_"..c ) < d and ent:GetNWInt( "Craft_"..c ) >= d - math.Round( d * 0.25 ) then
+					changedtextcolor = CRAFT_CONFIG_BUTTON_TEXT_COLOR_CLOSE
+				elseif ent:GetNWInt( "Craft_"..c ) < d then
+					changedtextcolor = CRAFT_CONFIG_BUTTON_TEXT_COLOR_NONE
+				end
+			end
 			local mainbuttons = vgui.Create( "DButton", mainframescroll )
 			mainbuttons:SetText( v.Name )
-			mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+			mainbuttons:SetTextColor( changedtextcolor )
 			mainbuttons:Dock( TOP )
 			mainbuttons:DockMargin( 0, 0, 0, 5 )
 			mainbuttons.Paint = function( self, w, h )
