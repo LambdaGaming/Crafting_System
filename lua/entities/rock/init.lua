@@ -1,12 +1,12 @@
 
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-include('shared.lua')
+include( "shared.lua" )
 
-function ENT:SpawnFunction( ply, tr )
+function ENT:SpawnFunction( ply, tr, name )
 	if !tr.Hit then return end
-	local SpawnPos = tr.HitPos + tr.HitNormal * 10
-	local ent = ents.Create( "rock" )
+	local SpawnPos = tr.HitPos + tr.HitNormal * 100
+	local ent = ents.Create( name )
 	ent:SetPos( SpawnPos )
 	ent:Spawn()
 	ent:Activate()
@@ -22,7 +22,7 @@ function ENT:Initialize()
 	self:SetRenderMode( RENDERMODE_TRANSCOLOR )
 	
     local phys = self:GetPhysicsObject()
-	if (phys:IsValid()) then
+	if phys:IsValid() then
 		phys:Wake()
 	end
 
@@ -33,19 +33,24 @@ end
 
 local function UnhideEnt( ent )
 	if IsValid( ent ) then
-		ent:SetPos( ent:GetPos() + Vector( 0, 0, 500 ) )
+		ent:SetSolid( SOLID_VPHYSICS )
 		ent:SetMoveType( MOVETYPE_VPHYSICS )
-		ent:SetColor( Color( 255, 255, 255, 255 ) )
+		ent:SetColor( color_white )
 		ent:SetNWBool( "IsHidden", false )
 		ent:SetHealth( ent:GetMaxHealth() )
+		local phys = ent:GetPhysicsObject()
+		if phys:IsValid() then
+			phys:EnableMotion( false )
+		end
 	end
 end
 
 local function HideEnt( ent )
 	if IsValid( ent ) then
-		ent:SetPos( ent:GetPos() + Vector( 0, 0, -500 ) )
+		local color = ent:GetColor()
+		ent:SetSolid( SOLID_NONE )
 		ent:SetMoveType( MOVETYPE_NONE )
-		ent:SetColor( Color( 255, 255, 255, 0 ) )
+		ent:SetColor( ColorAlpha( color, 0 ) )
 		ent:SetNWBool( "IsHidden", true )
 		timer.Create( "Hidden_"..ent:EntIndex(), GetConVar( "Craft_Config_Rock_Respawn" ):GetInt(), 1, function() UnhideEnt( ent ) end )
 	end
@@ -69,5 +74,12 @@ function ENT:OnTakeDamage( dmg )
 			e:Spawn()
 		end
 		HideEnt( self )
+	end
+end
+
+function ENT:OnRemove()
+	local index = self:EntIndex()
+	if timer.Exists( "Hidden_"..index ) then
+		timer.Remove( "Hidden_"..index )
 	end
 end

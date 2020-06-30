@@ -1,12 +1,12 @@
 
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-include('shared.lua')
+include( "shared.lua" )
 
-function ENT:SpawnFunction( ply, tr )
+function ENT:SpawnFunction( ply, tr, name )
 	if !tr.Hit then return end
 	local SpawnPos = tr.HitPos + tr.HitNormal * 2
-	local ent = ents.Create( "iron" )
+	local ent = ents.Create( name )
 	ent:SetPos( SpawnPos )
 	ent:Spawn()
 	ent:Activate()
@@ -21,7 +21,7 @@ function ENT:Initialize()
 	self:SetUseType( SIMPLE_USE )
 	
     local phys = self:GetPhysicsObject()
-	if (phys:IsValid()) then
+	if phys:IsValid() then
 		phys:Wake()
 	end
 end
