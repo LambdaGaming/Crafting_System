@@ -132,3 +132,10 @@ function ENT:OnTakeDamage( dmg )
 	local damage = dmg:GetDamage()
 	self:SetHealth( self:Health() - damage )
 end
+
+--Example usage in an item spawn function: self:AddItem( "iron", 5 )
+--The first argument must be the class name of a registered crafting ingredient
+--If you want to remove an item, make the second argument negative
+function ENT:AddItem( item, amount )
+	self:SetNWInt( "Craft_"..item, math.Clamp( self:GetNWInt( "Craft_"..item ) + amount, 0, math.huge ) )
+end
