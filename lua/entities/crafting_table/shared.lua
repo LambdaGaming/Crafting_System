@@ -22,6 +22,7 @@ CreateConVar( "Craft_Config_Destroy_Sound", "physics/metal/metal_box_break1.wav"
 CraftingTable = {} --Initializes the item table, don't touch
 CraftingCategory = {} --Initializes the category table, don't touch
 CraftingIngredient = {} --Initializes the ingredients, don't touch
+local COLOR_DEFAULT = Color( 49, 53, 61, 255 ) --Color of the default categories for optimization, you can change this if you want
 
 --Template Ingredient
 --[[
@@ -42,38 +43,39 @@ CraftingIngredient["wood"] = {
 --[[
 	CraftingCategory[1] = { --Be sure to change the number, the lower the number, the higher up in the list it is
 		Name = "Pistols", --Name of the category
-		Color = Color( 49, 53, 61, 255 ) --Color of the category box
+		Color = COLOR_DEFAULT, --Color of the category box
+		StartCollapsed = false --Optional, set to true if you want the category to start collapsed
 	}
 ]]
 
 CraftingCategory[1] = {
 	Name = "Pistols",
-	Color = Color( 49, 53, 61, 255 )
+	Color = COLOR_DEFAULT
 }
 
 CraftingCategory[2] = {
 	Name = "SMGs",
-	Color = Color( 49, 53, 61, 255 )
+	Color = COLOR_DEFAULT
 }
 
 CraftingCategory[3] = {
 	Name = "Rifles",
-	Color = Color( 49, 53, 61, 255 )
+	Color = COLOR_DEFAULT
 }
 
 CraftingCategory[4] = {
 	Name = "Shotguns",
-	Color = Color( 49, 53, 61, 255 )
+	Color = COLOR_DEFAULT
 }
 
 CraftingCategory[5] = {
 	Name = "Tools",
-	Color = Color( 49, 53, 61, 255 )
+	Color = COLOR_DEFAULT
 }
 
 CraftingCategory[6] = {
 	Name = "Explosives",
-	Color = Color( 49, 53, 61, 255 )
+	Color = COLOR_DEFAULT
 }
 
 --Template Crafting Item
