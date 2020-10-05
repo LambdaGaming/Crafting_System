@@ -7,7 +7,7 @@
 --]]
 
 --Color of the table, default is white (which means no change)
-CRAFT_CONFIG_COLOR = Color( 255, 255, 255, 255 )
+CRAFT_CONFIG_COLOR = color_white --Using a global for optimization, you can also use Color()
 
 --Color of the menu background
 CRAFT_CONFIG_MENU_COLOR = Color( 49, 53, 61, 200 )
@@ -16,7 +16,7 @@ CRAFT_CONFIG_MENU_COLOR = Color( 49, 53, 61, 200 )
 CRAFT_CONFIG_BUTTON_COLOR = Color( 230, 93, 80, 255 )
 
 --Color of the button text if all required ingredients are on the table
-CRAFT_CONFIG_BUTTON_TEXT_COLOR = color_white --Using a global for optimization, you can also use Color()
+CRAFT_CONFIG_BUTTON_TEXT_COLOR = color_white
 
 --Color of the button text if 75% to 99% of the required ingredients are on the table
 CRAFT_CONFIG_BUTTON_TEXT_COLOR_CLOSE = Color( 255, 255, 0 )
