@@ -104,7 +104,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		categorybutton:SetLabel( b.Name )
 		categorybutton:Dock( TOP )
 		categorybutton:DockMargin( 0, 15, 0, 5 )
-		categorybutton:DockPadding( 0, 0, 0, 5 )
+		categorybutton:DockPadding( 5, 0, 5, 5 )
 		categorybutton:SetContents( mainlist )
 		categorybutton.Paint = function( self, w, h )
 			draw.RoundedBox( 8, 0, 0, w, h, b.Color )
@@ -117,19 +117,9 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 			if v.Category != b.Name then --Puts items into their respective categories
 				continue
 			end
-			local changedtextcolor
-			for c,d in pairs( v.Materials ) do
-				if ent:GetNWInt( "Craft_"..c ) >= d then
-					changedtextcolor = CRAFT_CONFIG_BUTTON_TEXT_COLOR
-				elseif ent:GetNWInt( "Craft_"..c ) < d and ent:GetNWInt( "Craft_"..c ) >= d - math.Round( d * 0.25 ) then
-					changedtextcolor = CRAFT_CONFIG_BUTTON_TEXT_COLOR_CLOSE
-				elseif ent:GetNWInt( "Craft_"..c ) < d then
-					changedtextcolor = CRAFT_CONFIG_BUTTON_TEXT_COLOR_NONE
-				end
-			end
 			local mainbuttons = vgui.Create( "DButton", mainframescroll )
 			mainbuttons:SetText( v.Name )
-			mainbuttons:SetTextColor( changedtextcolor )
+			mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
 			mainbuttons.Paint = function( self, w, h )
 				draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
 			end
@@ -143,6 +133,19 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 			end
 			mainlist:AddItem( mainbuttons )
 			categorybutton.NumEntries = categorybutton.NumEntries + 1
+
+			local amountimage = vgui.Create( "DImage", mainbuttons )
+			amountimage:SetSize( 16, 16 )
+			amountimage:CenterVertical()
+			for c,d in pairs( v.Materials ) do
+				if ent:GetNWInt( "Craft_"..c ) >= d then
+					amountimage:SetImage( "icon16/accept.png" )
+				elseif ent:GetNWInt( "Craft_"..c ) < d and ent:GetNWInt( "Craft_"..c ) >= d - math.Round( d * 0.25 ) then
+					amountimage:SetImage( "icon16/error.png" )
+				elseif ent:GetNWInt( "Craft_"..c ) < d then
+					amountimage:SetImage( "icon16/delete.png" )
+				end
+			end
 		end
 		if categorybutton.NumEntries == 0 then
 			categorybutton:Remove() --Remove the category if no recipes are using it
@@ -158,7 +161,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	selectedbutton:SetPos( 5, 465 )
 	selectedbutton:SetSize( 245, 30 )
 	selectedbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBoxEx( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR, true, false, true, false )
 	end
 	local craftbutton = vgui.Create( "DButton", mainframe )
 	craftbutton:SetText( "Craft Selected Item" )
@@ -167,7 +170,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	craftbutton:DockMargin( 250, 0, 0, 0 )
 	craftbutton:SetSize( 245, 30 )
 	craftbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBoxEx( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR, false, true, false, true )
 	end
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
