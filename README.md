@@ -9,3 +9,4 @@ This is a simple, yet highly customizable crafting table made to work with all g
 - Comes with HL2 and DarkRP weapon support by default.
 - Comes with rock and tree entities that players can mine with a crowbar to obtain crafting ingredients.
 - Category support for large amounts of items.
+- Icons next to each recipe to let the player know if it's able to be crafted, close to having enough materials to be crafted, or can't be crafted.
