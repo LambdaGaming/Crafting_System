@@ -1,6 +1,5 @@
 
 ENT.Type = "anim"
-ENT.Base = "base_entity"
 ENT.PrintName = "Tree"
 ENT.Author = "Lambda Gaming"
 ENT.Spawnable = true
