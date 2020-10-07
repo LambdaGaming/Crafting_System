@@ -21,24 +21,28 @@ CreateConVar( "Craft_Config_Destroy_Sound", "physics/metal/metal_box_break1.wav"
 CraftingTable = {} --Initializes the item table, don't touch
 CraftingCategory = {} --Initializes the category table, don't touch
 CraftingIngredient = {} --Initializes the ingredients, don't touch
+IngredientCategory = {} --Initializes the ingredient category table, don't touch
 local COLOR_DEFAULT = Color( 49, 53, 61, 255 ) --Color of the default categories for optimization, you can change this if you want
 
 --Template Ingredient
 --[[
 	CraftingIngredient["iron"] = { --Class name of the entity goes in the brackets
-		Name = "Iron" --Name that shows up in the ingredient list
+		Name = "Iron", --Name that shows up in the ingredient list
+		Category = "Default Ingredients" --Optional. Category the item shows up in, has to match the name of an ingredient category created below
 	}
 ]]
 
 CraftingIngredient["iron"] = {
-	Name = "Iron"
+	Name = "Iron",
+	Category = "Default Ingredients"
 }
 
 CraftingIngredient["wood"] = {
-	Name = "Wood"
+	Name = "Wood",
+	Category = "Default Ingredients"
 }
 
---Template Category
+--Template recipe category
 --[[
 	CraftingCategory[1] = { --Be sure to change the number, the lower the number, the higher up in the list it is
 		Name = "Pistols", --Name of the category
@@ -77,12 +81,26 @@ CraftingCategory[6] = {
 	Color = COLOR_DEFAULT
 }
 
+--Template ingredient category
+--[[
+	IngredientCategory[1] = { --Be sure to change the number, the lower the number, the higher up in the list it is
+		Name = "Default Ingredients", --Name of the category
+		Color = COLOR_DEFAULT, --Color of the category box
+		StartCollapsed = false --Optional, set to true if you want the category to start collapsed
+	}
+]]
+
+IngredientCategory[1] = {
+	Name = "Default Ingredients",
+	Color = COLOR_DEFAULT
+}
+
 --Template Crafting Item
 --[[
 	CraftingTable["weapon_crowbar"] = { --Add the entity name of the item in the brackets with quotes
 		Name = "Crowbar", --Name of the item, different from the item's entity name
 		Description = "Requires 1 ball.", --Description of the item
-		Category = "Tools", --Category the item shows up in, has to match the name of a category created above
+		Category = "Tools", --Optional. Category the item shows up in, has to match the name of a category created above
 		Materials = { --Entities that are required to craft this item, make sure you leave the entity names WITHOUT quotes!
 			iron = 2,
 			wood = 1
