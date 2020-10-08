@@ -70,10 +70,20 @@ function ENT:OnTakeDamage( dmg )
 		self:SetHealth( health - ( maxhealth * 0.05 ) )
 	end
 	if self:Health() <= 0 and !hidden then
-		for i=1, math.random( 2, 6 ) do
-			local e = ents.Create( table.Random( CRAFT_CONFIG_TREE_INGREDIENTS ) )
-			e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
-			e:Spawn()
+		for i=1, math.random( GetConVar( "Craft_Config_Min_Spawn" ):GetInt(), GetConVar( "Craft_Config_Max_Spawn" ):GetInt() ) do
+			local shouldspawn = false
+			local entspawn
+			for k,v in pairs( CRAFT_CONFIG_TREE_INGREDIENTS ) do
+				if math.random( 1, 100 ) < v[2] then
+					shouldspawn = true
+					entspawn = v[1]
+				end
+			end
+			if shouldspawn then
+				local e = ents.Create( entspawn )
+				e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
+				e:Spawn()
+			end
 		end
 		HideEnt( self )
 		hook.Call( "Craft_Tree_OnMined", nil, self, ply )
