@@ -27,7 +27,7 @@ CRAFT_CONFIG_ROCK_MODELS = {
 
 --List of entities that can be dropped from mining a rock
 CRAFT_CONFIG_ROCK_INGREDIENTS = {
-	"iron"
+	{ "iron", 100 } --First entry is the entity name, second entry is the chance it has of spawning from 1 to 100
 }
 
 --List of models the trees can have
@@ -38,7 +38,7 @@ CRAFT_CONFIG_TREE_MODELS = {
 
 --List of entities that can be dropped from mining a tree
 CRAFT_CONFIG_TREE_INGREDIENTS = {
-	"wood"
+	{ "wood", 100 }
 }
 
 --List of allowed weapons to be used to mine rocks and trees

@@ -17,6 +17,12 @@ CreateConVar( "Craft_Config_Fail_Sound", "buttons/button2.wav", { FCVAR_ARCHIVE 
 CreateConVar( "Craft_Config_Drop_Sound", "physics/metal/metal_canister_impact_soft1.wav", { FCVAR_ARCHIVE }, "Sound that plays when an ingredient is dropped." )
 CreateConVar( "Craft_Config_Should_Explode", 1, { FCVAR_ARCHIVE }, "Whether or not the table should explode when it's health reaches 0. 1 for true, 0 for false." )
 CreateConVar( "Craft_Config_Destroy_Sound", "physics/metal/metal_box_break1.wav", { FCVAR_ARCHIVE }, "Sound that plays when the table is destroyed." )
+CreateConVar( "Craft_Config_Tree_Health", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The max health of the trees." )
+CreateConVar( "Craft_Config_Tree_Respawn", 300, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The respawn time for trees in seconds." )
+CreateConVar( "Craft_Config_Min_Spawn", 2, { FCVAR_ARCHIVE }, "Minimum number of entities that can be mined from a rock or tree." )
+CreateConVar( "Craft_Config_Max_Spawn", 6, { FCVAR_ARCHIVE }, "Maximum number of entities that can be mined from a rock or tree." )
+CreateConVar( "Craft_Config_Rock_Health", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The max health of the rocks." )
+CreateConVar( "Craft_Config_Rock_Respawn", 300, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The respawn time for rocks in seconds." )
 
 CraftingTable = {} --Initializes the item table, don't touch
 CraftingCategory = {} --Initializes the category table, don't touch
