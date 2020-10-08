@@ -29,6 +29,7 @@ function ENT:Initialize()
 	self:SetHealth( GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
 	self:SetMaxHealth( GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
 	self:SetNWBool( "IsHidden", false )
+	hook.Call( "Craft_Tree_OnSpawn", nil, self )
 end
 
 local function UnhideEnt( ent )
@@ -42,6 +43,7 @@ local function UnhideEnt( ent )
 		if phys:IsValid() then
 			phys:EnableMotion( false )
 		end
+		hook.Call( "Craft_Tree_OnRespawn", nil, ent )
 	end
 end
 
@@ -74,6 +76,7 @@ function ENT:OnTakeDamage( dmg )
 			e:Spawn()
 		end
 		HideEnt( self )
+		hook.Call( "Craft_Tree_OnMined", nil, self, ply )
 	end
 end
 
