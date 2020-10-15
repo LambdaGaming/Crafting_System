@@ -62,12 +62,19 @@ function ENT:OnTakeDamage( dmg )
 	local ply = dmg:GetAttacker()
 	local wep = ply:GetActiveWeapon()
 	local hidden = self:GetNWBool( "IsHidden" )
+	local wepclass = string.lower( wep:GetClass() )
 	if !ply:IsPlayer() then return end
 	if self:Health() <= 0 then return end
-	if CRAFT_CONFIG_MINE_WHITELIST[string.lower( wep:GetClass() )] then
+	if CRAFT_CONFIG_MINE_WHITELIST[wepclass] then
 		local health = self:Health()
 		local maxhealth = self:GetMaxHealth()
-		self:SetHealth( health - ( maxhealth * 0.05 ) )
+		local damage
+		if CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass] then
+			damage = CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass]
+		else
+			damage = dmg:GetDamage()
+		end
+		self:SetHealth( math.Clamp( health - damage, 0, maxhealth ) )
 	end
 	if self:Health() <= 0 and !hidden then
 		for i=1, math.random( GetConVar( "Craft_Config_Min_Spawn" ):GetInt(), GetConVar( "Craft_Config_Max_Spawn" ):GetInt() ) do

@@ -46,6 +46,12 @@ CRAFT_CONFIG_MINE_WHITELIST = {
 	["weapon_crowbar"] = true
 }
 
+--Specify weapons to deal specific damage to rocks and trees. Any weapons listed here must be in the whitelist to work.
+--Any weapons not listed here but are in the whitelist will assume their default damage values
+CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE = {
+	["weapon_crowbar"] = 5
+}
+
 
 --Don't touch anything below this line unless you know what you're doing
 function util.IsAllInWorld( ent ) --Function to see if part of the entity is outside of the world, not just it's origin
