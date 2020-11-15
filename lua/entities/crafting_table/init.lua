@@ -32,13 +32,13 @@ function ENT:Initialize()
 	if phys:IsValid() then
 		phys:Wake()
 	end
-	hook.Call( "Craft_OnSpawn", nil, self )
+	hook.Run( "Craft_OnSpawn", self )
 end
 
 util.AddNetworkString( "CraftingTableMenu" )
 function ENT:Use( activator, caller )
-	local canuse = hook.Call( "Craft_OnUse", nil, self, activator )
-	if !activator:IsPlayer() or !canuse then return end
+	local canuse = hook.Run( "Craft_OnUse", self, activator )
+	if !activator:IsPlayer() or canuse == false then return end
 	net.Start( "CraftingTableMenu" )
 	net.WriteEntity( self )
 	net.WriteEntity( activator )
@@ -73,7 +73,7 @@ net.Receive( "StartCrafting", function( len, ply )
 			net.WriteBool( validfunction )
 			net.WriteString( entname )
 			net.Send( ply )
-			hook.Call( "Craft_OnStartCrafting", nil, ent, ply )
+			hook.Run( "Craft_OnStartCrafting", ent, ply )
 		else
 			local validfunction = false
 			net.Start( "CraftMessage" )
@@ -97,7 +97,7 @@ net.Receive( "DropItem", function( len, ply )
 	e:Spawn()
 	ent:SetNWInt( "Craft_"..item, ent:GetNWInt( "Craft_"..item ) - 1 )
 	ent:EmitSound( GetConVar( "Craft_Config_Drop_Sound" ):GetString() )
-	hook.Call( "Craft_OnDropItem", nil, ent, ply )
+	hook.Run( "Craft_OnDropItem", ent, ply )
 end )
 
 function ENT:Touch( ent )
@@ -111,7 +111,7 @@ function ENT:Touch( ent )
 			effectdata:SetScale( 2 )
 			util.Effect( "ManhackSparks", effectdata )
 			ent:Remove()
-			hook.Call( "Craft_OnIngredientTouch", nil, self, ent )
+			hook.Run( "Craft_OnIngredientTouch", self, ent )
 			self.TouchCooldown = CurTime() + 0.1 --Small cooldown since ent:Touch runs multiple times before the for loop has time to break
 			break
 		end
@@ -119,8 +119,8 @@ function ENT:Touch( ent )
 end
 
 function ENT:OnTakeDamage( dmg )
-	local candmg = hook.Call( "Craft_OnTakeDamage", nil, self, dmg )
-	if !candmg then return end
+	local candmg = hook.Run( "Craft_OnTakeDamage", self, dmg )
+	if candmg == false then return end
 	if self:Health() <= 0 and !self.Exploding then
 		if GetConVar( "Craft_Config_Should_Explode" ):GetBool() then
 			self.Exploding = true --Prevents a bunch of fires from spawning at once causing the server to hang for a few seconds if VFire is installed
@@ -130,7 +130,7 @@ function ENT:OnTakeDamage( dmg )
 			e:SetKeyValue( "iMagnitude", 200 )
 			e:Fire( "Explode", 0, 0 )
 			self:Remove()
-			hook.Call( "Craft_OnExplode", nil, self )
+			hook.Run( "Craft_OnExplode", self )
 		else
 			self:EmitSound( GetConVar( "Craft_Config_Destroy_Sound" ):GetString() )
 			self:Remove()

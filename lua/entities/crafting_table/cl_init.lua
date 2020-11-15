@@ -63,7 +63,7 @@ local function DrawIngredientButtons( k, v, ent, main, scroll, nocat )
 	scrollbutton.DoClick = function()
 		if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
 			surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
-			hook.Call( "Craft_OnDropItemFail", nil, ent )
+			hook.Run( "Craft_OnDropItemFail", ent )
 			return --Prevents players from having negative ingredients
 		end
 		if MenuReloadCooldown > CurTime() then return end
@@ -148,7 +148,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	for k,v in pairs( nocategory ) do
 		DrawIngredientButtons( k, v, ent, mainframe, mainframescroll, true )
 	end
-	hook.Call( "Craft_OnIngredientsOpen", nil, ent )
+	hook.Run( "Craft_OnIngredientsOpen", ent )
 end
 
 DrawRecipes = function( ent ) --Panel that draws the list of recipes
@@ -253,7 +253,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		ply.SelectedCraftingItem = nil --Resets the entity class name
 		ply.SelectedCraftingItemName = nil --Resets the actual name
 	end
-	hook.Call( "Craft_OnRecipesOpen", nil, ent, ply )
+	hook.Run( "Craft_OnRecipesOpen", ent, ply )
 end
 
 DrawMainMenu = function( ent ) --Panel that draws the main menu
@@ -293,7 +293,7 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 		mainframe:Close()
 		surface.PlaySound( GetConVar( "Craft_Config_UI_Sound" ):GetString() )
 	end
-	hook.Call( "Craft_OnMainMenuOpen", nil, ent )
+	hook.Run( "Craft_OnMainMenuOpen", ent )
 end
 
 net.Receive( "CraftingTableMenu", function( len ) --Receiving the net message to open the main crafting table menu
