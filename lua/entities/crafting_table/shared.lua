@@ -367,10 +367,11 @@ else
 
 	CraftingTable["weapon_crossbow"] = {
 		Name = "Crossbow",
-		Description = "Requires 5 iron.",
+		Description = "Requires 5 iron and 2 wood.",
 		Category = "Rifles",
 		Materials = {
-			iron = 5
+			iron = 5,
+			wood = 2
 		},
 		SpawnFunction = function( ply, self )
 			local e = ents.Create( "weapon_crossbow" )
