@@ -58,11 +58,10 @@ function util.IsAllInWorld( ent ) --Function to see if part of the entity is out
 	if IsValid( ent ) and IsEntity( ent ) then
 		local inworld = ent:IsInWorld()
 		local vec1, vec2 = ent:GetCollisionBounds()
-		local realvec1, realvec2 = util.LocalToWorld( ent, vec1 ), util.LocalToWorld( ent, vec2 )
+		local realvec1, realvec2 = ent:WorldToLocal( vec1 ), ent:WorldToLocal( vec2 )
 		if inworld and util.IsInWorld( realvec1 ) and util.IsInWorld( realvec2 ) then
 			return true
 		end
-		return false
 	end
 	return false
 end
