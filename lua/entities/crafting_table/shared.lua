@@ -23,6 +23,8 @@ CreateConVar( "Craft_Config_Min_Spawn", 2, { FCVAR_ARCHIVE }, "Minimum number of
 CreateConVar( "Craft_Config_Max_Spawn", 6, { FCVAR_ARCHIVE }, "Maximum number of entities that can be mined from a rock or tree." )
 CreateConVar( "Craft_Config_Rock_Health", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The max health of the rocks." )
 CreateConVar( "Craft_Config_Rock_Respawn", 300, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The respawn time for rocks in seconds." )
+CreateConVar( "Craft_Config_Allow_Automation", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Whether or not players should be allowed to use the automation feature." )
+CreateConVar( "Craft_Config_Automation_Time", 120, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The time it takes in seconds for the table to complete an automation process." )
 
 CraftingTable = {} --Initializes the item table, don't touch
 CraftingCategory = {} --Initializes the category table, don't touch

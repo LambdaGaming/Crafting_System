@@ -11,6 +11,7 @@ This is a simple, yet highly customizable crafting table made to work with all g
 - Category support for large amounts of items.
 - Icons next to each recipe to let the player know if it's able to be crafted, close to having enough materials to be crafted, or can't be crafted.
 - Developer functions to help addon and server developers integrate their own systems with this one. You can find more info about that [here.](https://github.com/LambdaGaming/Crafting_System/blob/master/dev.md)
+- Automation option that allows users to tell the table to repeatedly craft a certain item as long as it has enough ingredients.
 
 # Issues & Pull Requests
  If you would like to contribute to this repository by creating an issue or pull request, please refer to the [contributing guidelines.](https://lambdagaming.github.io/contributing.html)

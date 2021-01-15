@@ -45,6 +45,34 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 	else
 		amountimage:SetImage( "icon16/delete.png" )
 	end
+
+	if GetConVar( "Craft_Config_Allow_Automation" ):GetBool() then
+		local automatecheck = vgui.Create( "DCheckBox", mainbuttons )
+		automatecheck:SetPos( 20, 3 )
+		if ent:GetNWString( "CraftAutomate" ) == k then
+			automatecheck:SetChecked( true )
+		end
+		automatecheck.OnChange = function()
+			if automatecheck:GetChecked() then
+				net.Start( "StartAutomate" )
+				net.WriteEntity( ent )
+				net.WriteString( k )
+				net.WriteString( v.Name )
+				net.SendToServer()
+				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will now automate production of the "..v.Name.."." )
+			else
+				net.Start( "StopAutomate" )
+				net.WriteEntity( ent )
+				net.SendToServer()
+				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will no longer automate production of the "..v.Name.."." )
+			end
+			surface.PlaySound( GetConVar( "Craft_Config_Select_Sound" ):GetString() )
+			timer.Simple( 0.2, function() --Small timer so the net message has a chance to go through
+				main:Close()
+				DrawRecipes( ent )
+			end )
+		end
+	end
 	return mainbuttons
 end
 
@@ -314,7 +342,7 @@ net.Receive( "CraftMessage", function( len, ply ) --Have to network the entname 
 	local validfunction = net.ReadBool()
 	local entname = net.ReadString()
 	if validfunction then --Checks to make sure the spawn function exists, I might have it go through a default spawn function at some point instead of just erroring
-		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Successfully crafted a "..entname.." ." )
+		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Successfully crafted a "..entname.."." )
 	else
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "ERROR! Missing SpawnFunction for "..entname )
 	end

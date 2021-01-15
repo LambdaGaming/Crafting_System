@@ -47,7 +47,7 @@ end
 
 util.AddNetworkString( "StartCrafting" )
 util.AddNetworkString( "CraftMessage" )
-net.Receive( "StartCrafting", function( len, ply )
+local function StartCrafting( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
 	local entname = net.ReadString()
@@ -86,10 +86,11 @@ net.Receive( "StartCrafting", function( len, ply )
 			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v ) --Only removes required materials
 		end
 	end
-end )
+end
+net.Receive( "StartCrafting", StartCrafting )
 
 util.AddNetworkString( "DropItem" )
-net.Receive( "DropItem", function( len, ply )
+local function DropItem( len, ply )
 	local ent = net.ReadEntity()
 	local item = net.ReadString()
 	local e = ents.Create( item )
@@ -98,7 +99,62 @@ net.Receive( "DropItem", function( len, ply )
 	ent:SetNWInt( "Craft_"..item, ent:GetNWInt( "Craft_"..item ) - 1 )
 	ent:EmitSound( GetConVar( "Craft_Config_Drop_Sound" ):GetString() )
 	hook.Run( "Craft_OnDropItem", ent, ply )
-end )
+end
+net.Receive( "DropItem", DropItem )
+
+util.AddNetworkString( "StartAutomate" )
+local function StartAutomate( len, ply )
+	local ent = net.ReadEntity()
+	local item = net.ReadString()
+	local itemname = net.ReadString()
+	ent:SetNWString( "CraftAutomate", item )
+	timer.Create( "CraftAutomate"..ent:EntIndex(), GetConVar( "Craft_Config_Automation_Time" ):GetInt(), 0, function()
+		local CraftMaterials = CraftingTable[item].Materials
+		local SpawnItem = CraftingTable[item].SpawnFunction
+		local SpawnCheck = CraftingTable[item].SpawnCheck
+		if CraftMaterials then
+			for k,v in pairs( CraftMaterials ) do
+				if ent:GetNWInt( "Craft_"..k ) < v then
+					ply:SendLua( [[
+						chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Automation failed. Table is missing ingredients." ) 
+						surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
+					]] )
+					return
+				end
+			end
+			if SpawnCheck and !SpawnCheck( ply, ent ) then return end
+			if SpawnItem then
+				local validfunction = true
+				SpawnItem( ply, ent )
+				ent:EmitSound( GetConVar( "Craft_Config_Craft_Sound" ):GetString() )
+				net.Start( "CraftMessage" )
+				net.WriteBool( validfunction )
+				net.WriteString( itemname )
+				net.Send( ply )
+				hook.Run( "Craft_OnStartCrafting", item, ply )
+			else
+				local validfunction = false
+				net.Start( "CraftMessage" )
+				net.WriteBool( validfunction )
+				net.WriteString( itemname )
+				net.Send( ply )
+				return
+			end
+			for k,v in pairs( CraftMaterials ) do
+				ent:SetNWInt( "Craft_"..k, ent:GetNWInt( "Craft_"..k ) - v )
+			end
+		end
+	end )
+end
+net.Receive( "StartAutomate", StartAutomate )
+
+util.AddNetworkString( "StopAutomate" )
+local function StopAutomate( len, ply )
+	local ent = net.ReadEntity()
+	ent:SetNWString( "CraftAutomate", "" )
+	timer.Remove( "CraftAutomate"..ent:EntIndex() )
+end
+net.Receive( "StopAutomate", StopAutomate )
 
 function ENT:Touch( ent )
 	for k,v in pairs( CraftingIngredient ) do
