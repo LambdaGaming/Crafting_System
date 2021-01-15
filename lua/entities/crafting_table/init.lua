@@ -24,6 +24,7 @@ function ENT:Initialize()
 	self:SetTrigger( true )
 	self:SetColor( CRAFT_CONFIG_COLOR )
 
+	self.AutomationTimers = {}
 	if GetConVar( "Craft_Config_Material" ):GetString() != "" then
 		self:SetMaterial( GetConVar( "Craft_Config_Material" ):GetString() )
 	end
@@ -107,8 +108,9 @@ local function StartAutomate( len, ply )
 	local ent = net.ReadEntity()
 	local item = net.ReadString()
 	local itemname = net.ReadString()
+	local timername = "CraftAutomate"..ent:EntIndex()..item
 	ent:SetNWString( "CraftAutomate", item )
-	timer.Create( "CraftAutomate"..ent:EntIndex(), GetConVar( "Craft_Config_Automation_Time" ):GetInt(), 0, function()
+	timer.Create( timername, GetConVar( "Craft_Config_Automation_Time" ):GetInt(), 0, function()
 		local CraftMaterials = CraftingTable[item].Materials
 		local SpawnItem = CraftingTable[item].SpawnFunction
 		local SpawnCheck = CraftingTable[item].SpawnCheck
@@ -145,14 +147,18 @@ local function StartAutomate( len, ply )
 			end
 		end
 	end )
+	table.insert( ent.AutomationTimers, timername )
 end
 net.Receive( "StartAutomate", StartAutomate )
 
 util.AddNetworkString( "StopAutomate" )
 local function StopAutomate( len, ply )
 	local ent = net.ReadEntity()
+	local item = net.ReadString()
+	local timername = "CraftAutomate"..ent:EntIndex()..item
 	ent:SetNWString( "CraftAutomate", "" )
-	timer.Remove( "CraftAutomate"..ent:EntIndex() )
+	timer.Remove( timername )
+	table.RemoveByValue( ent.AutomationTimers, timername )
 end
 net.Receive( "StopAutomate", StopAutomate )
 
@@ -195,6 +201,12 @@ function ENT:OnTakeDamage( dmg )
 	end
 	local damage = dmg:GetDamage()
 	self:SetHealth( self:Health() - damage )
+end
+
+function ENT:OnRemove()
+	for _,v in pairs( self.AutomationTimers ) do
+		timer.Remove( v )
+	end
 end
 
 --Example usage in an item spawn function: self:AddItem( "iron", 5 )

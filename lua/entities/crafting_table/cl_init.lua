@@ -63,14 +63,11 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 			else
 				net.Start( "StopAutomate" )
 				net.WriteEntity( ent )
+				net.WriteString( k )
 				net.SendToServer()
 				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will no longer automate production of the "..v.Name.."." )
 			end
 			surface.PlaySound( GetConVar( "Craft_Config_Select_Sound" ):GetString() )
-			timer.Simple( 0.2, function() --Small timer so the net message has a chance to go through
-				main:Close()
-				DrawRecipes( ent )
-			end )
 		end
 	end
 	return mainbuttons
