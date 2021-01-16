@@ -25,6 +25,7 @@ CreateConVar( "Craft_Config_Rock_Health", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED
 CreateConVar( "Craft_Config_Rock_Respawn", 300, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The respawn time for rocks in seconds." )
 CreateConVar( "Craft_Config_Allow_Automation", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Whether or not players should be allowed to use the automation feature." )
 CreateConVar( "Craft_Config_Automation_Time", 120, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The time it takes in seconds for the table to complete an automation process." )
+CreateConVar( "Craft_Config_Automation_Message_Range", 0, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Max range in hammer units that the player can be away from the table to get automation messages. Set to 0 for infinite." )
 
 CraftingTable = {} --Initializes the item table, don't touch
 CraftingCategory = {} --Initializes the category table, don't touch
@@ -277,7 +278,7 @@ if DarkRP then
 			iron = 2
 		},
 		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_deagle" )
+			local e = ents.Create( "weapon_deagle2" )
 			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
 			e:Spawn()
 		end

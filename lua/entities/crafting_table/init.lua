@@ -109,18 +109,25 @@ local function StartAutomate( len, ply )
 	local item = net.ReadString()
 	local itemname = net.ReadString()
 	local timername = "CraftAutomate"..ent:EntIndex()..item
-	ent:SetNWString( "CraftAutomate", item )
+	ent:SetNWBool( "CraftAutomate"..item, true )
 	timer.Create( timername, GetConVar( "Craft_Config_Automation_Time" ):GetInt(), 0, function()
 		local CraftMaterials = CraftingTable[item].Materials
 		local SpawnItem = CraftingTable[item].SpawnFunction
 		local SpawnCheck = CraftingTable[item].SpawnCheck
 		if CraftMaterials then
+			local radius = GetConVar( "Craft_Config_Automation_Message_Range" ):GetInt()
+			local findents = ents.FindInSphere( ent:GetPos(), radius )
 			for k,v in pairs( CraftMaterials ) do
 				if ent:GetNWInt( "Craft_"..k ) < v then
-					ply:SendLua( [[
-						chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Automation failed. Table is missing ingredients." ) 
-						surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
-					]] )
+					for a,b in pairs( findents ) do
+						if b == ply or radius == 0 then
+							ply:SendLua( [[
+								chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Automation failed. Table is missing ingredients." ) 
+								surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
+							]] )
+							break
+						end
+					end
 					return
 				end
 			end
@@ -129,17 +136,25 @@ local function StartAutomate( len, ply )
 				local validfunction = true
 				SpawnItem( ply, ent )
 				ent:EmitSound( GetConVar( "Craft_Config_Craft_Sound" ):GetString() )
-				net.Start( "CraftMessage" )
-				net.WriteBool( validfunction )
-				net.WriteString( itemname )
-				net.Send( ply )
+				for k,v in pairs( findents ) do
+					if v == ply or radius == 0 then
+						net.Start( "CraftMessage" )
+						net.WriteBool( validfunction )
+						net.WriteString( itemname )
+						net.Send( ply )
+					end
+				end
 				hook.Run( "Craft_OnStartCrafting", item, ply )
 			else
 				local validfunction = false
-				net.Start( "CraftMessage" )
-				net.WriteBool( validfunction )
-				net.WriteString( itemname )
-				net.Send( ply )
+				for k,v in pairs( findents ) do
+					if v == ply or radius == 0 then
+						net.Start( "CraftMessage" )
+						net.WriteBool( validfunction )
+						net.WriteString( itemname )
+						net.Send( ply )
+					end
+				end
 				return
 			end
 			for k,v in pairs( CraftMaterials ) do
@@ -156,7 +171,7 @@ local function StopAutomate( len, ply )
 	local ent = net.ReadEntity()
 	local item = net.ReadString()
 	local timername = "CraftAutomate"..ent:EntIndex()..item
-	ent:SetNWString( "CraftAutomate", "" )
+	ent:SetNWBool( "CraftAutomate"..item, false )
 	timer.Remove( timername )
 	table.RemoveByValue( ent.AutomationTimers, timername )
 end

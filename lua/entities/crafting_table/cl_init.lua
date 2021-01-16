@@ -49,7 +49,7 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 	if GetConVar( "Craft_Config_Allow_Automation" ):GetBool() then
 		local automatecheck = vgui.Create( "DCheckBox", mainbuttons )
 		automatecheck:SetPos( 20, 3 )
-		if ent:GetNWString( "CraftAutomate" ) == k then
+		if ent:GetNWBool( "CraftAutomate"..k ) then
 			automatecheck:SetChecked( true )
 		end
 		automatecheck.OnChange = function()
