@@ -26,8 +26,8 @@ function ENT:Initialize()
 		phys:Wake()
 	end
 
-	self:SetHealth( GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
-	self:SetMaxHealth( GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
+	self:SetHealth( CRAFT_CONFIG_TREE_HEALTH or GetConVar( "Craft_Config_Tree_Health" ):GetInt() )
+	self:SetMaxHealth( CRAFT_CONFIG_TREE_HEALTH or GetConVar( "Craft_Config_Tree_Health" ):GetInt() )
 	self:SetNWBool( "IsHidden", false )
 	hook.Run( "Craft_Tree_OnSpawn", self )
 end
@@ -54,7 +54,7 @@ local function HideEnt( ent )
 		ent:SetMoveType( MOVETYPE_NONE )
 		ent:SetColor( ColorAlpha( color, 0 ) )
 		ent:SetNWBool( "IsHidden", true )
-		timer.Create( "Hidden_"..ent:EntIndex(), GetConVar( "Craft_Config_Rock_Respawn" ):GetInt(), 1, function() UnhideEnt( ent ) end )
+		timer.Create( "Hidden_"..ent:EntIndex(), CRAFT_CONFIG_TREE_RESPAWN or GetConVar( "Craft_Config_Tree_Respawn" ):GetInt(), 1, function() UnhideEnt( ent ) end )
 	end
 end
 
@@ -77,7 +77,7 @@ function ENT:OnTakeDamage( dmg )
 		self:SetHealth( math.Clamp( health - damage, 0, maxhealth ) )
 	end
 	if self:Health() <= 0 and !hidden then
-		for i=1, math.random( GetConVar( "Craft_Config_Min_Spawn" ):GetInt(), GetConVar( "Craft_Config_Max_Spawn" ):GetInt() ) do
+		for i=1, math.random( CRAFT_CONFIG_MIN_SPAWN or GetConVar( "Craft_Config_Min_Spawn" ):GetInt(), CRAFT_CONFIG_MAX_SPAWN or GetConVar( "Craft_Config_Max_Spawn" ):GetInt() ) do
 			local shouldspawn = false
 			local entspawn
 			for k,v in pairs( CRAFT_CONFIG_TREE_INGREDIENTS ) do

@@ -1,5 +1,5 @@
 # Customizable Crafting Table
-This is a simple, yet highly customizable crafting table made to work with all gamemodes. Below are it's current features. For a more detailed explanation of this addon, <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=1793133869">click here.</a>
+This is a simple, yet highly customizable crafting table made to work with all gamemodes. Below are it's current features. For a more detailed explanation of this addon, click [here.](https://steamcommunity.com/sharedfiles/filedetails/?id=1793133869)
 - Not hard coded to accept specific entities like other crafting systems.
 - Accepts any entity as an ingredient and/or craftable item. (As long as the item is configured correctly.)
 - Allows for an infinite amount of new items to be added.

@@ -22,7 +22,7 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
 		ply.SelectedCraftingItem = tostring( k )
 		ply.SelectedCraftingItemName = v.Name
-		surface.PlaySound( GetConVar( "Craft_Config_Select_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_SELECT_SOUND or GetConVar( "Craft_Config_Select_Sound" ):GetString() )
 		main:Close()
 		DrawRecipes( ent )
 	end
@@ -46,7 +46,7 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 		amountimage:SetImage( "icon16/delete.png" )
 	end
 
-	if GetConVar( "Craft_Config_Allow_Automation" ):GetBool() then
+	if CRAFT_CONFIG_ALLOW_AUTOMATION or GetConVar( "Craft_Config_Allow_Automation" ):GetBool() then
 		local automatecheck = vgui.Create( "DCheckBox", mainbuttons )
 		automatecheck:SetPos( 20, 3 )
 		if ent:GetNWBool( "CraftAutomate"..k ) then
@@ -67,7 +67,7 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 				net.SendToServer()
 				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will no longer automate production of the "..v.Name.."." )
 			end
-			surface.PlaySound( GetConVar( "Craft_Config_Select_Sound" ):GetString() )
+			surface.PlaySound( CRAFT_CONFIG_SELECT_SOUND or GetConVar( "Craft_Config_Select_Sound" ):GetString() )
 		end
 	end
 	return mainbuttons
@@ -93,7 +93,7 @@ local function DrawIngredientButtons( k, v, ent, main, scroll, nocat )
 	end
 	scrollbutton.DoClick = function()
 		if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
-			surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
+			surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND or GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
 			hook.Run( "Craft_OnDropItemFail", ent )
 			return --Prevents players from having negative ingredients
 		end
@@ -133,7 +133,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
-		surface.PlaySound( GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
@@ -203,7 +203,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
-		surface.PlaySound( GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
@@ -272,7 +272,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Please select an item to craft." )
-			surface.PlaySound( GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
+			surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND or GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
 			return
 		end
 		net.Start( "StartCrafting" )
@@ -308,7 +308,7 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	recipesbutton.DoClick = function() --Button to open the recipes panel
 		DrawRecipes( ent )
 		mainframe:Close()
-		surface.PlaySound( GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
     end
 	local itemsbutton = vgui.Create( "DButton", mainframe )
 	itemsbutton:SetText( "View Items Currently on the Table" )
@@ -322,7 +322,7 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	itemsbutton.DoClick = function() --Button to open the current ingredients panel
 		DrawItems( ent )
 		mainframe:Close()
-		surface.PlaySound( GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
 	end
 	hook.Run( "Craft_OnMainMenuOpen", ent )
 end
