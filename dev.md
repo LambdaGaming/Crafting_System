@@ -5,6 +5,7 @@ Below is a list of resources addon and server developers can use to modify or ta
 |------|-------|-----------|---------|-------------|
 |util.IsAllInWorld|shared|Entity `ent`|Boolean `inworld`|Function to see if part of the entity is outside of the world, not just it's origin.|
 |CraftingTable:AddItem|server|String `item`, Int `amount`|N/A|Add the specified ingredient to the table. Set amount as negative to subtract.|
+|CraftingTable:GetItemAmount|server|String `item`|Int `amount`|Returns the number of the specified item currently on the table.|
 
 # Hooks
 | Name | Scope | Arguments | Returns | Description |

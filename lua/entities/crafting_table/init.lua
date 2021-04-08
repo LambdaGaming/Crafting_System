@@ -228,3 +228,7 @@ end
 function ENT:AddItem( item, amount )
 	self:SetNWInt( "Craft_"..item, math.Clamp( self:GetNWInt( "Craft_"..item ) + amount, 0, math.huge ) )
 end
+
+function ENT:GetItemAmount( item )
+	return self:GetNWInt( "Craft_"..item )
+end
