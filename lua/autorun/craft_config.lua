@@ -107,12 +107,17 @@ CRAFT_CONFIG_TREE_INGREDIENTS = {
 	{ "wood", 100 }
 }
 
---List of allowed weapons to be used to mine rocks and trees
-CRAFT_CONFIG_MINE_WHITELIST = {
+--List of allowed weapons to be used to mine trees
+CRAFT_CONFIG_MINE_WHITELIST_TREE = {
 	["weapon_crowbar"] = true
 }
 
---Specify weapons to deal specific damage to rocks and trees. Any weapons listed here must be in the whitelist to work.
+--Same as above but for rocks
+CRAFT_CONFIG_MINE_WHITELIST_ROCK = {
+	["weapon_crowbar"] = true
+}
+
+--Specify weapons to deal specific damage to rocks and trees. Any weapons listed here must be in one of the whitelists to work.
 --Any weapons not listed here but are in the whitelist will assume their default damage values
 CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE = {
 	["weapon_crowbar"] = 5

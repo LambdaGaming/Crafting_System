@@ -65,7 +65,7 @@ function ENT:OnTakeDamage( dmg )
 	local wepclass = string.lower( wep:GetClass() )
 	if !ply:IsPlayer() then return end
 	if self:Health() <= 0 then return end
-	if CRAFT_CONFIG_MINE_WHITELIST[wepclass] then
+	if CRAFT_CONFIG_MINE_WHITELIST_ROCK[wepclass] then
 		local health = self:Health()
 		local maxhealth = self:GetMaxHealth()
 		local damage
