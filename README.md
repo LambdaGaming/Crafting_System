@@ -1,5 +1,7 @@
 # Customizable Crafting Table
-This is a simple, yet highly customizable crafting table made to work with all gamemodes. Below are it's current features. For a more detailed explanation of this addon, click [here.](https://steamcommunity.com/sharedfiles/filedetails/?id=1793133869)
+This is a simple, yet highly customizable crafting table made to work with all gamemodes.
+
+# Features
 - Not hard coded to accept specific entities like other crafting systems.
 - Accepts any entity as an ingredient and/or craftable item. (As long as the item is configured correctly.)
 - Allows for an infinite amount of new items to be added.
@@ -12,6 +14,24 @@ This is a simple, yet highly customizable crafting table made to work with all g
 - Icons next to each recipe to let the player know if it's able to be crafted, close to having enough materials to be crafted, or can't be crafted.
 - Developer functions to help addon and server developers integrate their own systems with this one. You can find more info about that [here.](https://github.com/LambdaGaming/Crafting_System/blob/master/dev.md)
 - Automation option that allows users to tell the table to repeatedly craft a certain item as long as it has enough ingredients.
+
+# Other Versions
+I've made other versions of this addon with special features for specific servers. If you're looking for a specific feature that this version doesn't have, one of these versions might have it. Please note that I do not give any support for these versions.
+- [Blueprint Version](https://github.com/LambdaGaming/CityRP/tree/master/addons/Crafting_System) - Requires players to place a blueprint of the specified crafting item near the table before being able to craft said item. Items can also be configured to not require a blueprint so it can be crafted like normal.
+- [Table Type Version](https://github.com/LambdaGaming/Half-Life-Universe-RP/tree/master/addons/Crafting%20System) - Allows developers to make more than one table with different items. Useful if you want a separate item list for different teams.
+
+# FAQs
+## How do I craft an item?
+Simply touch the required ingredients with the table and it will accept it. After all of the required items are in the table, click the craft items button and select the item you want to craft, then press the craft button and your item will spawn below the table.
+
+## How do I create new items or customize the table?
+To create new items, download or clone this repository, go to `lua/entities/crafting_table`, open the shared.lua file, and follow the instructions from there. To customize the table, go to `lua/autorun`, open the craft_config.lua file, and follow the instructions from there. Please note that the workshop version does not support custom items and only supports a handful of table customization options.
+
+## Why do rocks/trees spawn invisible after a map change?
+This is likely caused by a perma-prop system that saves the colors of entities, and the last time it saved was when the rocks or trees were invisible because they were recently mined. Some ways around this are to either use a perma-prop system that doesn't save the colors of entities, or write your own script that spawns rocks and trees at specified coordinates so their data isn't saved at all. Another, less likely cause of this is a bad model. Try reverting the rock and tree models back to their defaults if you changed them in the config.
+
+## Will you help me with [thing I want to do]?
+I will give support to people who are having issues modifying the addon in the intended ways of changing values in the config or creating new items. I will NOT give support to people who want to modify the addon outside of these intended ways. If you want extra code to be written for your own needs, you will have to do it yourself. When you ask for support, I will assume you already have a basic understanding of the Gmod addon system, GitHub, and Lua, as they are required in order to customize this addon.
 
 # Issues & Pull Requests
  If you would like to contribute to this repository by creating an issue or pull request, please refer to the [contributing guidelines.](https://lambdagaming.github.io/contributing.html)
