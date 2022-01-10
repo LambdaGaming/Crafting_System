@@ -1,5 +1,5 @@
 # Customizable Crafting Table
-This is a simple, yet highly customizable crafting table made to work with all gamemodes.
+This is a simple, yet highly customizable crafting table made to work with all gamemodes. The workshop version can be found [here.](https://steamcommunity.com/sharedfiles/filedetails/?id=1793133869)
 
 # Features
 - Not hard coded to accept specific entities like other crafting systems.
