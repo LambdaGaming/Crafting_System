@@ -1,4 +1,3 @@
-
 ENT.Type = "anim"
 ENT.PrintName = "Rock"
 ENT.Author = "Lambda Gaming"

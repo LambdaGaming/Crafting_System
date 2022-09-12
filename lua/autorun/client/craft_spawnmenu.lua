@@ -1,4 +1,3 @@
-
 hook.Add( "PopulateToolMenu", "CraftingOptions", function()
 	spawnmenu.AddToolMenuOption( "Options", "Crafting Table", "Craft_Health", "Table Actions", "", "", function( panel )
 		panel:NumSlider( "Max Health", "Craft_Config_MaxHealth", 0, 1000, 0 )

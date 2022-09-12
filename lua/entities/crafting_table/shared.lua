@@ -1,4 +1,3 @@
-
 ENT.Type = "anim"
 ENT.PrintName = "Crafting Table"
 ENT.Author = "Lambda Gaming"

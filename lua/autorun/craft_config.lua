@@ -1,4 +1,3 @@
-
 --Customize your crafting table here. Each constant has a comment above it to tell you what it does.
 
 --[[

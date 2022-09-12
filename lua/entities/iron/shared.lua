@@ -1,4 +1,3 @@
-
 ENT.Type = "anim"
 ENT.PrintName = "Iron (Crafting Ingredient)"
 ENT.Author = "Lambda Gaming"

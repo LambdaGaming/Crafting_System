@@ -1,4 +1,3 @@
-
 --Temporary fix for cvars not being sent between client and server properly until the Gmod devs fix those bugs
 util.AddNetworkString( "Craft_ChangeCvar" )
 local function ChangeCvar( len, ply )
