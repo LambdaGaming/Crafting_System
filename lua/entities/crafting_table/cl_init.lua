@@ -1,9 +1,5 @@
 include( "shared.lua" )
 
-function ENT:Draw()
-	self:DrawModel()
-end
-
 local DrawItems, DrawRecipes, DrawMainMenu --Initialize these early so the client can see them when using the back buttons
 
 local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
