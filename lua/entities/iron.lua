@@ -1,6 +1,11 @@
-AddCSLuaFile( "cl_init.lua" )
-AddCSLuaFile( "shared.lua" )
-include( "shared.lua" )
+AddCSLuaFile()
+
+ENT.Type = "anim"
+ENT.PrintName = "Iron (Crafting Ingredient)"
+ENT.Author = "Lambda Gaming"
+ENT.Spawnable = true
+ENT.AdminOnly = true
+ENT.Category = "Crafting Table"
 
 function ENT:SpawnFunction( ply, tr, name )
 	if !tr.Hit then return end
@@ -13,11 +18,13 @@ function ENT:SpawnFunction( ply, tr, name )
 end
 
 function ENT:Initialize()
-    self:SetModel( "models/props_phx/construct/wood/wood_boardx1.mdl" )
-	self:PhysicsInit( SOLID_VPHYSICS )
+    self:SetModel( "models/Items/CrossbowRounds.mdl" )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
-	self:SetUseType( SIMPLE_USE )
+	if SERVER then
+		self:PhysicsInit( SOLID_VPHYSICS )
+		self:SetUseType( SIMPLE_USE )
+	end
 	
     local phys = self:GetPhysicsObject()
 	if phys:IsValid() then
