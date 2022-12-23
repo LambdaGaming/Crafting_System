@@ -59,11 +59,10 @@ end
 
 function ENT:OnTakeDamage( dmg )
 	local ply = dmg:GetAttacker()
+	if !ply:IsPlayer() or self:Health() <= 0 then return end
 	local wep = ply:GetActiveWeapon()
 	local hidden = self:GetNWBool( "IsHidden" )
 	local wepclass = string.lower( wep:GetClass() )
-	if !ply:IsPlayer() then return end
-	if self:Health() <= 0 then return end
 	if CRAFT_CONFIG_MINE_WHITELIST_ROCK[wepclass] then
 		local health = self:Health()
 		local maxhealth = self:GetMaxHealth()
