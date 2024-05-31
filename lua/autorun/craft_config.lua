@@ -138,3 +138,6 @@ function util.IsAllInWorld( ent )
 	end
 	return false
 end
+
+local version = "1.20.3"
+MsgC( Color( 0, 0, 255 ), "Universal Crafting System v"..version.." by OPGman successfully loaded.\n" )
