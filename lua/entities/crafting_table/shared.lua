@@ -1,6 +1,6 @@
 ENT.Type = "anim"
 ENT.PrintName = "Crafting Table"
-ENT.Author = "Lambda Gaming"
+ENT.Author = "OPGman"
 ENT.Spawnable = true
 ENT.Category = "Crafting Table"
 
