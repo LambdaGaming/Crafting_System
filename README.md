@@ -17,8 +17,8 @@ This is a simple, yet highly customizable crafting table made to work with all g
 
 # Other Versions
 I've made other versions of this addon with special features for specific servers. If you're looking for a specific feature that this version doesn't have, one of these versions might have it. Please note that I do not give any support for these versions.
-- [Blueprint Version](https://github.com/LambdaGaming/CityRP/tree/master/addons/Crafting_System) - Requires players to place a blueprint of the specified crafting item near the table before being able to craft said item. Items can also be configured to not require a blueprint so it can be crafted like normal.
-- [Table Type Version](https://github.com/LambdaGaming/Half-Life-Universe-RP/tree/master/addons/Crafting%20System) - Allows developers to make more than one table with different items. Useful if you want a separate item list for different teams.
+- [Blueprint Version](https://github.com/LambdaGaming/Crafting_System/tree/cityrp) - Requires players to place a blueprint of the specified crafting item near the table before being able to craft said item. Items can also be configured to not require a blueprint so it can be crafted like normal.
+- [Table Type Version](https://github.com/LambdaGaming/Crafting_System/tree/hlurp) - Allows developers to make more than one table with different items. Useful if you want a separate item list for different teams.
 
 # FAQs
 ## How do I craft an item?
