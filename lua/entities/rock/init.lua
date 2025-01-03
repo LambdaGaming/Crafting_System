@@ -2,20 +2,17 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include( "shared.lua" )
 
-function ENT:SpawnFunction( ply, tr, name )
-	if !tr.Hit then return end
-	local SpawnPos = tr.HitPos + tr.HitNormal * 100
-	local ent = ents.Create( name )
-	ent:SetPos( SpawnPos )
-	ent:Spawn()
-	ent:Activate()
-	return ent
-end
+local ores = {
+	["Ruby"] = { color_red, 30, { 7, 15 } },
+	["Gold"] = { color_yellow, 60, { 3, 5 } },
+	["Diamond"] = { Color( 100, 100, 255 ), 160, { 1, 3 } },
+	["Rock"] = { Color( 128, 128, 128 ), 10, { 1, 3 } }
+}
 
 function ENT:Initialize()
     self:SetModel( table.Random( CRAFT_CONFIG_ROCK_MODELS ) )
 	self:PhysicsInit( SOLID_VPHYSICS )
-	self:SetMoveType( MOVETYPE_VPHYSICS )
+	self:SetMoveType( MOVETYPE_NONE )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType( SIMPLE_USE )
 	self:SetRenderMode( RENDERMODE_TRANSCOLOR )
@@ -25,35 +22,102 @@ function ENT:Initialize()
 		phys:Wake()
 	end
 
-	self:SetHealth( CRAFT_CONFIG_ROCK_HEALTH or GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
-	self:SetMaxHealth( CRAFT_CONFIG_ROCK_HEALTH or GetConVar( "Craft_Config_Rock_Health" ):GetInt() )
 	self:SetNWBool( "IsHidden", false )
 	hook.Run( "Craft_Rock_OnSpawn", self )
+	self.Loot = {}
+	self:CreateLoot()
 end
 
-local function UnhideEnt( ent )
-	if IsValid( ent ) then
-		ent:SetSolid( SOLID_VPHYSICS )
-		ent:SetMoveType( MOVETYPE_VPHYSICS )
-		ent:SetColor( color_white )
-		ent:SetNWBool( "IsHidden", false )
-		ent:SetHealth( ent:GetMaxHealth() )
-		local phys = ent:GetPhysicsObject()
-		if phys:IsValid() then
-			phys:EnableMotion( false )
+function ENT:Unhide()
+	self:SetSolid( SOLID_VPHYSICS )
+	self:SetColor( color_white )
+	self:SetNWBool( "IsHidden", false )
+	self:SetHealth( self:GetMaxHealth() )
+	self:CreateLoot()
+	hook.Run( "Craft_Rock_OnRespawn", self )
+end
+
+function ENT:Hide()
+	local color = self:GetColor()
+	self:SetSolid( SOLID_NONE )
+	self:SetColor( ColorAlpha( color, 0 ) )
+	self:SetNWBool( "IsHidden", true )
+	timer.Create( "Hidden_"..self:EntIndex(), CRAFT_CONFIG_ROCK_RESPAWN, 1, function()
+		if IsValid( self ) then
+			self:Unhide()
 		end
-		hook.Run( "Craft_Rock_OnRespawn", ent )
-	end
+	end )
 end
 
-local function HideEnt( ent )
-	if IsValid( ent ) then
-		local color = ent:GetColor()
-		ent:SetSolid( SOLID_NONE )
-		ent:SetMoveType( MOVETYPE_NONE )
-		ent:SetColor( ColorAlpha( color, 0 ) )
-		ent:SetNWBool( "IsHidden", true )
-		timer.Create( "Hidden_"..ent:EntIndex(), CRAFT_CONFIG_ROCK_RESPAWN or GetConVar( "Craft_Config_Rock_Respawn" ):GetInt(), 1, function() UnhideEnt( ent ) end )
+local function GetRandomOre( type )
+	local tbl = { "Ruby", "Gold", "Diamond" }
+	return tbl[math.random( #tbl )]
+end
+
+--[[
+	Loot table structure:
+	{ EntName, Amount, OreType }
+	OR
+	{ EntName, Amount }
+]]
+function ENT:CreateLoot()
+	local rand = math.random( 1, 100 )
+	if rand >= 60 then
+		local rand2 = math.random( 0, 1 )
+		table.insert( self.Loot, {"mgs_ore", 2, "Rock" } )
+		if rand2 == 1 then
+			table.insert( self.Loot, { "ironbar", 2 } )
+		else
+			table.insert( self.Loot, {"mgs_ore", 2, true } )
+		end
+	elseif rand >= 30 and rand < 60 then
+		local rand2 = math.random( 0, 1 )
+		table.insert( self.Loot, {"mgs_ore", 2, "Rock" } )
+		if rand2 == 1 then
+			table.insert( self.Loot, { "ironbar", 4 } )
+		else
+			table.insert( self.Loot, {"mgs_ore", 4, true } )
+		end
+	elseif rand >= 10 and rand < 30 then
+		table.insert( self.Loot, { "mgs_ore", 3, true } )
+		table.insert( self.Loot, { "ironbar", 3 } )
+	elseif rand > 1 and rand < 10 then
+		table.insert( self.Loot, { "mgs_ore", 6, true } )
+		table.insert( self.Loot, { "ironbar", 6 } )
+	else
+		table.insert( self.Loot, { "ironbar", 15 } )
+	end
+
+	local totaliron = 0
+	for k,v in pairs( self.Loot ) do
+		if v[1] == "ironbar" then
+			totaliron = totaliron + v[2]
+		end
+	end
+	self:SetHealth( 5 + totaliron )
+	self:SetMaxHealth( 5 + totaliron )
+end
+
+function ENT:SpawnLoot()
+	for k,v in pairs( self.Loot ) do
+		for i = 1, v[2] do
+			local e = ents.Create( v[1] )
+			e:SetPos( self:GetPos() + Vector( math.Rand( 1, 20 ), math.Rand( 1, 20 ), 20 ) )
+			if v[3] then
+				local ore
+				if isstring( v[3] ) then
+					ore = v[3]
+				else
+					ore = GetRandomOre()
+				end
+				e:SetNWInt( "price", ores[ore][2] )
+				e:SetNWInt( "mass", math.Rand( ores[ore][3][1], ores[ore][3][2] ) )
+				e:SetNWString( "type", ore )
+				e:SetColor( ores[ore][1] )
+			end
+			e:Spawn()
+			self.Loot = {}
+		end
 	end
 end
 
@@ -66,31 +130,11 @@ function ENT:OnTakeDamage( dmg )
 	if CRAFT_CONFIG_MINE_WHITELIST_ROCK[wepclass] then
 		local health = self:Health()
 		local maxhealth = self:GetMaxHealth()
-		local damage
-		if CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass] then
-			damage = CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass]
-		else
-			damage = dmg:GetDamage()
-		end
-		self:SetHealth( math.Clamp( health - damage, 0, maxhealth ) )
+		self:SetHealth( math.Clamp( health - dmg:GetDamage(), 0, maxhealth ) )
 	end
 	if self:Health() <= 0 and !hidden then
-		for i=1, math.random( CRAFT_CONFIG_MIN_SPAWN or GetConVar( "Craft_Config_Min_Spawn" ):GetInt(), CRAFT_CONFIG_MAX_SPAWN or GetConVar( "Craft_Config_Max_Spawn" ):GetInt() ) do
-			local shouldspawn = false
-			local entspawn
-			for k,v in pairs( CRAFT_CONFIG_ROCK_INGREDIENTS ) do
-				if math.random( 1, 100 ) < v[2] then
-					shouldspawn = true
-					entspawn = v[1]
-				end
-			end
-			if shouldspawn then
-				local e = ents.Create( entspawn )
-				e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
-				e:Spawn()
-			end
-		end
-		HideEnt( self )
+		self:Hide()
+		self:SpawnLoot()
 		hook.Run( "Craft_Rock_OnMined", self, ply )
 	end
 end

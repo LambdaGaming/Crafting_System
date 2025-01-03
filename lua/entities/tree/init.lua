@@ -4,7 +4,7 @@ include( "shared.lua" )
 
 function ENT:SpawnFunction( ply, tr, name )
 	if !tr.Hit then return end
-	local SpawnPos = tr.HitPos + tr.HitNormal * 10
+	local SpawnPos = tr.HitPos + tr.HitNormal
 	local ent = ents.Create( name )
 	ent:SetPos( SpawnPos )
 	ent:Spawn()
@@ -15,7 +15,7 @@ end
 function ENT:Initialize()
     self:SetModel( table.Random( CRAFT_CONFIG_TREE_MODELS ) )
 	self:PhysicsInit( SOLID_VPHYSICS )
-	self:SetMoveType( MOVETYPE_VPHYSICS )
+	self:SetMoveType( MOVETYPE_NONE )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType( SIMPLE_USE )
 	self:SetRenderMode( RENDERMODE_TRANSCOLOR )
@@ -25,36 +25,30 @@ function ENT:Initialize()
 		phys:Wake()
 	end
 
-	self:SetHealth( CRAFT_CONFIG_TREE_HEALTH or GetConVar( "Craft_Config_Tree_Health" ):GetInt() )
-	self:SetMaxHealth( CRAFT_CONFIG_TREE_HEALTH or GetConVar( "Craft_Config_Tree_Health" ):GetInt() )
+	self:SetHealth( CRAFT_CONFIG_TREE_HEALTH )
+	self:SetMaxHealth( CRAFT_CONFIG_TREE_HEALTH )
 	self:SetNWBool( "IsHidden", false )
 	hook.Run( "Craft_Tree_OnSpawn", self )
 end
 
-local function UnhideEnt( ent )
-	if IsValid( ent ) then
-		ent:SetPos( ent:GetPos() + Vector( 0, 0, 900 ) )
-		ent:SetMoveType( MOVETYPE_VPHYSICS )
-		ent:SetColor( color_white )
-		ent:SetNWBool( "IsHidden", false )
-		ent:SetHealth( ent:GetMaxHealth() )
-		local phys = ent:GetPhysicsObject()
-		if phys:IsValid() then
-			phys:EnableMotion( false )
-		end
-		hook.Run( "Craft_Tree_OnRespawn", ent )
-	end
+function ENT:Unhide()
+	self:SetSolid( SOLID_VPHYSICS )
+	self:SetColor( color_white )
+	self:SetNWBool( "IsHidden", false )
+	self:SetHealth( self:GetMaxHealth() )
+	hook.Run( "Craft_Tree_OnRespawn", self )
 end
 
-local function HideEnt( ent )
-	if IsValid( ent ) then
-		local color = ent:GetColor()
-		ent:SetPos( ent:GetPos() + Vector( 0, 0, -900 ) )
-		ent:SetMoveType( MOVETYPE_NONE )
-		ent:SetColor( ColorAlpha( color, 0 ) )
-		ent:SetNWBool( "IsHidden", true )
-		timer.Create( "Hidden_"..ent:EntIndex(), CRAFT_CONFIG_TREE_RESPAWN or GetConVar( "Craft_Config_Tree_Respawn" ):GetInt(), 1, function() UnhideEnt( ent ) end )
-	end
+function ENT:Hide()
+	local color = self:GetColor()
+	self:SetSolid( SOLID_NONE )
+	self:SetColor( ColorAlpha( color, 0 ) )
+	self:SetNWBool( "IsHidden", true )
+	timer.Create( "Hidden_"..self:EntIndex(), CRAFT_CONFIG_TREE_RESPAWN, 1, function()
+		if IsValid( self ) then
+			self:Unhide()
+		end
+	end )
 end
 
 function ENT:OnTakeDamage( dmg )
@@ -66,31 +60,15 @@ function ENT:OnTakeDamage( dmg )
 	if CRAFT_CONFIG_MINE_WHITELIST_TREE[wepclass] then
 		local health = self:Health()
 		local maxhealth = self:GetMaxHealth()
-		local damage
-		if CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass] then
-			damage = CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass]
-		else
-			damage = dmg:GetDamage()
-		end
-		self:SetHealth( math.Clamp( health - damage, 0, maxhealth ) )
+		self:SetHealth( math.Clamp( health - dmg:GetDamage(), 0, maxhealth ) )
 	end
 	if self:Health() <= 0 and !hidden then
-		for i=1, math.random( CRAFT_CONFIG_MIN_SPAWN or GetConVar( "Craft_Config_Min_Spawn" ):GetInt(), CRAFT_CONFIG_MAX_SPAWN or GetConVar( "Craft_Config_Max_Spawn" ):GetInt() ) do
-			local shouldspawn = false
-			local entspawn
-			for k,v in pairs( CRAFT_CONFIG_TREE_INGREDIENTS ) do
-				if math.random( 1, 100 ) < v[2] then
-					shouldspawn = true
-					entspawn = v[1]
-				end
-			end
-			if shouldspawn then
-				local e = ents.Create( entspawn )
-				e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
-				e:Spawn()
-			end
+		for i=1, math.random( CRAFT_CONFIG_MIN_SPAWN, CRAFT_CONFIG_MAX_SPAWN ) do
+			local e = ents.Create( "wood" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, i * 50 ) )
+			e:Spawn()
 		end
-		HideEnt( self )
+		self:Hide()
 		hook.Run( "Craft_Tree_OnMined", self, ply )
 	end
 end
