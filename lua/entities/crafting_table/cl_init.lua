@@ -1,114 +1,14 @@
-include( "shared.lua" )
+
+include('shared.lua')
+
+function ENT:Draw()
+	self:DrawModel()
+end
 
 local DrawItems, DrawRecipes, DrawMainMenu --Initialize these early so the client can see them when using the back buttons
 
-local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
-	local mainbuttons = vgui.Create( "DButton", scroll )
-	mainbuttons:SetText( v.Name )
-	mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
-	if nocat then
-		mainbuttons:Dock( TOP )
-		mainbuttons:DockMargin( 5, 5, 5, 5 )
-	end
-	mainbuttons.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
-	end
-	mainbuttons.DoClick = function()
-		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
-		ply.SelectedCraftingItem = tostring( k )
-		ply.SelectedCraftingItemName = v.Name
-		surface.PlaySound( CRAFT_CONFIG_SELECT_SOUND or GetConVar( "Craft_Config_Select_Sound" ):GetString() )
-		main:Close()
-		DrawRecipes( ent )
-	end
-
-	local totalrequired = 0
-	local totalamount = 0
-	local amountimage = vgui.Create( "DImage", mainbuttons )
-	amountimage:SetSize( 16, 16 )
-	amountimage:CenterVertical()
-	for c,d in pairs( v.Materials ) do
-		if ent:GetNWInt( "Craft_"..c ) >= d then
-			totalamount = totalamount + 1
-		end
-		totalrequired = totalrequired + 1
-	end
-	if totalamount >= totalrequired then
-		amountimage:SetImage( "icon16/accept.png" )
-	elseif math.Round( totalamount / totalrequired ) >= 0.50 then
-		amountimage:SetImage( "icon16/error.png" )
-	else
-		amountimage:SetImage( "icon16/delete.png" )
-	end
-
-	if CRAFT_CONFIG_ALLOW_AUTOMATION or GetConVar( "Craft_Config_Allow_Automation" ):GetBool() then
-		local automatecheck = vgui.Create( "DCheckBox", mainbuttons )
-		automatecheck:SetPos( 20, 3 )
-		if ent:GetNWBool( "CraftAutomate"..k ) then
-			automatecheck:SetChecked( true )
-		end
-		automatecheck.OnChange = function()
-			if automatecheck:GetChecked() then
-				net.Start( "StartAutomate" )
-				net.WriteEntity( ent )
-				net.WriteString( k )
-				net.WriteString( v.Name )
-				net.SendToServer()
-				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will now automate production of the "..v.Name.."." )
-			else
-				net.Start( "StopAutomate" )
-				net.WriteEntity( ent )
-				net.WriteString( k )
-				net.SendToServer()
-				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will no longer automate production of the "..v.Name.."." )
-			end
-			surface.PlaySound( CRAFT_CONFIG_SELECT_SOUND or GetConVar( "Craft_Config_Select_Sound" ):GetString() )
-		end
-	end
-	return mainbuttons
-end
-
-local function DrawIngredientButtons( k, v, ent, main, scroll, nocat )
-	local MenuReloadCooldown = 0
-	local scrollbutton = vgui.Create( "DButton", scroll )
-	if ent:GetNWInt( "Craft_"..v.Name ) == nil then --If networked int doesn't exist then just set it's value to 0 until it does
-		scrollbutton:SetText( v.Name..": 0" )
-	else
-		scrollbutton:SetText( v.Name..": "..ent:GetNWInt( "Craft_"..k ) )
-	end
-	scrollbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
-	scrollbutton:Dock( TOP )
-	if nocat then
-		scrollbutton:DockMargin( 5, 5, 5, 5 )
-	else
-		scrollbutton:DockMargin( 0, 0, 0, 5 )
-	end
-	scrollbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
-	end
-	scrollbutton.DoClick = function()
-		if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
-			surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND or GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
-			hook.Run( "Craft_OnDropItemFail", ent )
-			return --Prevents players from having negative ingredients
-		end
-		if MenuReloadCooldown > CurTime() then return end
-		net.Start( "DropItem" )
-		net.WriteEntity( ent )
-		net.WriteString( k )
-		net.SendToServer() --Sends the net message to drop the specified item and remove it from the table
-		timer.Simple( 0.3, function() --Small timer to let the net message go through
-			main:Close()
-			DrawItems( ent ) --Refreshes the panel so it updates the number of materials
-		end )
-		MenuReloadCooldown = CurTime() + 1
-	end
-	return scrollbutton
-end
-
 DrawItems = function( ent ) --Panel that draws the list of materials that are on the table
 	local itemtable = {}
-	local nocategory = {}
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Items currently on the table:" )
 	mainframe:SetSize( 500, 500 )
@@ -128,53 +28,59 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
-		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
+
+	local MenuReloadCooldown = 0
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
-	for a,b in pairs( IngredientCategory ) do
-		local mainlist = vgui.Create( "DPanelList" )
-		mainlist:SetSpacing( 5 )
-		mainlist:EnableHorizontal( false )
-
-		local categorybutton = vgui.Create( "DCollapsibleCategory", mainframescroll )
-		categorybutton:SetLabel( b.Name )
-		categorybutton:Dock( TOP )
-		categorybutton:DockMargin( 0, 15, 0, 5 )
-		categorybutton:DockPadding( 5, 0, 5, 5 )
-		categorybutton:SetContents( mainlist )
-		categorybutton.Paint = function( self, w, h )
-			draw.RoundedBox( 8, 0, 0, w, h, b.Color )
-		end
-		if b.StartCollapsed then
-			categorybutton:SetExpanded( false )
-		end
-		categorybutton.NumEntries = 0
-
-		for k,v in pairs( CraftingIngredient ) do --Looks over the keys inside the materials table, luckily Lua is fine converting them to strings
-			if table.HasValue( itemtable, k ) then 
-				continue --Prevents two or more of the same materials from being listed if they are used in more than one recipe
+	for k,v in pairs( CraftingIngredient ) do
+		if ent:GetTableType() == 0 then
+			if isnumber( v.Type ) then
+				if v.Type != 1 then continue end
+			else
+				if !table.HasValue( v.Type, 1 ) then continue end
 			end
-			if !v.Category and !table.HasValue( nocategory, v ) then
-				table.insert( nocategory, v )
-				continue
+		else
+			if isnumber( v.Type ) then
+				if v.Type != ent:GetTableType() then continue end
+			else
+				if !table.HasValue( v.Type, ent:GetTableType() ) then continue end
 			end
-			if v.Category and v.Category != b.Name or !v.Category then --Puts items into their respective categories
-				continue
+		end
+		if table.HasValue( itemtable, k ) then 
+			continue --Prevents two or more of the same materials from being listed if they are used in more than one recipe
+		end
+		local scrollbutton = vgui.Create( "DButton", mainframescroll )
+		if ent:GetNWInt( "Craft_"..v.Name ) == nil then --If networked int doesn't exist then just set it's value to 0 until it does
+			scrollbutton:SetText( v.Name..": 0" )
+		else
+			scrollbutton:SetText( v.Name..": "..ent:GetNWInt( "Craft_"..k ) )
+		end
+		scrollbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+		scrollbutton:Dock( TOP )
+		scrollbutton:DockMargin( 0, 0, 0, 5 )
+		scrollbutton.Paint = function( self, w, h )
+			draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		end
+		scrollbutton.DoClick = function()
+			if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
+				surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND )
+				return --Prevents players from having negative ingredients
 			end
-			local mainbuttons = DrawIngredientButtons( k, v, ent, mainframe, mainframescroll )
-			mainlist:AddItem( mainbuttons )
-			table.insert( itemtable, k )
-			categorybutton.NumEntries = categorybutton.NumEntries + 1
+			if MenuReloadCooldown > CurTime() then return end
+			net.Start( "DropItem" )
+			net.WriteEntity( ent )
+			net.WriteString( k )
+			net.SendToServer() --Sends the net message to drop the specified item and remove it from the table
+			timer.Simple( 0.3, function() --Small timer to let the net message go through
+				mainframe:Close()
+				DrawItems( ent ) --Refreshes the panel so it updates the number of materials
+			end )
+			MenuReloadCooldown = CurTime() + 1
 		end
-		if categorybutton.NumEntries == 0 then
-			categorybutton:Remove() --Remove the category if no ingredients are using it
-		end
+		table.insert( itemtable, k )
 	end
-	for k,v in pairs( nocategory ) do
-		DrawIngredientButtons( k, v, ent, mainframe, mainframescroll, true )
-	end
-	hook.Run( "Craft_OnIngredientsOpen", ent )
 end
 
 DrawRecipes = function( ent ) --Panel that draws the list of recipes
@@ -198,13 +104,16 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	backbutton.DoClick = function()
 		mainframe:Close()
 		DrawMainMenu( ent )
-		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
-
-	local nocategory = {}
 	for a,b in ipairs( CraftingCategory ) do
+		if ent:GetTableType() == 0 then
+			if b.Type != 1 then continue end
+		else
+			if b.Type != ent:GetTableType() then continue end
+		end
 		local mainlist = vgui.Create( "DPanelList" )
 		mainlist:SetSpacing( 5 )
 		mainlist:EnableHorizontal( false )
@@ -222,27 +131,55 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 			categorybutton:SetExpanded( false )
 		end
 		categorybutton.NumEntries = 0
-		for k,v in pairs( CraftingTable ) do --Looks over all recipes in the main CraftingTable table
-			if !v.Category and !table.HasValue( nocategory, v ) then
-				table.insert( nocategory, v )
+		for k,v in SortedPairsByMemberValue( CraftingTable, "Name" ) do --Looks over all recipes in the main CraftingTable table in alphabetical order
+			if v.Category != b.Name then --Puts items into their respective categories
 				continue
 			end
-			if v.Category and v.Category != b.Name or !v.Category then --Puts items into their respective categories
-				continue
+			if ent:GetTableType() == 0 then
+				if v.Type != 1 then continue end
+			else
+				if v.Type != ent:GetTableType() then continue end
 			end
-			local mainbuttons = DrawRecipeButtons( k, v, ply, ent, mainframe, mainframescroll )
+			local mainbuttons = vgui.Create( "DButton", mainframescroll )
+			mainbuttons:SetText( v.Name )
+			mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+			mainbuttons.Paint = function( self, w, h )
+				draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+			end
+			mainbuttons.DoClick = function()
+				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
+				ply.SelectedCraftingItem = tostring( k ) --Temporarily saves the entity class name for the net message that goes through when the player presses the craft button
+				ply.SelectedCraftingItemName = v.Name --Temporarily saves the actual name so it doesn't print the entity class name
+				surface.PlaySound( CRAFT_CONFIG_SELECT_SOUND )
+				mainframe:Close()
+				DrawRecipes( ent ) --Refreshes the button so it shows the currently selected item
+			end
 			mainlist:AddItem( mainbuttons )
 			categorybutton.NumEntries = categorybutton.NumEntries + 1
+
+			local totalrequired = 0
+			local totalamount = 0
+			local amountimage = vgui.Create( "DImage", mainbuttons )
+			amountimage:SetSize( 16, 16 )
+			amountimage:CenterVertical()
+			for c,d in pairs( v.Materials ) do
+				if ent:GetNWInt( "Craft_"..c ) >= d then
+					totalamount = totalamount + 1
+				end
+				totalrequired = totalrequired + 1
+			end
+			if totalamount >= totalrequired then
+				amountimage:SetImage( "icon16/accept.png" )
+			elseif math.Round( totalamount / totalrequired ) >= 0.50 then
+				amountimage:SetImage( "icon16/error.png" )
+			else
+				amountimage:SetImage( "icon16/delete.png" )
+			end
 		end
 		if categorybutton.NumEntries == 0 then
 			categorybutton:Remove() --Remove the category if no recipes are using it
 		end
 	end
-
-	for k,v in pairs( nocategory ) do
-		DrawRecipeButtons( k, v, ply, ent, mainframe, mainframescroll, true )
-	end
-
 	local selectedbutton = vgui.Create( "DButton", mainframe )
 	if ply.SelectedCraftingItemName then
 		selectedbutton:SetText( "Currently Selected Item: "..ply.SelectedCraftingItemName )
@@ -267,7 +204,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Please select an item to craft." )
-			surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND or GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
+			surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND )
 			return
 		end
 		net.Start( "StartCrafting" )
@@ -279,7 +216,6 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		ply.SelectedCraftingItem = nil --Resets the entity class name
 		ply.SelectedCraftingItemName = nil --Resets the actual name
 	end
-	hook.Run( "Craft_OnRecipesOpen", ent, ply )
 end
 
 DrawMainMenu = function( ent ) --Panel that draws the main menu
@@ -303,7 +239,7 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	recipesbutton.DoClick = function() --Button to open the recipes panel
 		DrawRecipes( ent )
 		mainframe:Close()
-		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
     end
 	local itemsbutton = vgui.Create( "DButton", mainframe )
 	itemsbutton:SetText( "View Items Currently on the Table" )
@@ -317,9 +253,8 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	itemsbutton.DoClick = function() --Button to open the current ingredients panel
 		DrawItems( ent )
 		mainframe:Close()
-		surface.PlaySound( CRAFT_CONFIG_UI_SOUND or GetConVar( "Craft_Config_UI_Sound" ):GetString() )
+		surface.PlaySound( CRAFT_CONFIG_UI_SOUND )
 	end
-	hook.Run( "Craft_OnMainMenuOpen", ent )
 end
 
 net.Receive( "CraftingTableMenu", function( len ) --Receiving the net message to open the main crafting table menu
@@ -334,7 +269,7 @@ net.Receive( "CraftMessage", function( len, ply ) --Have to network the entname 
 	local validfunction = net.ReadBool()
 	local entname = net.ReadString()
 	if validfunction then --Checks to make sure the spawn function exists, I might have it go through a default spawn function at some point instead of just erroring
-		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Successfully crafted a "..entname.."." )
+		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Successfully crafted a "..entname.." ." )
 	else
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "ERROR! Missing SpawnFunction for "..entname )
 	end

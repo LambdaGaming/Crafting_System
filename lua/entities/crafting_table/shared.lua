@@ -1,454 +1,1247 @@
 ENT.Type = "anim"
+ENT.Base = "base_gmodentity"
 ENT.PrintName = "Crafting Table"
-ENT.Author = "Lambda Gaming"
+ENT.Author = "OPGman"
 ENT.Spawnable = true
 ENT.Category = "Crafting Table"
 
---Convars that allow you to change values on your singleplayer game or listen server while it's running, don't touch these unless you know what you're doing
-CreateConVar( "Craft_Config_MaxHealth", 100, { FCVAR_ARCHIVE }, "The max health of the crafting table." )
-CreateConVar( "Craft_Config_Model", "models/props_wasteland/controlroom_desk001b.mdl", { FCVAR_ARCHIVE }, "The model of the crafting table." )
-CreateConVar( "Craft_Config_Material", "", { FCVAR_ARCHIVE }, "The material of the crafting table. Leave blank if you want the default model texture." )
-CreateConVar( "Craft_Config_Place_Sound", "physics/metal/metal_solid_impact_hard1.wav", { FCVAR_ARCHIVE }, "Sound that plays when an item is placed on the table." )
-CreateConVar( "Craft_Config_Craft_Sound", "ambient/machines/catapult_throw.wav", { FCVAR_ARCHIVE }, "Sound that plays when an item is crafted." )
-CreateConVar( "Craft_Config_UI_Sound", "ui/buttonclickrelease.wav", { FCVAR_ARCHIVE }, "Sound that plays when a button is pressed." )
-CreateConVar( "Craft_Config_Select_Sound", "buttons/lightswitch2.wav", { FCVAR_ARCHIVE }, "Sound that plays when an item is selected." )
-CreateConVar( "Craft_Config_Fail_Sound", "buttons/button2.wav", { FCVAR_ARCHIVE }, "Sound that plays when an item fails to craft." )
-CreateConVar( "Craft_Config_Drop_Sound", "physics/metal/metal_canister_impact_soft1.wav", { FCVAR_ARCHIVE }, "Sound that plays when an ingredient is dropped." )
-CreateConVar( "Craft_Config_Should_Explode", 1, { FCVAR_ARCHIVE }, "Whether or not the table should explode when it's health reaches 0. 1 for true, 0 for false." )
-CreateConVar( "Craft_Config_Destroy_Sound", "physics/metal/metal_box_break1.wav", { FCVAR_ARCHIVE }, "Sound that plays when the table is destroyed." )
-CreateConVar( "Craft_Config_Tree_Health", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The max health of the trees." )
-CreateConVar( "Craft_Config_Tree_Respawn", 300, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The respawn time for trees in seconds." )
-CreateConVar( "Craft_Config_Min_Spawn", 2, { FCVAR_ARCHIVE }, "Minimum number of entities that can be mined from a rock or tree." )
-CreateConVar( "Craft_Config_Max_Spawn", 6, { FCVAR_ARCHIVE }, "Maximum number of entities that can be mined from a rock or tree." )
-CreateConVar( "Craft_Config_Rock_Health", 100, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The max health of the rocks." )
-CreateConVar( "Craft_Config_Rock_Respawn", 300, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The respawn time for rocks in seconds." )
-CreateConVar( "Craft_Config_Allow_Automation", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Whether or not players should be allowed to use the automation feature." )
-CreateConVar( "Craft_Config_Automation_Time", 120, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "The time it takes in seconds for the table to complete an automation process." )
-CreateConVar( "Craft_Config_Automation_Message_Range", 0, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Max range in hammer units that the player can be away from the table to get automation messages. Set to 0 for infinite." )
+function ENT:SetupDataTables()
+	self:NetworkVar( "Int", 0, "TableType" ) --Access and write to using ent:GetTableType() and ent:SetTableType()
+end
 
-CraftingTable = {} --Initializes the item table, don't touch
-CraftingCategory = {} --Initializes the category table, don't touch
-CraftingIngredient = {} --Initializes the ingredients, don't touch
-IngredientCategory = {} --Initializes the ingredient category table, don't touch
-local COLOR_DEFAULT = Color( 49, 53, 61, 255 ) --Color of the default categories for optimization, you can change this if you want
-
---Template Ingredient
 --[[
-	CraftingIngredient["iron"] = { --Class name of the entity goes in the brackets
-		Name = "Iron", --Name that shows up in the ingredient list
-		Category = "Default Ingredients" --Optional. Category the item shows up in, has to match the name of an ingredient category created below
-	}
+	Types:
+	1 - Rebel
+	2 - Biochemist
+	3 - Weapons Engineer
+	4 - Combine
 ]]
 
-CraftingIngredient["iron"] = {
+CraftingTable = {}
+CraftingCategory = {}
+CraftingIngredient = {}
+local COLOR_DEFAULT = Color( 49, 53, 61, 255 )
+
+CraftingIngredient["ironbar"] = {
 	Name = "Iron",
-	Category = "Default Ingredients"
+	Type = { 1, 4 }
+}
+
+CraftingIngredient["wrench"] = {
+	Name = "Wrench",
+	Type = { 1, 4 }
 }
 
 CraftingIngredient["wood"] = {
 	Name = "Wood",
-	Category = "Default Ingredients"
+	Type = { 1 }
 }
 
---Template recipe category
---[[
-	CraftingCategory[1] = { --Be sure to change the number, the lower the number, the higher up in the list it is
-		Name = "Pistols", --Name of the category
-		Color = COLOR_DEFAULT, --Color of the category box
-		StartCollapsed = false --Optional, set to true if you want the category to start collapsed
-	}
-]]
+CraftingIngredient["locker_key"] = {
+	Name = "Science Locker Key",
+	Type = { 1 }
+}
 
+CraftingIngredient["xen_iron"] = {
+	Name = "Xen Iron",
+	Type = { 2, 3 }
+}
+
+CraftingIngredient["xen_iron_refined"] = {
+	Name = "Refined Xen Iron",
+	Type = { 2, 3 }
+}
+
+CraftingIngredient["organic_matter"] = {
+	Name = "Organic Matter",
+	Type = { 2, 3 }
+}
+
+CraftingIngredient["organic_matter_rare"] = {
+	Name = "Rare Organic Matter",
+	Type = { 3 }
+}
+
+CraftingIngredient["crystal_harvested"] = {
+	Name = "Harvested Crystal",
+	Type = { 2, 3 }
+}
+
+CraftingIngredient["crystal_fragment"] = {
+	Name = "Crystal Fragment",
+	Type = { 3 }
+}
+
+--Rebel categories
 CraftingCategory[1] = {
 	Name = "Pistols",
-	Color = COLOR_DEFAULT
+	Color = COLOR_DEFAULT,
+	Type = 1
 }
 
 CraftingCategory[2] = {
 	Name = "SMGs",
-	Color = COLOR_DEFAULT
+	Color = COLOR_DEFAULT,
+	Type = 1
 }
 
 CraftingCategory[3] = {
 	Name = "Rifles",
-	Color = COLOR_DEFAULT
+	Color = COLOR_DEFAULT,
+	Type = 1
 }
 
 CraftingCategory[4] = {
 	Name = "Shotguns",
-	Color = COLOR_DEFAULT
+	Color = COLOR_DEFAULT,
+	Type = 1
 }
 
 CraftingCategory[5] = {
 	Name = "Tools",
-	Color = COLOR_DEFAULT
+	Color = COLOR_DEFAULT,
+	Type = 1
 }
 
 CraftingCategory[6] = {
+	Name = "Crafting Ingredients",
+	Color = COLOR_DEFAULT,
+	Type = 1
+}
+
+CraftingCategory[7] = {
+	Name = "Ammo",
+	Color = COLOR_DEFAULT,
+	Type = 1
+}
+
+CraftingCategory[8] = {
 	Name = "Explosives",
-	Color = COLOR_DEFAULT
+	Color = COLOR_DEFAULT,
+	Type = 1
 }
 
---Template ingredient category
---[[
-	IngredientCategory[1] = { --Be sure to change the number, the lower the number, the higher up in the list it is
-		Name = "Default Ingredients", --Name of the category
-		Color = COLOR_DEFAULT, --Color of the category box
-		StartCollapsed = false --Optional, set to true if you want the category to start collapsed
-	}
-]]
-
-IngredientCategory[1] = {
-	Name = "Default Ingredients",
-	Color = COLOR_DEFAULT
+CraftingCategory[9] = {
+	Name = "Traps",
+	Color = COLOR_DEFAULT,
+	Type = 1
 }
 
---Template Crafting Item
---[[
-	CraftingTable["weapon_crowbar"] = { --Add the entity name of the item in the brackets with quotes
-		Name = "Crowbar", --Name of the item, different from the item's entity name
-		Description = "Requires 1 ball.", --Description of the item
-		Category = "Tools", --Optional. Category the item shows up in, has to match the name of a category created above
-		Materials = { --Entities that are required to craft this item, make sure you leave the entity names WITHOUT quotes!
-			iron = 2,
-			wood = 1
-		},
-		SpawnCheck = function( ply, self ) --This function is optional, it runs a check to see if the player can craft the item before any materials are consumed
-			local blacklist = {
-				["gm_construct"] = true,
-				["gm_flatgrass"] = true
-			}
-			if blacklist[game.GetMap()] then
-				ply:ChatPrint( "This item cannot be crafted on the current map." )
-				return false --Example that checks to see if the player can craft the item on the current map
-			end
-			return true --The function always needs to return either true or false
-		end,
-		SpawnFunction = function( ply, self ) --In this function you are able to modify the player who is crafting, the table itself, and the item that is being crafted
-			local e = ents.Create( "weapon_crowbar" ) --Replace the entity name with the one at the very top inside the brackets
-			e:SetPos( self:GetPos() - Vector( 0, 0, -5 ) ) --A negative Z coordinate is added here to prevent items from spawning on top of the table and being consumed, you'll have to change it if you use a different model otherwise keep it as it is
-			e:Spawn()
-			if !util.IsAllInWorld( e ) then --If the model of your item is larger than the table, consider using this to detect when it spawns outside of the map
-				e:Remove()
-				ply:ChatPrint( "Crafted entity spawned outside of the map. You have been refunded. Please reposition the table." )
-				for k,v in pairs( CraftingTable["weapon_crowbar"].Materials ) do
-					self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) + v )
-				end
-			end
-		end
-	}
-]]
+--Biochemist categories
+CraftingCategory[10] = {
+	Name = "Creatures",
+	Color = COLOR_DEFAULT,
+	Type = 2
+}
 
---If you are adding new ingredients, make sure you configure them above before adding them as materials in the items below. Failure to do so will result in errors!
+CraftingCategory[11] = {
+	Name = "Bioweapons",
+	Color = COLOR_DEFAULT,
+	Type = 2
+}
 
-if DarkRP then
-	CraftingTable["weapon_glock2"] = {
-		Name = "Glock",
-		Description = "Requires 1 iron.",
-		Category = "Pistols",
+--Weapons engineer categories
+CraftingCategory[12] = {
+	Name = "Normal Weapons",
+	Color = COLOR_DEFAULT,
+	Type = 3
+}
+
+CraftingCategory[13] = {
+	Name = "Prototype Weapons",
+	Color = COLOR_DEFAULT,
+	Type = 3
+}
+
+CraftingCategory[14] = {
+	Name = "Unusual Weapons",
+	Color = COLOR_DEFAULT,
+	Type = 3
+}
+
+--Combine categories
+CraftingCategory[15] = {
+	Name = "Turrets",
+	Color = COLOR_DEFAULT,
+	Type = 4
+}
+
+CraftingCategory[16] = {
+	Name = "Turret Ammo",
+	Color = COLOR_DEFAULT,
+	Type = 4
+}
+
+CraftingCategory[17] = {
+	Name = "Turret Tools",
+	Color = COLOR_DEFAULT,
+	Type = 4
+}
+
+CraftingCategory[18] = {
+	Name = "Other",
+	Color = COLOR_DEFAULT,
+	Type = 4
+}
+
+--Rebel crafting items
+CraftingTable["weapon_pistol"] = {
+	Name = "Civil Protection Pistol",
+	Description = "Requires 3 iron.",
+	Materials = {
+		ironbar = 3
+	},
+	Type = 1,
+	Category = "Pistols",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_pistol" )
+	end
+}
+
+CraftingTable["weapon_crowbar"] = {
+	Name = "Crowbar",
+	Description = "Requires 2 iron.",
+	Materials = {
+		ironbar = 2
+	},
+	Type = 1,
+	Category = "Tools",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_crowbar" )
+	end
+}
+
+CraftingTable["weapon_smg1"] = {
+	Name = "Combine SMG",
+	Description = "Requires 2 iron and 1 wrench.",
+	Materials = {
+		ironbar = 2,
+		wrench = 1
+	},
+	Type = 1,
+	Category = "SMGs",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_smg1" )
+	end
+}
+
+CraftingTable["weapon_ar2"] = {
+	Name = "AR2",
+	Description = "Requires 3 iron and 2 wrenches.",
+	Materials = {
+		ironbar = 3,
+		wrench = 2
+	},
+	Type = 1,
+	Category = "Rifles",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_ar2" )
+	end
+}
+
+CraftingTable["weapon_crossbow"] = {
+	Name = "Makeshift Crossbow",
+	Description = "Requires 4 iron and 3 wrenches.",
+	Materials = {
+		ironbar = 4,
+		wrench = 3
+	},
+	Type = 1,
+	Category = "Rifles",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_crossbow" )
+	end
+}
+
+CraftingTable["wrench"] = {
+	Name = "Wrench",
+	Description = "Requires 2 iron.",
+	Materials = {
+		ironbar = 2
+	},
+	Type = 1,
+	Category = "Crafting Ingredients",
+	SpawnFunction = function( ply, self )
+		ply:Give( "wrench" )
+	end
+}
+
+CraftingTable["weapon_bp_sniper"] = {
+	Name = "Combine Sniper Rifle",
+	Description = "Requires 4 iron and 4 wrenches.",
+	Materials = {
+		ironbar = 4,
+		wrench = 4
+	},
+	Type = 1,
+	Category = "Rifles",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_bp_sniper" )
+	end
+}
+
+CraftingTable["item_ammo_pistol"] = {
+	Name = "Pistol Ammo",
+	Description = "Requires 1 iron.",
+	Materials = {
+		ironbar = 1
+	},
+	Type = 1,
+	Category = "Ammo",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "item_ammo_pistol" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["item_ammo_smg1"] = {
+	Name = "SMG Ammo",
+	Description = "Requires 2 iron.",
+	Materials = {
+		ironbar = 2
+	},
+	Type = 1,
+	Category = "Ammo",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "item_ammo_smg1" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["item_box_buckshot"] = {
+	Name = "Shotgun Ammo",
+	Description = "Requires 2 iron.",
+	Materials = {
+		ironbar = 2
+	},
+	Type = 1,
+	Category = "Ammo",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "item_box_buckshot" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["item_ammo_crossbow"] = {
+	Name = "Crossbow Ammo",
+	Description = "Requires 3 iron.",
+	Materials = {
+		ironbar = 3
+	},
+	Type = 1,
+	Category = "Ammo",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "item_ammo_crossbow" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["item_ammo_ar2"] = {
+	Name = "AR2 Ammo",
+	Description = "Requires 2 iron.",
+	Materials = {
+		ironbar = 2
+	},
+	Type = 1,
+	Category = "Ammo",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "item_ammo_ar2" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["bp_sniper_ammo"] = {
+	Name = "Sniper Ammo",
+	Description = "Requires 3 iron.",
+	Materials = {
+		ironbar = 3
+	},
+	Type = 1,
+	Category = "Ammo",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "bp_sniper_ammo" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["lockpick"] = {
+	Name = "Lockpick",
+	Description = "Requires 2 iron.",
+	Materials = {
+		ironbar = 2
+	},
+	Type = 1,
+	Category = "Tools",
+	SpawnFunction = function( ply, self )
+		ply:Give( "lockpick" )
+	end
+}
+
+CraftingTable["weapon_shotgun"] = {
+	Name = "Shotgun",
+	Description = "Requires 2 iron and 2 wrenches.",
+	Materials = {
+		ironbar = 2,
+		wrench = 2
+	},
+	Type = 1,
+	Category = "Shotguns",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_shotgun" )
+	end
+}
+
+CraftingTable["weapon_rpg"] = {
+	Name = "RPG",
+	Description = "Requires 5 iron and 4 wrenches.",
+	Materials = {
+		ironbar = 5,
+		wrench = 4
+	},
+	Type = 1,
+	Category = "Explosives",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_rpg" )
+	end
+}
+
+CraftingTable["rebel_teleporter"] = {
+	Name = "Resistance Teleporter",
+	Description = "Requires 8 iron and 5 wrenches.",
+	Materials = {
+		ironbar = 8,
+		wrench = 5
+	},
+	Type = 1,
+	Category = "Tools",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "rebel_teleporter" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["two_way_teleporter"] = {
+	Name = "Two-Way Teleporter",
+	Description = "Requires 4 iron and 2 wrenches. (2 need to be crafted for them to work.)",
+	Materials = {
+		ironbar = 4,
+		wrench = 2
+	},
+	Type = 1,
+	Category = "Tools",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "two_way_teleporter" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["weapon_frag"] = {
+	Name = "Frag Grenade",
+	Description = "Requires 3 iron and 2 wrenches.",
+	Materials = {
+		ironbar = 3,
+		wrench = 2
+	},
+	Type = 1,
+	Category = "Explosives",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_frag" )
+	end
+}
+
+CraftingTable["weapon_grenadeplacer"] = {
+	Name = "Tripwire Grenade",
+	Description = "Requires 3 iron and 1 wrench.",
+	Materials = {
+		ironbar = 3,
+		wrench = 1
+	},
+	Type = 1,
+	Category = "Traps",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_grenadeplacer" )
+	end
+}
+
+CraftingTable["bouncingmine"] = {
+	Name = "Anti-Personnel Mine",
+	Description = "Requires 5 iron and 4 wrenches.",
+	Materials = {
+		ironbar = 5,
+		wrench = 4
+	},
+	Type = 1,
+	Category = "Traps",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "bouncingmine" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["springgun"] = {
+	Name = "Tripwire Spring Gun",
+	Description = "Requires 5 iron and 4 wrenches.",
+	Materials = {
+		ironbar = 5,
+		wrench = 2
+	},
+	Type = 1,
+	Category = "Traps",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "springgun" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["tripwireextender"] = {
+	Name = "Tripwire Extender",
+	Description = "Requires 2 iron.",
+	Materials = {
+		ironbar = 2
+	},
+	Type = 1,
+	Category = "Traps",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "tripwireextender" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["code_decrypter"] = {
+	Name = "Detonation Code Decrypter",
+	Description = "Requires 5 iron and a science locker key.",
+	Materials = {
+		ironbar = 5,
+		locker_key = 1
+	},
+	Type = 1,
+	Category = "Tools",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "code_decrypter" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+if game.GetMap() == "rp_mezs" then
+	CraftingTable["ent_jack_sleepinbag_rebel"] = {
+		Name = "Sleeping Bag",
+		Description = "Requires 2 iron and 4 wood.",
 		Materials = {
-			iron = 1
+			ironbar = 2,
+			wood = 4
 		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_glock2" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_m42"] = {
-		Name = "M4",
-		Description = "Requires 3 iron.",
-		Category = "Rifles",
-		Materials = {
-			iron = 3
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_m42" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_mac102"] = {
-		Name = "MAC 10",
-		Description = "Requires 2 iron.",
-		Category = "SMGs",
-		Materials = {
-			iron = 2
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_mac102" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_mp52"] = {
-		Name = "MP5",
-		Description = "Requires 2 iron.",
-		Category = "SMGs",
-		Materials = {
-			iron = 2
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_mp52" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_p2282"] = {
-		Name = "P228",
-		Description = "Requires 1 iron.",
-		Category = "Pistols",
-		Materials = {
-			iron = 1
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_p2282" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_pumpshotgun2"] = {
-		Name = "Pump Shotgun",
-		Description = "Requires 4 iron.",
-		Category = "Shotguns",
-		Materials = {
-			iron = 4
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_pumpshotgun2" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["lockpick"] = {
-		Name = "Lockpick",
-		Description = "Requires 1 iron.",
+		Type = 1,
 		Category = "Tools",
-		Materials = {
-			iron = 1
-		},
 		SpawnFunction = function( ply, self )
-			local e = ents.Create( "lockpick" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			local e = ents.Create( "ent_jack_sleepinbag" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
 			e:Spawn()
+			e:CPPISetOwner( ply )
 		end
 	}
 
-	CraftingTable["ls_sniper"] = {
-		Name = "Silenced Sniper Rifle",
-		Description = "Requires 5 iron.",
-		Category = "Rifles",
+	CraftingTable["ent_jack_gmod_ezadvparts"] = {
+		Name = "Advanced Parts Box",
+		Description = "Requires 3 iron and 3 wrenches.",
 		Materials = {
-			iron = 5
+			ironbar = 3,
+			wrench = 3
 		},
+		Type = 1,
+		Category = "Crafting Materials",
 		SpawnFunction = function( ply, self )
-			local e = ents.Create( "ls_sniper" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			local e = ents.Create( "ent_jack_gmod_ezadvparts" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
 			e:Spawn()
+			e:CPPISetOwner( ply )
 		end
 	}
 
-	CraftingTable["weapon_ak472"] = {
-		Name = "AK-47",
-		Description = "Requires 4 iron and 2 wood.",
-		Category = "Rifles",
+	CraftingTable["ent_jack_gmod_ezadvtextiles"] = {
+		Name = "Advanced Textiles Box",
+		Description = "Requires 2 iron and 2 wood.",
 		Materials = {
-			iron = 4,
+			ironbar = 2,
 			wood = 2
 		},
+		Type = 1,
+		Category = "Crafting Materials",
 		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_ak472" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			local e = ents.Create( "ent_jack_gmod_ezadvtextiles" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
 			e:Spawn()
+			e:CPPISetOwner( ply )
 		end
 	}
 
-	CraftingTable["weapon_deagle2"] = {
-		Name = "Deagle",
-		Description = "Requires 2 iron.",
-		Category = "Pistols",
-		Materials = {
-			iron = 2
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_deagle2" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_fiveseven2"] = {
-		Name = "FiveSeven",
-		Description = "Requires 1 iron.",
-		Category = "Pistols",
-		Materials = {
-			iron = 1
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_fiveseven2" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-else
-	CraftingTable["weapon_pistol"] = {
-		Name = "9mm Pistol",
-		Description = "Requires 1 iron.",
-		Category = "Pistols",
-		Materials = {
-			iron = 1
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_pistol" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_357"] = {
-		Name = ".357 Revolver",
-		Description = "Requires 2 iron.",
-		Category = "Pistols",
-		Materials = {
-			iron = 2
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_357" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_smg1"] = {
-		Name = "SMG",
-		Description = "Requires 3 iron.",
-		Category = "SMGs",
-		Materials = {
-			iron = 3
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_smg1" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_ar2"] = {
-		Name = "Pulse Rifle",
+	CraftingTable["ent_jack_gmod_ezammo"] = {
+		Name = "Turret Ammo",
 		Description = "Requires 4 iron.",
-		Category = "Rifles",
 		Materials = {
-			iron = 4
+			ironbar = 4
 		},
+		Type = 1,
+		Category = "Ammo",
 		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_ar2" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			local e = ents.Create( "ent_jack_gmod_ezammo" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
 			e:Spawn()
+			e:CPPISetOwner( ply )
 		end
 	}
 
-	CraftingTable["weapon_shotgun"] = {
-		Name = "Shotgun",
-		Description = "Requires 4 iron.",
-		Category = "Shotguns",
+	CraftingTable["ent_jack_gmod_ezbattery"] = {
+		Name = "Battery",
+		Description = "Requires 3 iron and 1 wrench.",
 		Materials = {
-			iron = 4
+			ironbar = 3,
+			wrench = 1
 		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_shotgun" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_crossbow"] = {
-		Name = "Crossbow",
-		Description = "Requires 5 iron and 2 wood.",
-		Category = "Rifles",
-		Materials = {
-			iron = 5,
-			wood = 2
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_crossbow" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_rpg"] = {
-		Name = "RPG",
-		Description = "Requires 6 iron.",
-		Category = "Explosives",
-		Materials = {
-			iron = 6
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_rpg" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_frag"] = {
-		Name = "Frag Grenade",
-		Description = "Requires 5 iron.",
-		Category = "Explosives",
-		Materials = {
-			iron = 5
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_frag" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_slam"] = {
-		Name = "S.L.A.M.",
-		Description = "Requires 6 iron.",
-		Category = "Explosives",
-		Materials = {
-			iron = 6
-		},
-		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_slam" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-			e:Spawn()
-		end
-	}
-
-	CraftingTable["weapon_crowbar"] = {
-		Name = "Crowbar",
-		Description = "Requires 1 iron.",
+		Type = 1,
 		Category = "Tools",
-		Materials = {
-			iron = 1
-		},
 		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_crowbar" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			local e = ents.Create( "ent_jack_gmod_ezbattery" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
 			e:Spawn()
+			e:CPPISetOwner( ply )
 		end
 	}
 
-	CraftingTable["weapon_stunstick"] = {
-		Name = "Stunstick",
-		Description = "Requires 2 iron.",
-		Category = "Tools",
+	CraftingTable["ent_jack_gmod_ezmedsupplies"] = {
+		Name = "Medical Supply Box",
+		Description = "Requires 2 iron and 3 wood.",
 		Materials = {
-			iron = 2
+			ironbar = 2,
+			wood = 3
 		},
+		Type = 1,
+		Category = "Tools",
 		SpawnFunction = function( ply, self )
-			local e = ents.Create( "weapon_stunstick" )
-			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			local e = ents.Create( "ent_jack_gmod_ezmedsupplies" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
 			e:Spawn()
+			e:CPPISetOwner( ply )
+		end
+	}
+
+	CraftingTable["ent_jack_gmod_ezparts"] = {
+		Name = "Parts Box",
+		Description = "Requires 2 iron and 2 wrenches.",
+		Materials = {
+			ironbar = 2,
+			wrench = 2
+		},
+		Type = 1,
+		Category = "Tools",
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "ent_jack_gmod_ezparts" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+			e:Spawn()
+			e:CPPISetOwner( ply )
+		end
+	}
+
+	CraftingTable["ent_gauto_fuel"] = {
+		Name = "Vehicle Fuel",
+		Description = "Requires 4 iron and 1 wrench.",
+		Materials = {
+			ironbar = 4,
+			wrench = 1
+		},
+		Type = 1,
+		Category = "Tools",
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "ent_gauto_fuel" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+			e:Spawn()
+			e:CPPISetOwner( ply )
+		end
+	}
+
+	CraftingTable["ent_gauto_repair"] = {
+		Name = "Vehicle Repair Kit",
+		Description = "Requires 2 iron and 3 wrenches.",
+		Materials = {
+			ironbar = 2,
+			wrench = 3
+		},
+		Type = 1,
+		Category = "Tools",
+		SpawnFunction = function( ply, self )
+			local e = ents.Create( "ent_gauto_repair" )
+			e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+			e:Spawn()
+			e:CPPISetOwner( ply )
 		end
 	}
 end
+
+--Biochemist crafting items
+CraftingTable["npc_headcrab_black"] = {
+	Name = "Poison Headcrab",
+	Description = "Requires 2 organic matter.",
+	Materials = {
+		organic_matter = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "npc_headcrab_black" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["npc_headcrab_fast"] = {
+	Name = "Fast Headcrab",
+	Description = "Requires 2 organic matter.",
+	Materials = {
+		organic_matter = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "npc_headcrab_fast" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_agrunt"] = {
+	Name = "Alien Grunt",
+	Description = "Requires 3 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 3,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_agrunt" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_controller"] = {
+	Name = "Alien Controller",
+	Description = "Requires 5 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 5,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_controller" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_bullsquid"] = {
+	Name = "Bullsquid",
+	Description = "Requires 4 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 4,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_bullsquid" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_babyheadcrab"] = {
+	Name = "Baby Headcrab",
+	Description = "Requires 1 organic matter.",
+	Materials = {
+		organic_matter = 1
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_babyheadcrab" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_hound_eye"] = {
+	Name = "Houndeye",
+	Description = "Requires 3 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 3,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_hound_eye" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_zombie_scientist"] = {
+	Name = "Zombie Scientist",
+	Description = "Requires 2 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 2,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_zombie_scientist" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_zombie_barney"] = {
+	Name = "Zombie Security Officer",
+	Description = "Requires 2 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 2,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_zombie_barney" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_zombie_soldier"] = {
+	Name = "Zombie Marine",
+	Description = "Requires 2 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 2,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_zombie_soldier" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_alien_snark"] = {
+	Name = "Snark",
+	Description = "Requires 1 organic matter and 2 xen iron.",
+	Materials = {
+		organic_matter = 1,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_alien_snark" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["monster_alien_slv"] = {
+	Name = "Vortigaunt",
+	Description = "Requires 4 organic matter and 3 xen iron.",
+	Materials = {
+		organic_matter = 4,
+		xen_iron = 3
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "monster_alien_slv" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["weapon_barnacle"] = {
+	Name = "Handheld Barnacle",
+	Description = "Requires 3 organic matter and 1 harvested crystal.",
+	Materials = {
+		organic_matter = 3,
+		crystal_harvested = 1
+	},
+	Type = 2,
+	Category = "Bioweapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_barnacle" )
+	end
+}
+
+CraftingTable["weapon_chumtoad"] = {
+	Name = "Chumtoad",
+	Description = "Requires 3 organic matter, 1 xen iron, and 1 harvested crystal.",
+	Materials = {
+		organic_matter = 3,
+		crystal_harvested = 1,
+		xen_iron = 1
+	},
+	Type = 2,
+	Category = "Bioweapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_chumtoad" )
+	end
+}
+
+CraftingTable["weapon_hornetgun"] = {
+	Name = "Hivehand",
+	Description = "Requires 2 organic matter, 2 xen iron, and 1 harvested crystal.",
+	Materials = {
+		organic_matter = 2,
+		crystal_harvested = 1,
+		xen_iron = 2
+	},
+	Type = 2,
+	Category = "Bioweapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_hornetgun" )
+	end
+}
+
+CraftingTable["weapon_shockrifle"] = {
+	Name = "Shock Rifle",
+	Description = "Requires 2 organic matter, 3 xen iron, 1 rare organic matter, and 1 harvested crystal.",
+	Materials = {
+		organic_matter = 2,
+		crystal_harvested = 1,
+		xen_iron = 1,
+		organic_matter_rare = 1
+	},
+	Type = 2,
+	Category = "Bioweapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_shockrifle" )
+	end
+}
+
+CraftingTable["weapon_snark"] = {
+	Name = "Snark",
+	Description = "Requires 3 organic matter, 3 xen iron, and 1 harvested crystal.",
+	Materials = {
+		organic_matter = 3,
+		crystal_harvested = 1,
+		xen_iron = 3
+	},
+	Type = 2,
+	Category = "Bioweapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_snark" )
+	end
+}
+
+CraftingTable["weapon_sporelauncher"] = {
+	Name = "Spore Launcher",
+	Description = "Requires 4 organic matter, 2 xen iron, 1 rare organic matter, and 1 harvested crystal.",
+	Materials = {
+		organic_matter = 4,
+		crystal_harvested = 1,
+		xen_iron = 2,
+		organic_matter_rare = 1
+	},
+	Type = 2,
+	Category = "Bioweapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_sporelauncher" )
+	end
+}
+
+CraftingTable["zombie_serum"] = {
+	Name = "Zombie Serum",
+	Description = "Requires 4 organic matter and 1 rare organic matter.",
+	Materials = {
+		organic_matter = 4,
+		organic_matter_rare = 1
+	},
+	Type = 2,
+	Category = "Creatures",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "zombie_serum" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+--Weapons engineer crafting items
+CraftingTable["weapon_357_hl"] = {
+	Name = "357 Magnum",
+	Description = "Requires 4 xen iron.",
+	Materials = {
+		xen_iron = 4
+	},
+	Type = 3,
+	Category = "Normal Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_357_hl" )
+	end
+}
+
+CraftingTable["weapon_crossbow_hl"] = {
+	Name = "Crossbow",
+	Description = "Requires 4 xen iron and 1 refined xen iron.",
+	Materials = {
+		xen_iron = 4,
+		xen_iron_refined = 1
+	},
+	Type = 3,
+	Category = "Normal Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_crossbow_hl" )
+	end
+}
+
+CraftingTable["weapon_egon"] = {
+	Name = "Gluon Gun",
+	Description = "Requires 2 refined xen iron, 1 harvested crystal, and 1 harvested crystal fragment.",
+	Materials = {
+		xen_iron_refined = 2,
+		crystal_harvested = 1,
+		crystal_fragment = 1
+	},
+	Type = 3,
+	Category = "Prototype Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_egon" )
+	end
+}
+
+CraftingTable["weapon_flechettegrenade"] = {
+	Name = "Flechette Grenade",
+	Description = "Requires 2 refined xen iron and 2 harvested crystal fragments.",
+	Materials = {
+		xen_iron_refined = 2,
+		crystal_fragment = 2
+	},
+	Type = 3,
+	Category = "Prototype Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_flechettegrenade" )
+	end
+}
+
+CraftingTable["weapon_freezinggun"] = {
+	Name = "Freezing Gun",
+	Description = "Requires 2 refined xen iron, 2 xen iron, 1 harvested crystal, and 2 harvested crystal fragments.",
+	Materials = {
+		xen_iron_refined = 2,
+		crystal_fragment = 2,
+		xen_iron = 2,
+		crystal_harvested = 1
+	},
+	Type = 3,
+	Category = "Unusual Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_freezinggun" )
+	end
+}
+
+CraftingTable["weapon_gauss"] = {
+	Name = "Gauss Cannon",
+	Description = "Requires 2 refined xen iron, 2 xen iron, 2 harvested crystals, and 3 harvested crystal fragments.",
+	Materials = {
+		xen_iron_refined = 2,
+		crystal_fragment = 3,
+		xen_iron = 2,
+		crystal_harvested = 2
+	},
+	Type = 3,
+	Category = "Prototype Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_gauss" )
+	end
+}
+
+CraftingTable["weapon_knife"] = {
+	Name = "Knife",
+	Description = "Requires 2 xen iron.",
+	Materials = {
+		xen_iron = 2
+	},
+	Type = 3,
+	Category = "Normal Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_knife" )
+	end
+}
+
+CraftingTable["weapon_penguin"] = {
+	Name = "Penguin",
+	Description = "Requires 2 organic matter, 1 rare organic matter, 2 xen iron, 1 refined xen iron, 1 harvested crystal, and 1 harvested crystal fragment.",
+	Materials = {
+		organic_matter = 2,
+		organic_matter_rare = 1,
+		xen_iron = 2,
+		xen_iron_refined = 1,
+		crystal_harvested = 1,
+		crystal_fragment = 1
+	},
+	Type = 3,
+	Category = "Unusual Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_penguin" )
+	end
+}
+
+CraftingTable["weapon_rpg_hl"] = {
+	Name = "RPG",
+	Description = "Requires 4 refined xen iron, 2 xen iron, and 1 harvested crystal.",
+	Materials = {
+		xen_iron_refined = 4,
+		xen_iron = 2,
+		crystal_harvested = 1
+	},
+	Type = 3,
+	Category = "Normal Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_rpg_hl" )
+	end
+}
+
+CraftingTable["weapon_tripmine"] = {
+	Name = "Tripmine",
+	Description = "Requires 3 refined xen iron, 1 xen iron, and 2 harvested crystal fragments.",
+	Materials = {
+		xen_iron_refined = 3,
+		xen_iron = 1,
+		crystal_fragment = 2
+	},
+	Type = 3,
+	Category = "Normal Weapons",
+	SpawnFunction = function( ply, self )
+		ply:Give( "weapon_tripmine" )
+	end
+}
+
+--Combine crafting items
+CraftingTable["ent_jack_gmod_ezsentry"] = {
+	Name = "Sentry",
+	Description = "Requires 4 iron and 2 wrenches.",
+	Materials = {
+		ironbar = 2,
+		wrench = 2
+	},
+	Type = 4,
+	Category = "Turrets",
+	SpawnFunction = function( ply, self )
+		local spawn = ents.Create( "ent_jack_gmod_ezsentry" )
+		spawn:SetPos( ply:GetPos() + Vector( -30, 0, 10 ) )
+		JMod_Owner( spawn, ply )
+		spawn:Spawn()
+		spawn:Activate()
+		spawn:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["ent_jack_gmod_ezammo"] = {
+	Name = "Turret Ammo",
+	Description = "Requires 4 iron.",
+	Materials = {
+		ironbar = 4
+	},
+	Type = 4,
+	Category = "Turrets",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "ent_jack_gmod_ezammo" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["ent_jack_gmod_ezbattery"] = {
+	Name = "Battery",
+	Description = "Requires 3 iron and 1 wrench.",
+	Materials = {
+		ironbar = 3,
+		wrench = 1
+	},
+	Type = 1,
+	Category = "Turrets",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "ent_jack_gmod_ezbattery" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["ent_jack_gmod_ezparts"] = {
+	Name = "Parts Box",
+	Description = "Requires 1 iron and 1 wrench.",
+	Materials = {
+		ironbar = 1,
+		wrench = 1
+	},
+	Type = 4,
+	Category = "Turrets",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "ent_jack_gmod_ezparts" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
+
+CraftingTable["locker_key"] = {
+	Name = "Combine Science Locker Key",
+	Description = "Requires 10 iron.",
+	Materials = {
+		ironbar = 10
+	},
+	Type = 4,
+	Category = "Other",
+	SpawnFunction = function( ply, self )
+		local e = ents.Create( "locker_key" )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
+		e:Spawn()
+		e:CPPISetOwner( ply )
+	end
+}
