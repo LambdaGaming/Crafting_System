@@ -1,6 +1,6 @@
 ENT.Type = "anim"
-ENT.PrintName = "Rock"
+ENT.PrintName = "Mineable Entity"
 ENT.Author = "OPGman"
 ENT.Spawnable = true
 ENT.AdminOnly = true
-ENT.Category = "Crafting Table"
+ENT.Category = "Universal Crafting System"

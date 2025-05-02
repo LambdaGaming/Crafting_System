@@ -2,7 +2,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Crafting Table"
 ENT.Author = "OPGman"
 ENT.Spawnable = true
-ENT.Category = "Crafting Table"
+ENT.Category = "Universal Crafting System"
 
 --Convars that allow you to change values on your singleplayer game or listen server while it's running, don't touch these unless you know what you're doing
 CreateConVar( "Craft_Config_MaxHealth", 100, { FCVAR_ARCHIVE }, "The max health of the crafting table." )
