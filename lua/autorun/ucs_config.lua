@@ -1,3 +1,9 @@
+--Table initializations, don't touch
+CraftingTable = {}
+CraftingRecipe = {}
+CraftingIngredient = {}
+MineableEntity = {}
+
 --TODO: Add functions so people don't have to mess with tables, like how DarkRP handles custom stuff
 
 --Template mining entity
@@ -17,6 +23,17 @@
 		MaxSpawn = 6
 	}
 ]]
+
+MineableEntity[1] = {
+    Name = "Rock",
+    Models = {
+        "models/props_debris/barricade_short01a.mdl",
+        "models/props_debris/barricade_short02a.mdl",
+        "models/props_debris/barricade_tall01a.mdl"
+    },
+    Tools = { ["weapon_crowbar"] = 5 },
+    Drops = { ["iron"] = 100 }
+}
 
 --Template crafting table; All options except name and model have fallbacks and are not required
 --[[
@@ -41,6 +58,11 @@
 		TextColor = color_white
 	}
 ]]
+
+CraftingTable[1] = {
+    Name = "HL2 Weapons Table",
+    Model = "models/props_wasteland/controlroom_desk001b.mdl"
+}
 
 --Template Ingredient
 --[[

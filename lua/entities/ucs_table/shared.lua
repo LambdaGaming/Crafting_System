@@ -4,10 +4,6 @@ ENT.Author = "OPGman"
 ENT.Spawnable = true
 ENT.Category = "Universal Crafting System"
 
-CraftingTable = {}
-CraftingRecipe = {}
-CraftingIngredient = {}
-
 function ENT:SetupDataTables()
 	self:NetworkVar( "Int", "TableType" )
 	if SERVER then

@@ -5,8 +5,6 @@ ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.Category = "Universal Crafting System"
 
-MineableEntity = {}
-
 function ENT:SetupDataTables()
     self:NetworkVar( "Int", "MineableType" )
     if SERVER then

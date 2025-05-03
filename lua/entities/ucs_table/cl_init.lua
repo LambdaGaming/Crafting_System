@@ -142,7 +142,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	--Read categories from ingredients
 	for k,v in pairs( CraftingIngredient ) do
 		if v.Category and !table.HasValue( categories, v.Category ) then
-			table.insert( categories )
+			table.insert( categories, v.Category )
 		end
 	end
 
@@ -167,7 +167,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 				table.insert( nocategory, v )
 				continue
 			end
-			if v.Category and v.Category != b.Name or !v.Category then --Puts items into their respective categories
+			if v.Category and v.Category != b or !v.Category then --Puts items into their respective categories
 				continue
 			end
 			local mainbuttons = DrawIngredientButtons( k, v, ent, mainframe, mainframescroll )
@@ -210,38 +210,39 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	mainframescroll:Dock( FILL )
 
 	local nocategory = {}
-	for a,b in ipairs( CraftingCategory ) do
+	local categories = {}
+
+	--Read categories from recipes
+	for k,v in pairs( CraftingRecipe ) do
+		if v.Category and !table.HasValue( categories, v.Category ) then
+			table.insert( categories, v.Category )
+		end
+	end
+
+	for a,b in pairs( categories ) do
 		local mainlist = vgui.Create( "DPanelList" )
 		mainlist:SetSpacing( 5 )
 		mainlist:EnableHorizontal( false )
 
 		local categorybutton = vgui.Create( "DCollapsibleCategory", mainframescroll )
-		categorybutton:SetLabel( b.Name )
+		categorybutton:SetLabel( b )
 		categorybutton:Dock( TOP )
 		categorybutton:DockMargin( 0, 15, 0, 5 )
 		categorybutton:DockPadding( 5, 0, 5, 5 )
 		categorybutton:SetContents( mainlist )
 		categorybutton.Paint = function( self, w, h )
-			draw.RoundedBox( 8, 0, 0, w, h, b.Color )
+			draw.RoundedBox( 8, 0, 0, w, h, tbl.CategoryColor or CAT_COLOR )
 		end
-		if b.StartCollapsed then
-			categorybutton:SetExpanded( false )
-		end
-		categorybutton.NumEntries = 0
-		for k,v in pairs( CraftingTable ) do --Looks over all recipes in the main CraftingTable table
+		for k,v in pairs( CraftingRecipe ) do --Looks over all recipes
 			if !v.Category and !table.HasValue( nocategory, v ) then
 				table.insert( nocategory, v )
 				continue
 			end
-			if v.Category and v.Category != b.Name or !v.Category then --Puts items into their respective categories
+			if v.Category and v.Category != b or !v.Category then --Puts items into their respective categories
 				continue
 			end
 			local mainbuttons = DrawRecipeButtons( k, v, ply, ent, mainframe, mainframescroll )
 			mainlist:AddItem( mainbuttons )
-			categorybutton.NumEntries = categorybutton.NumEntries + 1
-		end
-		if categorybutton.NumEntries == 0 then
-			categorybutton:Remove() --Remove the category if no recipes are using it
 		end
 	end
 
