@@ -23,7 +23,6 @@ function ENT:Initialize()
 	self:SetUseType( SIMPLE_USE )
 	self:SetHealth( tbl.Health or 100 )
 	self:SetTrigger( true )
-	self:SetColor( CRAFT_CONFIG_COLOR )
 	self:SetMaterial( tbl.Material or "" )
 	self.AutomationTimers = {}
     self:PhysWake()

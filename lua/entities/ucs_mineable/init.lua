@@ -16,7 +16,7 @@ end
 
 function ENT:Initialize()
 	local tbl = self:GetData()
-	self:SetModel( table.Random( CRAFT_CONFIG_ROCK_MODELS ) )
+	self:SetModel( table.Random( tbl.Models ) )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
@@ -63,12 +63,13 @@ function ENT:OnTakeDamage( dmg )
 	local hidden = self:GetNWBool( "IsHidden" )
 	local wepclass = string.lower( wep:GetClass() )
 	local tbl = self:GetData()
-	if CRAFT_CONFIG_MINE_WHITELIST_ROCK[wepclass] then
+	local tool = tbl.Tools[wepclass]
+	if tool then
 		local health = self:Health()
 		local maxhealth = self:GetMaxHealth()
 		local damage
-		if CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass] then
-			damage = CRAFT_CONFIG_MINE_DAMAGE_OVERRIDE[wepclass]
+		if tool > 0 then
+			damage = tool
 		else
 			damage = dmg:GetDamage()
 		end
@@ -78,10 +79,10 @@ function ENT:OnTakeDamage( dmg )
 		for i=1, math.random( tbl.MinSpawn or 2, tbl.MaxSpawn or 6 ) do
 			local shouldspawn = false
 			local entspawn
-			for k,v in pairs( CRAFT_CONFIG_ROCK_INGREDIENTS ) do
-				if math.random( 1, 100 ) < v[2] then
+			for k,v in pairs( tbl.Drops ) do
+				if math.random( 1, 100 ) < v then
 					shouldspawn = true
-					entspawn = v[1]
+					entspawn = k
 				end
 			end
 			if shouldspawn then

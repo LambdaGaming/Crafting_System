@@ -1,18 +1,21 @@
 include( "shared.lua" )
 
 local DrawItems, DrawRecipes, DrawMainMenu --Initialize these early so the client can see them when using the back buttons
+local MENU_COLOR = Color( 49, 53, 61, 200 )
+local CAT_COLOR = Color( 49, 53, 61, 255 )
+local BUT_COLOR = Color( 230, 93, 80, 255 )
 
 local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 	local tbl = ent:GetData()
 	local mainbuttons = vgui.Create( "DButton", scroll )
 	mainbuttons:SetText( v.Name )
-	mainbuttons:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	mainbuttons:SetTextColor( tbl.TextColor or color_white )
 	if nocat then
 		mainbuttons:Dock( TOP )
 		mainbuttons:DockMargin( 5, 5, 5, 5 )
 	end
 	mainbuttons.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBox( 0, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
 	end
 	mainbuttons.DoClick = function()
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
@@ -78,7 +81,7 @@ local function DrawIngredientButtons( k, v, ent, main, scroll, nocat )
 	else
 		scrollbutton:SetText( v.Name..": "..ent:GetNWInt( "Craft_"..k ) )
 	end
-	scrollbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	scrollbutton:SetTextColor( tbl.TextColor or color_white )
 	scrollbutton:Dock( TOP )
 	if nocat then
 		scrollbutton:DockMargin( 5, 5, 5, 5 )
@@ -86,7 +89,7 @@ local function DrawIngredientButtons( k, v, ent, main, scroll, nocat )
 		scrollbutton:DockMargin( 0, 0, 0, 5 )
 	end
 	scrollbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBox( 0, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
 	end
 	scrollbutton.DoClick = function()
 		if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
@@ -118,15 +121,15 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	mainframe:Center()
 	mainframe:MakePopup()
 	mainframe.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_MENU_COLOR )
+		draw.RoundedBox( 0, 0, 0, w, h, tbl.MenuColor or MENU_COLOR )
 	end
 	local backbutton = vgui.Create( "DButton", mainframe )
 	backbutton:SetText( "Back" )
-	backbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	backbutton:SetTextColor( tbl.TextColor or color_white )
 	backbutton:SetPos( 350, 3 )
 	backbutton:SetSize( 50, 20 )
 	backbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBox( 10, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
 	end
 	backbutton.DoClick = function()
 		mainframe:Close()
@@ -156,7 +159,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 		categorybutton:DockPadding( 5, 0, 5, 5 )
 		categorybutton:SetContents( mainlist )
 		categorybutton.Paint = function( self, w, h )
-			draw.RoundedBox( 8, 0, 0, w, h, color_black ) --TODO: Replace with reference to table type color
+			draw.RoundedBox( 8, 0, 0, w, h, tbl.CategoryColor or CAT_COLOR )
 		end
 
 		for k,v in pairs( CraftingIngredient ) do --Looks over the keys inside the materials table
@@ -188,15 +191,15 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	mainframe:Center()
 	mainframe:MakePopup()
 	mainframe.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_MENU_COLOR )
+		draw.RoundedBox( 0, 0, 0, w, h, tbl.MenuColor or MENU_COLOR )
 	end
 	local backbutton = vgui.Create( "DButton", mainframe )
 	backbutton:SetText( "Back" )
-	backbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	backbutton:SetTextColor( tbl.TextColor or color_white )
 	backbutton:SetPos( 350, 3 )
 	backbutton:SetSize( 50, 20 )
 	backbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBox( 10, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
 	end
 	backbutton.DoClick = function()
 		mainframe:Close()
@@ -252,20 +255,20 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	else
 		selectedbutton:SetText( "Currently Selected Item: N/A" )
 	end
-	selectedbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	selectedbutton:SetTextColor( tbl.TextColor or color_white )
 	selectedbutton:SetPos( 5, 465 )
 	selectedbutton:SetSize( 245, 30 )
 	selectedbutton.Paint = function( self, w, h )
-		draw.RoundedBoxEx( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR, true, false, true, false )
+		draw.RoundedBoxEx( 10, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR, true, false, true, false )
 	end
 	local craftbutton = vgui.Create( "DButton", mainframe )
 	craftbutton:SetText( "Craft Selected Item" )
-	craftbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	craftbutton:SetTextColor( tbl.TextColor or color_white )
 	craftbutton:Dock( BOTTOM )
 	craftbutton:DockMargin( 250, 0, 0, 0 )
 	craftbutton:SetSize( 245, 30 )
 	craftbutton.Paint = function( self, w, h )
-		draw.RoundedBoxEx( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR, false, true, false, true )
+		draw.RoundedBoxEx( 10, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR, false, true, false, true )
 	end
 	craftbutton.DoClick = function()
 		if !ply.SelectedCraftingItem then
@@ -293,16 +296,16 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 	mainframe:Center()
 	mainframe:MakePopup()
 	mainframe.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, CRAFT_CONFIG_MENU_COLOR )
+		draw.RoundedBox( 0, 0, 0, w, h, tbl.MenuColor or MENU_COLOR )
 	end
 	local recipesbutton = vgui.Create( "DButton", mainframe )
 	recipesbutton:SetText( "View Recipes/Craft an Item" )
-	recipesbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	recipesbutton:SetTextColor( tbl.TextColor or color_white )
 	recipesbutton:SetPos( 25, 50 )
 	recipesbutton:SetSize( 250, 30 )
 	recipesbutton:CenterHorizontal()
 	recipesbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBox( 10, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
 	end
 	recipesbutton.DoClick = function() --Button to open the recipes panel
 		DrawRecipes( ent )
@@ -311,12 +314,12 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
     end
 	local itemsbutton = vgui.Create( "DButton", mainframe )
 	itemsbutton:SetText( "View Items Currently on the Table" )
-	itemsbutton:SetTextColor( CRAFT_CONFIG_BUTTON_TEXT_COLOR )
+	itemsbutton:SetTextColor( tbl.TextColor or color_white )
 	itemsbutton:SetPos( 25, 100 )
 	itemsbutton:SetSize( 250, 30 )
 	itemsbutton:CenterHorizontal()
 	itemsbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 10, 0, 0, w, h, CRAFT_CONFIG_BUTTON_COLOR )
+		draw.RoundedBox( 10, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
 	end
 	itemsbutton.DoClick = function() --Button to open the current ingredients panel
 		DrawItems( ent )
