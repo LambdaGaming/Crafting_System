@@ -1,18 +1,30 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-include('shared.lua')
+include( "shared.lua" )
+
+function ENT:SpawnFunction( ply, tr, name )
+	if !tr.Hit then return end
+	local SpawnPos = tr.HitPos + tr.HitNormal
+	local ent = ents.Create( name )
+	ent:SetPos( SpawnPos )
+	ent:SetTableType( 1 )
+	ent:Spawn()
+	ent:Activate()
+	ply:ChatPrint( "Note: Crafting tables created from the spawn menu will always be set to type 1." )
+	return ent
+end
 
 function ENT:Initialize()
-    self:SetModel( CRAFT_CONFIG_MODEL or GetConVar( "Craft_Config_Model" ):GetString() )
+	local tbl = self:GetData()
+	self:SetModel( tbl.Model )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType( SIMPLE_USE )
-	self:SetHealth( CRAFT_CONFIG_MAX_HEALTH or GetConVar( "Craft_Config_MaxHealth" ):GetInt() )
-	self:SetMaxHealth( CRAFT_CONFIG_MAX_HEALTH or GetConVar( "Craft_Config_MaxHealth" ):GetInt() )
+	self:SetHealth( tbl.Health or 100 )
 	self:SetTrigger( true )
 	self:SetColor( CRAFT_CONFIG_COLOR )
-	self:SetMaterial( CRAFT_CONFIG_MATERIAL or GetConVar( "Craft_Config_Material" ):GetString() )
+	self:SetMaterial( tbl.Material or "" )
 	self.AutomationTimers = {}
     self:PhysWake()
 	hook.Run( "Craft_OnSpawn", self )
@@ -34,34 +46,32 @@ local function StartCrafting( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
 	local entname = net.ReadString()
-	local CraftMaterials = CraftingTable[ent].Materials
-	local SpawnItem = CraftingTable[ent].SpawnFunction
-	local SpawnCheck = CraftingTable[ent].SpawnCheck
+	local tbl = self:GetData()
+	local CraftMaterials = CraftingRecipe[ent].Materials
+	local SpawnItem = CraftingRecipe[ent].SpawnFunction
+	local SpawnCheck = CraftingRecipe[ent].SpawnCheck
 	if CraftMaterials then
 		for k,v in pairs( CraftMaterials ) do
 			if self:GetNWInt( "Craft_"..k ) < v then
-				ply:SendLua( [[
-					chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Required items are not on the table!" ) 
-					surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND or GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
-				]] )
+				net.Start( "CraftMessage" )
+				net.WriteString( "Required items are not on the table!" )
+				net.WriteString( tbl.FailSound or "buttons/button2.wav" )
+				net.Send( ply )
 				return
 			end
 		end
 		if SpawnCheck and !SpawnCheck( ply, self ) then return end
 		if SpawnItem then
-			local validfunction = true
 			SpawnItem( ply, self )
-			self:EmitSound( CRAFT_CONFIG_CRAFT_SOUND or GetConVar( "Craft_Config_Craft_Sound" ):GetString() )
+			self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
 			net.Start( "CraftMessage" )
-			net.WriteBool( validfunction )
-			net.WriteString( entname )
+			net.WriteString( "Successfully crafted a "..entname.."." )
 			net.Send( ply )
 			hook.Run( "Craft_OnStartCrafting", ent, ply )
 		else
-			local validfunction = false
 			net.Start( "CraftMessage" )
-			net.WriteBool( validfunction )
-			net.WriteString( entname )
+			net.WriteString( "ERROR! Missing SpawnFunction for "..entname )
+			net.WriteString( tbl.FailSound or "buttons/button2.wav" )
 			net.Send( ply )
 			return
 		end
@@ -76,11 +86,12 @@ util.AddNetworkString( "DropItem" )
 local function DropItem( len, ply )
 	local ent = net.ReadEntity()
 	local item = net.ReadString()
+	local tbl = ent:GetData()
 	local e = ents.Create( item )
 	e:SetPos( ent:GetPos() + Vector( 0, 70, 0 ) )
 	e:Spawn()
 	ent:SetNWInt( "Craft_"..item, ent:GetNWInt( "Craft_"..item ) - 1 )
-	ent:EmitSound( CRAFT_CONFIG_DROP_SOUND or GetConVar( "Craft_Config_Drop_Sound" ):GetString() )
+	ent:EmitSound( tbl.DropSound or "physics/metal/metal_canister_impact_soft1.wav" )
 	hook.Run( "Craft_OnDropItem", ent, ply )
 end
 net.Receive( "DropItem", DropItem )
@@ -91,52 +102,35 @@ local function StartAutomate( len, ply )
 	local item = net.ReadString()
 	local itemname = net.ReadString()
 	local timername = "CraftAutomate"..ent:EntIndex()..item
+	local tbl = ent:GetData()
 	ent:SetNWBool( "CraftAutomate"..item, true )
-	timer.Create( timername, CRAFT_CONFIG_AUTOMATION_TIME or GetConVar( "Craft_Config_Automation_Time" ):GetInt(), 0, function()
-		local CraftMaterials = CraftingTable[item].Materials
-		local SpawnItem = CraftingTable[item].SpawnFunction
-		local SpawnCheck = CraftingTable[item].SpawnCheck
+	timer.Create( timername, tbl.AutomationTime or 120, 0, function()
+		local CraftMaterials = CraftingRecipe[item].Materials
+		local SpawnItem = CraftingRecipe[item].SpawnFunction
+		local SpawnCheck = CraftingRecipe[item].SpawnCheck
 		if CraftMaterials then
-			local radius = CRAFT_CONFIG_AUTOMATION_MESSAGE_RANGE or GetConVar( "Craft_Config_Automation_Message_Range" ):GetInt()
-			local findents = ents.FindInSphere( ent:GetPos(), radius )
 			for k,v in pairs( CraftMaterials ) do
 				if ent:GetNWInt( "Craft_"..k ) < v then
-					for a,b in pairs( findents ) do
-						if b == ply or radius == 0 then
-							ply:SendLua( [[
-								chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Automation failed. Table is missing ingredients." ) 
-								surface.PlaySound( CRAFT_CONFIG_FAIL_SOUND or GetConVar( "Craft_Config_Fail_Sound" ):GetString() )
-							]] )
-							break
-						end
-					end
+					net.Start( "CraftMessage" )
+					net.WriteString( "Automation failed. Table is missing ingredients." )
+					net.WriteString( tbl.FailSound or "buttons/button2.wav" )
+					net.Send( ply )
 					return
 				end
 			end
 			if SpawnCheck and !SpawnCheck( ply, ent ) then return end
 			if SpawnItem then
-				local validfunction = true
 				SpawnItem( ply, ent )
-				ent:EmitSound( CRAFT_CONFIG_CRAFT_SOUND or GetConVar( "Craft_Config_Craft_Sound" ):GetString() )
-				for k,v in pairs( findents ) do
-					if v == ply or radius == 0 then
-						net.Start( "CraftMessage" )
-						net.WriteBool( validfunction )
-						net.WriteString( itemname )
-						net.Send( ply )
-					end
-				end
+				ent:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
+				net.Start( "CraftMessage" )
+				net.WriteString( "Successfully crafted a "..itemname.."." )
+				net.Send( ply )
 				hook.Run( "Craft_OnStartCrafting", item, ply )
 			else
-				local validfunction = false
-				for k,v in pairs( findents ) do
-					if v == ply or radius == 0 then
-						net.Start( "CraftMessage" )
-						net.WriteBool( validfunction )
-						net.WriteString( itemname )
-						net.Send( ply )
-					end
-				end
+				net.Start( "CraftMessage" )
+				net.WriteString( "ERROR! Missing SpawnFunction for "..itemname )
+				net.WriteString( tbl.FailSound or "buttons/button2.wav" )
+				net.Send( ply )
 				return
 			end
 			for k,v in pairs( CraftMaterials ) do
@@ -160,11 +154,13 @@ end
 net.Receive( "StopAutomate", StopAutomate )
 
 function ENT:Touch( ent )
+	local typ = self:GetTableType()
+	local tbl = CraftingTable[typ]
 	for k,v in pairs( CraftingIngredient ) do
 		if self.TouchCooldown and self.TouchCooldown > CurTime() then return end
 		if k == ent:GetClass() then
 			self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
-			self:EmitSound( CRAFT_CONFIG_PLACE_SOUND or GetConVar( "Craft_Config_Place_Sound" ):GetString() )
+			self:EmitSound( tbl.PlaceSound or "physics/metal/metal_solid_impact_hard1.wav" )
 			local effectdata = EffectData()
 			effectdata:SetOrigin( ent:GetPos() )
 			effectdata:SetScale( 2 )
@@ -181,7 +177,8 @@ function ENT:OnTakeDamage( dmg )
 	local candmg = hook.Run( "Craft_OnTakeDamage", self, dmg )
 	if candmg == false then return end
 	if self:Health() <= 0 and !self.Exploding then
-		if CRAFT_CONFIG_SHOULD_EXPLODE or GetConVar( "Craft_Config_Should_Explode" ):GetBool() then
+		local tbl = self:GetData()
+		if tbl.ShouldExplode then
 			self.Exploding = true --Prevents a bunch of fires from spawning at once causing the server to hang for a few seconds if VFire is installed
 			local e = ents.Create( "env_explosion" )
 			e:SetPos( self:GetPos() )
@@ -191,7 +188,7 @@ function ENT:OnTakeDamage( dmg )
 			self:Remove()
 			hook.Run( "Craft_OnExplode", self )
 		else
-			self:EmitSound( CRAFT_CONFIG_DESTROY_SOUND or GetConVar( "Craft_Config_Destroy_Sound" ):GetString() )
+			self:EmitSound( tbl.DestroySound or "physics/metal/metal_box_break1.wav" )
 			self:Remove()
 		end
 		return
@@ -201,6 +198,7 @@ function ENT:OnTakeDamage( dmg )
 end
 
 function ENT:OnRemove()
+	if !self.AutomationTimers then return end
 	for _,v in pairs( self.AutomationTimers ) do
 		timer.Remove( v )
 	end
