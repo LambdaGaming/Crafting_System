@@ -4,9 +4,13 @@ CraftingRecipe = {}
 CraftingIngredient = {}
 MineableEntity = {}
 
---TODO: Add functions so people don't have to mess with tables, like how DarkRP handles custom stuff
+--[[
+This file allows you to manually configure the addon with Lua tables.
+You should only do stuff here if you're familiar with Lua and need to
+do something that isn't possible through the in-game config.
+]]
 
---Template mining entity
+--Template mining entity; The Health, Respawn, MinSpawn, and MaxSpawn options have fallbacks and are not required
 --[[
 	MineableEntity[1] = {
 		Name = "Rock",
@@ -15,8 +19,8 @@ MineableEntity = {}
 			"models/props_debris/barricade_short02a.mdl",
 			"models/props_debris/barricade_tall01a.mdl"
 		},
-		Tools = { ["weapon_crowbar"] = 5 },
-		Drops = { ["iron"] = 100 },
+		Tools = { ["weapon_crowbar"] = 5, ["weapon_stunstick"] = 2 },
+		Drops = { ["ucs_iron"] = 100 },
 		Health = 100,
 		Respawn = 300,
 		MinSpawn = 2,
@@ -32,7 +36,7 @@ MineableEntity[1] = {
         "models/props_debris/barricade_tall01a.mdl"
     },
     Tools = { ["weapon_crowbar"] = 5 },
-    Drops = { ["iron"] = 100 }
+    Drops = { ["ucs_iron"] = 100 }
 }
 
 --Template crafting table; All options except name and model have fallbacks and are not required
@@ -72,48 +76,34 @@ CraftingTable[1] = {
 	}
 ]]
 
-CraftingIngredient["iron"] = {
+CraftingIngredient["ucs_iron"] = {
 	Name = "Iron",
 	Category = "Default Ingredients"
 }
 
-CraftingIngredient["wood"] = {
+CraftingIngredient["ucs_wood"] = {
 	Name = "Wood",
 	Category = "Default Ingredients"
 }
 
 --Template recipe
 --[[
-	CraftingRecipe["weapon_crowbar"] = { --Add the entity name of the item in the brackets with quotes
+	CraftingRecipe[1] = {
 		Name = "Crowbar", --Name of the item, different from the item's entity name
-		Description = "Requires 1 ball.", --Description of the item
+		Description = "Requires 2 iron and 1 wood.", --Description of the item
 		Category = "Tools", --Optional. Category the item shows up in, has to match the name of a category created above
-		Materials = { --Entities that are required to craft this item, make sure you leave the entity names WITHOUT quotes!
-			iron = 2,
-			wood = 1
+        Entity = "weapon_crowbar", --Name of the entity that will be spawned. Does nothing if using Weapon parameter
+        Weapon = "weapon_crowbar", --Name of the weapon to give to the player. Does nothing if using Entity parameter
+        Types = { 1 }, --List of table types that this recipe will show up in
+		Materials = { --Entities that are required to craft this item
+			["ucs_iron"] = 2,
+			["ucs_wood"] = 1
 		},
-		SpawnCheck = function( ply, self ) --This function is optional, it runs a check to see if the player can craft the item before any materials are consumed
-			local blacklist = {
-				["gm_construct"] = true,
-				["gm_flatgrass"] = true
-			}
-			if blacklist[game.GetMap()] then
-				ply:ChatPrint( "This item cannot be crafted on the current map." )
-				return false --Example that checks to see if the player can craft the item on the current map
-			end
-			return true --The function always needs to return either true or false
-		end,
-		SpawnFunction = function( ply, self ) --In this function you are able to modify the player who is crafting, the table itself, and the item that is being crafted
-			local e = ents.Create( "weapon_crowbar" ) --Replace the entity name with the one at the very top inside the brackets
-			e:SetPos( self:GetPos() - Vector( 0, 0, -5 ) ) --A negative Z coordinate is added here to prevent items from spawning on top of the table and being consumed, you'll have to change it if you use a different model otherwise keep it as it is
+		SpawnOverride = function( ply, self ) --Optional. Causes Entity and Weapon parameters to be ignored
+			local e = ents.Create( "weapon_crowbar" )
+			e:SetPos( self:GetPos() )
 			e:Spawn()
-			if !util.IsAllInWorld( e ) then --If the model of your item is larger than the table, consider using this to detect when it spawns outside of the map
-				e:Remove()
-				ply:ChatPrint( "Crafted entity spawned outside of the map. You have been refunded. Please reposition the table." )
-				for k,v in pairs( CraftingRecipe["weapon_crowbar"].Materials ) do
-					self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) + v )
-				end
-			end
+			return e
 		end
 	}
 ]]
@@ -123,153 +113,109 @@ CraftingRecipe["weapon_pistol"] = {
 	Name = "9mm Pistol",
 	Description = "Requires 1 iron.",
 	Category = "Pistols",
+	Weapon = "weapon_pistol",
 	Materials = {
-		iron = 1
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_pistol" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 1
+	}
 }
 
 CraftingRecipe["weapon_357"] = {
 	Name = ".357 Revolver",
 	Description = "Requires 2 iron.",
 	Category = "Pistols",
+	Weapon = "weapon_357",
 	Materials = {
-		iron = 2
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_357" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 2
+	}
 }
 
 CraftingRecipe["weapon_smg1"] = {
 	Name = "SMG",
 	Description = "Requires 3 iron.",
 	Category = "SMGs",
+	Weapon = "weapon_smg1",
 	Materials = {
-		iron = 3
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_smg1" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 3
+	}
 }
 
 CraftingRecipe["weapon_ar2"] = {
 	Name = "Pulse Rifle",
 	Description = "Requires 4 iron.",
 	Category = "Rifles",
+	Weapon = "weapon_ar2",
 	Materials = {
-		iron = 4
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_ar2" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 4
+	}
 }
 
 CraftingRecipe["weapon_shotgun"] = {
 	Name = "Shotgun",
 	Description = "Requires 4 iron.",
 	Category = "Shotguns",
+	Weapon = "weapon_shotgun",
 	Materials = {
-		iron = 4
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_shotgun" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 4
+	}
 }
 
 CraftingRecipe["weapon_crossbow"] = {
 	Name = "Crossbow",
 	Description = "Requires 5 iron and 2 wood.",
 	Category = "Rifles",
+	Weapon = "weapon_crossbow",
 	Materials = {
-		iron = 5,
-		wood = 2
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_crossbow" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 5,
+        ["ucs_wood"] = 2
+	}
 }
 
 CraftingRecipe["weapon_rpg"] = {
 	Name = "RPG",
 	Description = "Requires 6 iron.",
 	Category = "Explosives",
+	Weapon = "weapon_rpg",
 	Materials = {
-		iron = 6
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_rpg" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 6
+	}
 }
 
 CraftingRecipe["weapon_frag"] = {
 	Name = "Frag Grenade",
 	Description = "Requires 5 iron.",
 	Category = "Explosives",
+	Weapon = "weapon_frag",
 	Materials = {
-		iron = 5
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_frag" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 5
+	}
 }
 
 CraftingRecipe["weapon_slam"] = {
 	Name = "S.L.A.M.",
 	Description = "Requires 6 iron.",
 	Category = "Explosives",
+	Weapon = "weapon_slam",
 	Materials = {
-		iron = 6
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_slam" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 6
+	}
 }
 
 CraftingRecipe["weapon_crowbar"] = {
 	Name = "Crowbar",
 	Description = "Requires 1 iron.",
 	Category = "Tools",
+	Weapon = "weapon_crowbar",
 	Materials = {
-		iron = 1
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_crowbar" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 1
+	}
 }
 
 CraftingRecipe["weapon_stunstick"] = {
 	Name = "Stunstick",
 	Description = "Requires 2 iron.",
 	Category = "Tools",
+	Weapon = "weapon_stunstick",
 	Materials = {
-		iron = 2
-	},
-	SpawnFunction = function( ply, self )
-		local e = ents.Create( "weapon_stunstick" )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
-		e:Spawn()
-	end
+		["ucs_iron"] = 2
+	}
 }

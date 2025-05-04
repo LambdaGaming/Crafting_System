@@ -44,39 +44,40 @@ util.AddNetworkString( "CraftMessage" )
 local function StartCrafting( len, ply )
 	local self = net.ReadEntity()
 	local ent = net.ReadString()
-	local entname = net.ReadString()
 	local tbl = self:GetData()
-	local CraftMaterials = CraftingRecipe[ent].Materials
-	local SpawnItem = CraftingRecipe[ent].SpawnFunction
-	local SpawnCheck = CraftingRecipe[ent].SpawnCheck
-	if CraftMaterials then
-		for k,v in pairs( CraftMaterials ) do
-			if self:GetNWInt( "Craft_"..k ) < v then
-				net.Start( "CraftMessage" )
-				net.WriteString( "Required items are not on the table!" )
-				net.WriteString( tbl.FailSound or "buttons/button2.wav" )
-				net.Send( ply )
-				return
-			end
-		end
-		if SpawnCheck and !SpawnCheck( ply, self ) then return end
-		if SpawnItem then
-			SpawnItem( ply, self )
-			self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
+	local recipe = CraftingRecipe[ent]
+	if !recipe or !recipe.Materials or !recipe.Name then
+		error( "Tried to craft using an invalid recipe!" )
+	end
+	for k,v in pairs( recipe.Materials ) do
+		if self:GetNWInt( "Craft_"..k ) < v then
 			net.Start( "CraftMessage" )
-			net.WriteString( "Successfully crafted a "..entname.."." )
-			net.Send( ply )
-			hook.Run( "Craft_OnStartCrafting", ent, ply )
-		else
-			net.Start( "CraftMessage" )
-			net.WriteString( "ERROR! Missing SpawnFunction for "..entname )
+			net.WriteString( "Required items are not on the table!" )
 			net.WriteString( tbl.FailSound or "buttons/button2.wav" )
 			net.Send( ply )
 			return
 		end
-		for k,v in pairs( CraftMaterials ) do
-			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v ) --Only removes required materials
-		end
+	end
+	if hook.Run( "UCS_CanCraft", ply, self,  ) == false then return end
+	if recipe.SpawnOverride then
+		local e = recipe.SpawnOverride( ply, self )
+		hook.Run( "UCS_OnCrafted", ply, self, ent, e )
+	elseif recipe.Entity then
+		local e = ents.Create( recipe.Entity )
+		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:Spawn()
+		e:Activate()
+		self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
+		hook.Run( "UCS_OnCrafted", ply, self, ent, e )
+	elseif recipe.Weapon then
+		ply:Give( recipe.Weapon )
+		hook.Run( "UCS_OnCrafted", ply, self, ent )
+	end
+	net.Start( "CraftMessage" )
+	net.WriteString( "Successfully crafted a "..recipe.Name.."." )
+	net.Send( ply )
+	for k,v in pairs( recipe.Materials ) do
+		self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v ) --Only removes required materials
 	end
 end
 net.Receive( "StartCrafting", StartCrafting )
@@ -153,8 +154,7 @@ end
 net.Receive( "StopAutomate", StopAutomate )
 
 function ENT:Touch( ent )
-	local typ = self:GetTableType()
-	local tbl = CraftingTable[typ]
+	local tbl = self:GetData()
 	for k,v in pairs( CraftingIngredient ) do
 		if self.TouchCooldown and self.TouchCooldown > CurTime() then return end
 		if k == ent:GetClass() then

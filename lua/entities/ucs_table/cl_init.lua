@@ -4,6 +4,7 @@ local DrawItems, DrawRecipes, DrawMainMenu --Initialize these early so the clien
 local MENU_COLOR = Color( 49, 53, 61, 200 )
 local CAT_COLOR = Color( 49, 53, 61, 255 )
 local BUT_COLOR = Color( 230, 93, 80, 255 )
+local SelectedCraftingItem
 
 local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 	local tbl = ent:GetData()
@@ -19,8 +20,7 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 	end
 	mainbuttons.DoClick = function()
 		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
-		ply.SelectedCraftingItem = tostring( k )
-		ply.SelectedCraftingItemName = v.Name
+		SelectedCraftingItem = tostring( k )
 		surface.PlaySound( tbl.SelectSound or "buttons/lightswitch2.wav" )
 		main:Close()
 		DrawRecipes( ent )
@@ -250,12 +250,9 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		DrawRecipeButtons( k, v, ply, ent, mainframe, mainframescroll, true )
 	end
 
+	local name = CraftingRecipe[SelectedCraftingItem] and CraftingRecipe[SelectedCraftingItem].Name or "N/A"
 	local selectedbutton = vgui.Create( "DButton", mainframe )
-	if ply.SelectedCraftingItemName then
-		selectedbutton:SetText( "Currently Selected Item: "..ply.SelectedCraftingItemName )
-	else
-		selectedbutton:SetText( "Currently Selected Item: N/A" )
-	end
+	selectedbutton:SetText( "Currently Selected Item: "..name )
 	selectedbutton:SetTextColor( tbl.TextColor or color_white )
 	selectedbutton:SetPos( 5, 465 )
 	selectedbutton:SetSize( 245, 30 )
@@ -272,19 +269,17 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		draw.RoundedBoxEx( 10, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR, false, true, false, true )
 	end
 	craftbutton.DoClick = function()
-		if !ply.SelectedCraftingItem then
+		if !SelectedCraftingItem then
 			chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "Please select an item to craft." )
 			surface.PlaySound( tbl.FailSound or "buttons/button2.wav" )
 			return
 		end
 		net.Start( "StartCrafting" )
 		net.WriteEntity( ent )
-		net.WriteString( ply.SelectedCraftingItem ) --Sends the entity class name that was saved earlier
-		net.WriteString( ply.SelectedCraftingItemName ) --Sends the actual name that was saved earlier
-		net.SendToServer() --Sends the message to craft the item
+		net.WriteString( SelectedCraftingItem )
+		net.SendToServer()
 		mainframe:Close()
-		ply.SelectedCraftingItem = nil --Resets the entity class name
-		ply.SelectedCraftingItemName = nil --Resets the actual name
+		SelectedCraftingItem = nil
 	end
 	hook.Run( "Craft_OnRecipesOpen", ent, ply )
 end
