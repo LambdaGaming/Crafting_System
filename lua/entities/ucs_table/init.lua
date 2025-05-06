@@ -151,22 +151,20 @@ local function StopAutomate( len, ply )
 end
 net.Receive( "StopAutomate", StopAutomate )
 
-function ENT:Touch( ent )
+function ENT:StartTouch( ent )
 	local tbl = self:GetData()
-	for k,v in pairs( CraftingIngredient ) do
-		if self.TouchCooldown and self.TouchCooldown > CurTime() then return end
-		if k == ent:GetClass() then
-			self:SetNWInt( "Craft_"..ent:GetClass(), self:GetNWInt( "Craft_"..ent:GetClass() ) + 1 )
-			self:EmitSound( tbl.PlaceSound or "physics/metal/metal_solid_impact_hard1.wav" )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( ent:GetPos() )
-			effectdata:SetScale( 2 )
-			util.Effect( "ManhackSparks", effectdata )
-			hook.Run( "UCS_OnAddIngredient", self, ent )
-			ent:Remove()
-			self.TouchCooldown = CurTime() + 0.1 --Small cooldown since ent:Touch runs multiple times before the for loop has time to break
-			break
-		end
+	local typ = self:GetTableType()
+	local class = ent:GetClass()
+	local ingredient = CraftingIngredient[class]
+	if ingredient and ingredient.Types and ingredient.Types[typ] then
+		self:SetNWInt( "Craft_"..class, self:GetNWInt( "Craft_"..class ) + 1 )
+		self:EmitSound( tbl.PlaceSound or "physics/metal/metal_solid_impact_hard1.wav" )
+		local effectdata = EffectData()
+		effectdata:SetOrigin( ent:GetPos() )
+		effectdata:SetScale( 2 )
+		util.Effect( "ManhackSparks", effectdata )
+		hook.Run( "UCS_OnAddIngredient", self, ent )
+		ent:Remove()
 	end
 end
 
