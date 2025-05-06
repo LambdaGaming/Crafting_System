@@ -70,36 +70,39 @@ CraftingTable["hl2"] = {
 
 --Template Ingredient
 --[[
-	CraftingIngredient["iron"] = { --Class name of the entity goes in the brackets
+	CraftingIngredient["entity_name"] = { --Class name of the entity goes in the brackets
 		Name = "Iron", --Name that shows up in the ingredient list
-		Category = "Default Ingredients" --Optional. Category the item shows up in, has to match the name of an ingredient category created below
+		Category = "Default Ingredients", --Optional. Category the item shows up in, has to match the name of an ingredient category created below
+		Types = { ["example"] = true } --List of table types that this ingredient will show up in
 	}
 ]]
 
 CraftingIngredient["ucs_iron"] = {
 	Name = "Iron",
-	Category = "Default Ingredients"
+	Category = "Default Ingredients",
+	Types = { ["hl2"] = true }
 }
 
 CraftingIngredient["ucs_wood"] = {
 	Name = "Wood",
-	Category = "Default Ingredients"
+	Category = "Default Ingredients",
+	Types = { ["hl2"] = true }
 }
 
 --Template recipe
 --[[
-	CraftingRecipe[1] = {
+	CraftingRecipe["weapon_crowbar"] = { --Entity class of the item being crafted
 		Name = "Crowbar", --Name of the item, different from the item's entity name
 		Description = "Requires 2 iron and 1 wood.", --Description of the item
 		Category = "Tools", --Optional. Category the item shows up in, has to match the name of a category created above
-        Entity = "weapon_crowbar", --Name of the entity that will be spawned. Does nothing if using Weapon parameter
-        Weapon = "weapon_crowbar", --Name of the weapon to give to the player. Does nothing if using Entity parameter
-        Types = { 1 }, --List of table types that this recipe will show up in
+        Types = { --List of table types that this recipe will show up in
+			["example"] = true
+		},
 		Materials = { --Entities that are required to craft this item
 			["ucs_iron"] = 2,
 			["ucs_wood"] = 1
 		},
-		SpawnOverride = function( ply, self ) --Optional. Causes Entity and Weapon parameters to be ignored
+		SpawnOverride = function( ply, self ) --Optional. Entity class above will be ignored if this function is present
 			local e = ents.Create( "weapon_crowbar" )
 			e:SetPos( self:GetPos() )
 			e:Spawn()
@@ -113,7 +116,6 @@ CraftingRecipe["weapon_pistol"] = {
 	Name = "9mm Pistol",
 	Description = "Requires 1 iron.",
 	Category = "Pistols",
-	Weapon = "weapon_pistol",
 	Materials = {
 		["ucs_iron"] = 1
 	}
@@ -123,7 +125,6 @@ CraftingRecipe["weapon_357"] = {
 	Name = ".357 Revolver",
 	Description = "Requires 2 iron.",
 	Category = "Pistols",
-	Weapon = "weapon_357",
 	Materials = {
 		["ucs_iron"] = 2
 	}
@@ -133,7 +134,6 @@ CraftingRecipe["weapon_smg1"] = {
 	Name = "SMG",
 	Description = "Requires 3 iron.",
 	Category = "SMGs",
-	Weapon = "weapon_smg1",
 	Materials = {
 		["ucs_iron"] = 3
 	}
@@ -143,7 +143,6 @@ CraftingRecipe["weapon_ar2"] = {
 	Name = "Pulse Rifle",
 	Description = "Requires 4 iron.",
 	Category = "Rifles",
-	Weapon = "weapon_ar2",
 	Materials = {
 		["ucs_iron"] = 4
 	}
@@ -153,7 +152,6 @@ CraftingRecipe["weapon_shotgun"] = {
 	Name = "Shotgun",
 	Description = "Requires 4 iron.",
 	Category = "Shotguns",
-	Weapon = "weapon_shotgun",
 	Materials = {
 		["ucs_iron"] = 4
 	}
@@ -163,7 +161,6 @@ CraftingRecipe["weapon_crossbow"] = {
 	Name = "Crossbow",
 	Description = "Requires 5 iron and 2 wood.",
 	Category = "Rifles",
-	Weapon = "weapon_crossbow",
 	Materials = {
 		["ucs_iron"] = 5,
         ["ucs_wood"] = 2
@@ -174,7 +171,6 @@ CraftingRecipe["weapon_rpg"] = {
 	Name = "RPG",
 	Description = "Requires 6 iron.",
 	Category = "Explosives",
-	Weapon = "weapon_rpg",
 	Materials = {
 		["ucs_iron"] = 6
 	}
@@ -184,7 +180,6 @@ CraftingRecipe["weapon_frag"] = {
 	Name = "Frag Grenade",
 	Description = "Requires 5 iron.",
 	Category = "Explosives",
-	Weapon = "weapon_frag",
 	Materials = {
 		["ucs_iron"] = 5
 	}
@@ -194,7 +189,6 @@ CraftingRecipe["weapon_slam"] = {
 	Name = "S.L.A.M.",
 	Description = "Requires 6 iron.",
 	Category = "Explosives",
-	Weapon = "weapon_slam",
 	Materials = {
 		["ucs_iron"] = 6
 	}
@@ -204,7 +198,6 @@ CraftingRecipe["weapon_crowbar"] = {
 	Name = "Crowbar",
 	Description = "Requires 1 iron.",
 	Category = "Tools",
-	Weapon = "weapon_crowbar",
 	Materials = {
 		["ucs_iron"] = 1
 	}
@@ -214,7 +207,6 @@ CraftingRecipe["weapon_stunstick"] = {
 	Name = "Stunstick",
 	Description = "Requires 2 iron.",
 	Category = "Tools",
-	Weapon = "weapon_stunstick",
 	Materials = {
 		["ucs_iron"] = 2
 	}

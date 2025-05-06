@@ -61,17 +61,14 @@ local function StartCrafting( len, ply )
 	if hook.Run( "UCS_CanCraft", ply, self, recipe ) == false then return end
 	if recipe.SpawnOverride then
 		local e = recipe.SpawnOverride( ply, self )
-		hook.Run( "UCS_OnCrafted", ply, self, item, e )
-	elseif recipe.Entity then
-		local e = ents.Create( recipe.Entity )
+		hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
+	else
+		local e = ents.Create( item )
 		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
 		e:Spawn()
 		e:Activate()
 		self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
-		hook.Run( "UCS_OnCrafted", ply, self, item, e )
-	elseif recipe.Weapon then
-		ply:Give( recipe.Weapon )
-		hook.Run( "UCS_OnCrafted", ply, self, item )
+		hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
 	end
 	net.Start( "CraftMessage" )
 	net.WriteString( "Successfully crafted a "..recipe.Name.."." )
@@ -127,17 +124,14 @@ local function StartAutomate( len, ply )
 		if hook.Run( "UCS_CanCraft", ply, self, recipe ) == false then return end
 		if recipe.SpawnOverride then
 			local e = recipe.SpawnOverride( ply, self )
-			hook.Run( "UCS_OnCrafted", ply, self, item, e )
-		elseif recipe.Entity then
-			local e = ents.Create( recipe.Entity )
+			hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
+		else
+			local e = ents.Create( item )
 			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
 			e:Spawn()
 			e:Activate()
 			self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
-			hook.Run( "UCS_OnCrafted", ply, self, item, e )
-		elseif recipe.Weapon then
-			ply:Give( recipe.Weapon )
-			hook.Run( "UCS_OnCrafted", ply, self, item )
+			hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
 		end
 		for k,v in pairs( recipe.Materials ) do
 			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v )

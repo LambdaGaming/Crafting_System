@@ -114,6 +114,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	local nocategory = {}
 	local categories = {}
 	local tbl = ent:GetData()
+	local typ = ent:GetTableType()
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Items currently on the table:" )
 	mainframe:SetSize( 500, 500 )
@@ -162,6 +163,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 		end
 
 		for k,v in pairs( CraftingIngredient ) do --Looks over the keys inside the materials table
+			if !v.Types or !v.Types[typ] then continue end
 			if !v.Category and !table.HasValue( nocategory, v ) then
 				table.insert( nocategory, v )
 				continue
@@ -233,6 +235,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 			draw.RoundedBox( 8, 0, 0, w, h, tbl.CategoryColor or CAT_COLOR )
 		end
 		for k,v in pairs( CraftingRecipe ) do --Looks over all recipes
+			if !v.Types or !v.Types[typ] then continue end
 			if !v.Category and !table.HasValue( nocategory, v ) then
 				table.insert( nocategory, v )
 				continue
