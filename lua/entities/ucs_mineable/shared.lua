@@ -13,7 +13,7 @@ function ENT:SetupDataTables()
 end
 
 function ENT:GetData()
-	local typ = self:GetTableType()
+	local typ = self:GetMineableType()
 	if !MineableEntity[typ] then
 		error( "Table is set to type that doesn't exist!" )
 	end

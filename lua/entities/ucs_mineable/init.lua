@@ -72,23 +72,25 @@ function ENT:OnTakeDamage( dmg )
 		end
 		self:SetHealth( math.Clamp( health - damage, 0, maxhealth ) )
 	end
-	for i=1, math.random( tbl.MinSpawn or 2, tbl.MaxSpawn or 6 ) do
-		local shouldspawn = false
-		local entspawn
-		for k,v in pairs( tbl.Drops ) do
-			if math.random( 1, 100 ) < v then
-				shouldspawn = true
-				entspawn = k
+	if self:Health() <= 0 then
+		for i=1, math.random( tbl.MinSpawn or 2, tbl.MaxSpawn or 6 ) do
+			local shouldspawn = false
+			local entspawn
+			for k,v in pairs( tbl.Drops ) do
+				if math.random( 1, 100 ) < v then
+					shouldspawn = true
+					entspawn = k
+				end
+			end
+			if shouldspawn then
+				local e = ents.Create( entspawn )
+				e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
+				e:Spawn()
 			end
 		end
-		if shouldspawn then
-			local e = ents.Create( entspawn )
-			e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
-			e:Spawn()
-		end
+		self:Hide()
+		hook.Run( "UCS_OnMineableMined", self, ply )
 	end
-	self:Hide()
-	hook.Run( "UCS_OnMineableMined", self, ply )
 end
 
 function ENT:OnRemove()
