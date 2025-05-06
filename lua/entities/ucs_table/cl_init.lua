@@ -56,7 +56,6 @@ local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
 				net.Start( "StartAutomate" )
 				net.WriteEntity( ent )
 				net.WriteString( k )
-				net.WriteString( v.Name )
 				net.SendToServer()
 				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will now automate production of the "..v.Name.."." )
 			else

@@ -43,9 +43,9 @@ util.AddNetworkString( "StartCrafting" )
 util.AddNetworkString( "CraftMessage" )
 local function StartCrafting( len, ply )
 	local self = net.ReadEntity()
-	local ent = net.ReadString()
+	local item = net.ReadString()
 	local tbl = self:GetData()
-	local recipe = CraftingRecipe[ent]
+	local recipe = CraftingRecipe[item]
 	if !recipe or !recipe.Materials or !recipe.Name then
 		error( "Tried to craft using an invalid recipe!" )
 	end
@@ -58,20 +58,20 @@ local function StartCrafting( len, ply )
 			return
 		end
 	end
-	if hook.Run( "UCS_CanCraft", ply, self,  ) == false then return end
+	if hook.Run( "UCS_CanCraft", ply, self, recipe ) == false then return end
 	if recipe.SpawnOverride then
 		local e = recipe.SpawnOverride( ply, self )
-		hook.Run( "UCS_OnCrafted", ply, self, ent, e )
+		hook.Run( "UCS_OnCrafted", ply, self, item, e )
 	elseif recipe.Entity then
 		local e = ents.Create( recipe.Entity )
 		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
 		e:Spawn()
 		e:Activate()
 		self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
-		hook.Run( "UCS_OnCrafted", ply, self, ent, e )
+		hook.Run( "UCS_OnCrafted", ply, self, item, e )
 	elseif recipe.Weapon then
 		ply:Give( recipe.Weapon )
-		hook.Run( "UCS_OnCrafted", ply, self, ent )
+		hook.Run( "UCS_OnCrafted", ply, self, item )
 	end
 	net.Start( "CraftMessage" )
 	net.WriteString( "Successfully crafted a "..recipe.Name.."." )
@@ -84,72 +84,77 @@ net.Receive( "StartCrafting", StartCrafting )
 
 util.AddNetworkString( "DropItem" )
 local function DropItem( len, ply )
-	local ent = net.ReadEntity()
+	local self = net.ReadEntity()
 	local item = net.ReadString()
-	local tbl = ent:GetData()
+	local tbl = self:GetData()
 	local e = ents.Create( item )
-	e:SetPos( ent:GetPos() + Vector( 0, 70, 0 ) )
+	e:SetPos( self:GetPos() + Vector( 0, 70, 0 ) )
 	e:Spawn()
-	ent:SetNWInt( "Craft_"..item, ent:GetNWInt( "Craft_"..item ) - 1 )
-	ent:EmitSound( tbl.DropSound or "physics/metal/metal_canister_impact_soft1.wav" )
-	hook.Run( "Craft_OnDropItem", ent, ply )
+	self:SetNWInt( "Craft_"..item, self:GetNWInt( "Craft_"..item ) - 1 )
+	self:EmitSound( tbl.DropSound or "physics/metal/metal_canister_impact_soft1.wav" )
+	hook.Run( "Craft_OnDropItem", self, ply )
 end
 net.Receive( "DropItem", DropItem )
 
 util.AddNetworkString( "StartAutomate" )
 local function StartAutomate( len, ply )
-	local ent = net.ReadEntity()
+	local self = net.ReadEntity()
 	local item = net.ReadString()
-	local itemname = net.ReadString()
-	local timername = "CraftAutomate"..ent:EntIndex()..item
-	local tbl = ent:GetData()
-	ent:SetNWBool( "CraftAutomate"..item, true )
-	timer.Create( timername, tbl.AutomationTime or 120, 0, function()
-		local CraftMaterials = CraftingRecipe[item].Materials
-		local SpawnItem = CraftingRecipe[item].SpawnFunction
-		local SpawnCheck = CraftingRecipe[item].SpawnCheck
-		if CraftMaterials then
-			for k,v in pairs( CraftMaterials ) do
-				if ent:GetNWInt( "Craft_"..k ) < v then
-					net.Start( "CraftMessage" )
-					net.WriteString( "Automation failed. Table is missing ingredients." )
-					net.WriteString( tbl.FailSound or "buttons/button2.wav" )
-					net.Send( ply )
-					return
-				end
-			end
-			if SpawnCheck and !SpawnCheck( ply, ent ) then return end
-			if SpawnItem then
-				SpawnItem( ply, ent )
-				ent:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
+	local tbl = self:GetData()
+	local recipe = CraftingRecipe[item]
+	local timerName = "CraftAutomate"..self:EntIndex()..item
+	if !recipe or !recipe.Materials or !recipe.Name then
+		error( "Tried to craft using an invalid recipe!" )
+	end
+	self:SetNWBool( "CraftAutomate"..item, true )
+	timer.Create( timerName, tbl.AutomationTime or 120, 0, function()
+		if !IsValid( ply ) then
+			--Remove timer if player who initiated it left the server
+			self:SetNWBool( "CraftAutomate"..item, false )
+			timer.Remove( timerName )
+			table.RemoveByValue( self.AutomationTimers, timerName )
+			return
+		end
+		for k,v in pairs( recipe.Materials ) do
+			if self:GetNWInt( "Craft_"..k ) < v then
 				net.Start( "CraftMessage" )
-				net.WriteString( "Successfully crafted a "..itemname.."." )
-				net.Send( ply )
-				hook.Run( "Craft_OnStartCrafting", item, ply )
-			else
-				net.Start( "CraftMessage" )
-				net.WriteString( "ERROR! Missing SpawnFunction for "..itemname )
+				net.WriteString( "Automation failed. Table is missing ingredients." )
 				net.WriteString( tbl.FailSound or "buttons/button2.wav" )
 				net.Send( ply )
 				return
 			end
-			for k,v in pairs( CraftMaterials ) do
-				ent:SetNWInt( "Craft_"..k, ent:GetNWInt( "Craft_"..k ) - v )
-			end
+		end
+		if hook.Run( "UCS_CanCraft", ply, self, recipe ) == false then return end
+		if recipe.SpawnOverride then
+			local e = recipe.SpawnOverride( ply, self )
+			hook.Run( "UCS_OnCrafted", ply, self, item, e )
+		elseif recipe.Entity then
+			local e = ents.Create( recipe.Entity )
+			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+			e:Spawn()
+			e:Activate()
+			self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
+			hook.Run( "UCS_OnCrafted", ply, self, item, e )
+		elseif recipe.Weapon then
+			ply:Give( recipe.Weapon )
+			hook.Run( "UCS_OnCrafted", ply, self, item )
+		end
+		for k,v in pairs( recipe.Materials ) do
+			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v )
 		end
 	end )
-	table.insert( ent.AutomationTimers, timername )
+	table.insert( self.AutomationTimers, timerName )
 end
 net.Receive( "StartAutomate", StartAutomate )
 
 util.AddNetworkString( "StopAutomate" )
 local function StopAutomate( len, ply )
-	local ent = net.ReadEntity()
+	local self = net.ReadEntity()
 	local item = net.ReadString()
-	local timername = "CraftAutomate"..ent:EntIndex()..item
-	ent:SetNWBool( "CraftAutomate"..item, false )
-	timer.Remove( timername )
-	table.RemoveByValue( ent.AutomationTimers, timername )
+	local timerName = "CraftAutomate"..self:EntIndex()..item
+	self:SetNWBool( "CraftAutomate"..item, false )
+	timer.Remove( timerName )
+	table.RemoveByValue( self.AutomationTimers, timerName )
 end
 net.Receive( "StopAutomate", StopAutomate )
 

@@ -42,7 +42,7 @@ MineableEntity[1] = {
 --Template crafting table; All options except name and model have fallbacks and are not required
 --[[
 	CraftingTable[1] = {
-		Name = "HL2 Weapons Table",
+		Name = "Example Table",
 		Model = "models/props_wasteland/controlroom_desk001b.mdl",
 		Health = 500,
 		Material = "",
