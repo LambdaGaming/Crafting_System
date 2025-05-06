@@ -93,7 +93,6 @@ local function DrawIngredientButtons( k, v, ent, main, scroll, nocat )
 	scrollbutton.DoClick = function()
 		if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
 			surface.PlaySound( tbl.FailSound or "buttons/button2.wav" )
-			hook.Run( "Craft_OnDropItemFail", ent )
 			return --Prevents players from having negative ingredients
 		end
 		if MenuReloadCooldown > CurTime() then return end
@@ -180,7 +179,6 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 	for k,v in pairs( nocategory ) do
 		DrawIngredientButtons( k, v, ent, mainframe, mainframescroll, true )
 	end
-	hook.Run( "Craft_OnIngredientsOpen", ent )
 end
 
 DrawRecipes = function( ent ) --Panel that draws the list of recipes
@@ -283,7 +281,6 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		mainframe:Close()
 		SelectedCraftingItem = nil
 	end
-	hook.Run( "Craft_OnRecipesOpen", ent, ply )
 end
 
 DrawMainMenu = function( ent ) --Panel that draws the main menu
@@ -324,7 +321,6 @@ DrawMainMenu = function( ent ) --Panel that draws the main menu
 		mainframe:Close()
 		surface.PlaySound( tbl.UISound or "ui/buttonclickrelease.wav" )
 	end
-	hook.Run( "Craft_OnMainMenuOpen", ent )
 end
 
 net.Receive( "CraftingTableMenu", function( len ) --Receiving the net message to open the main crafting table menu

@@ -26,41 +26,38 @@ function ENT:Initialize()
 	self:SetHealth( tbl.Health or 100 )
 	self:SetMaxHealth( tbl.Health or 100 )
 	self:SetNWBool( "IsHidden", false )
-	hook.Run( "Craft_Rock_OnSpawn", self )
 end
 
-local function UnhideEnt( ent )
-	if IsValid( ent ) then
-		ent:SetSolid( SOLID_VPHYSICS )
-		ent:SetMoveType( MOVETYPE_VPHYSICS )
-		ent:SetColor( color_white )
-		ent:SetNWBool( "IsHidden", false )
-		ent:SetHealth( ent:GetMaxHealth() )
-		local phys = ent:GetPhysicsObject()
-		if phys:IsValid() then
-			phys:EnableMotion( false )
-		end
-		hook.Run( "Craft_Rock_OnRespawn", ent )
+function ENT:Show()
+	self:SetSolid( SOLID_VPHYSICS )
+	self:SetMoveType( MOVETYPE_VPHYSICS )
+	self:SetColor( color_white )
+	self:SetNWBool( "IsHidden", false )
+	self:SetHealth( self:GetMaxHealth() )
+	local phys = self:GetPhysicsObject()
+	if phys:IsValid() then
+		phys:EnableMotion( false )
 	end
+	hook.Run( "UCS_OnMineableRespawned", self )
 end
 
-local function HideEnt( ent )
-	if IsValid( ent ) then
-		local tbl = ent:GetData()
-		local color = ent:GetColor()
-		ent:SetSolid( SOLID_NONE )
-		ent:SetMoveType( MOVETYPE_NONE )
-		ent:SetColor( ColorAlpha( color, 0 ) )
-		ent:SetNWBool( "IsHidden", true )
-		timer.Create( "Hidden_"..ent:EntIndex(), tbl.Respawn or 300, 1, function() UnhideEnt( ent ) end )
-	end
+function ENT:Hide()
+	local tbl = self:GetData()
+	local color = self:GetColor()
+	self:SetSolid( SOLID_NONE )
+	self:SetMoveType( MOVETYPE_NONE )
+	self:SetColor( ColorAlpha( color, 0 ) )
+	self:SetNWBool( "IsHidden", true )
+	timer.Create( "Hidden_"..self:EntIndex(), tbl.Respawn or 300, 1, function()
+		if IsValid( self ) then self:Show() end
+	end )
 end
 
 function ENT:OnTakeDamage( dmg )
 	local ply = dmg:GetAttacker()
-	if !ply:IsPlayer() or self:Health() <= 0 then return end
-	local wep = ply:GetActiveWeapon()
 	local hidden = self:GetNWBool( "IsHidden" )
+	if !ply:IsPlayer() or self:Health() <= 0 or hidden then return end
+	local wep = ply:GetActiveWeapon()
 	local wepclass = string.lower( wep:GetClass() )
 	local tbl = self:GetData()
 	local tool = tbl.Tools[wepclass]
@@ -75,25 +72,23 @@ function ENT:OnTakeDamage( dmg )
 		end
 		self:SetHealth( math.Clamp( health - damage, 0, maxhealth ) )
 	end
-	if self:Health() <= 0 and !hidden then
-		for i=1, math.random( tbl.MinSpawn or 2, tbl.MaxSpawn or 6 ) do
-			local shouldspawn = false
-			local entspawn
-			for k,v in pairs( tbl.Drops ) do
-				if math.random( 1, 100 ) < v then
-					shouldspawn = true
-					entspawn = k
-				end
-			end
-			if shouldspawn then
-				local e = ents.Create( entspawn )
-				e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
-				e:Spawn()
+	for i=1, math.random( tbl.MinSpawn or 2, tbl.MaxSpawn or 6 ) do
+		local shouldspawn = false
+		local entspawn
+		for k,v in pairs( tbl.Drops ) do
+			if math.random( 1, 100 ) < v then
+				shouldspawn = true
+				entspawn = k
 			end
 		end
-		HideEnt( self )
-		hook.Run( "Craft_Rock_OnMined", self, ply )
+		if shouldspawn then
+			local e = ents.Create( entspawn )
+			e:SetPos( self:GetPos() + Vector( 0, 0, i * 5 ) )
+			e:Spawn()
+		end
 	end
+	self:Hide()
+	hook.Run( "UCS_OnMineableMined", self, ply )
 end
 
 function ENT:OnRemove()

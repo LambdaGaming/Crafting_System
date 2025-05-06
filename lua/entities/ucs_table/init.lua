@@ -26,17 +26,16 @@ function ENT:Initialize()
 	self:SetMaterial( tbl.Material or "" )
 	self.AutomationTimers = {}
     self:PhysWake()
-	hook.Run( "Craft_OnSpawn", self )
 end
 
 util.AddNetworkString( "CraftingTableMenu" )
-function ENT:Use( activator, caller )
-	local canuse = hook.Run( "Craft_OnUse", self, activator )
-	if !activator:IsPlayer() or canuse == false then return end
+function ENT:Use( ply )
+	local canuse = hook.Run( "UCS_CanUseTable", self, ply )
+	if !ply:IsPlayer() or canuse == false then return end
 	net.Start( "CraftingTableMenu" )
 	net.WriteEntity( self )
-	net.WriteEntity( activator )
-	net.Send( activator )
+	net.WriteEntity( ply )
+	net.Send( ply )
 end
 
 util.AddNetworkString( "StartCrafting" )
@@ -58,17 +57,17 @@ local function StartCrafting( len, ply )
 			return
 		end
 	end
-	if hook.Run( "UCS_CanCraft", ply, self, recipe ) == false then return end
+	if hook.Run( "UCS_CanCraft", self, ply, recipe ) == false then return end
 	if recipe.SpawnOverride then
 		local e = recipe.SpawnOverride( ply, self )
-		hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
+		hook.Run( "UCS_OnCrafted", self, ply, recipe, e )
 	else
 		local e = ents.Create( item )
 		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
 		e:Spawn()
 		e:Activate()
 		self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
-		hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
+		hook.Run( "UCS_OnCrafted", self, ply, recipe, e )
 	end
 	net.Start( "CraftMessage" )
 	net.WriteString( "Successfully crafted a "..recipe.Name.."." )
@@ -89,7 +88,7 @@ local function DropItem( len, ply )
 	e:Spawn()
 	self:SetNWInt( "Craft_"..item, self:GetNWInt( "Craft_"..item ) - 1 )
 	self:EmitSound( tbl.DropSound or "physics/metal/metal_canister_impact_soft1.wav" )
-	hook.Run( "Craft_OnDropItem", self, ply )
+	hook.Run( "UCS_OnDropIngredient", self, ply, e )
 end
 net.Receive( "DropItem", DropItem )
 
@@ -121,17 +120,17 @@ local function StartAutomate( len, ply )
 				return
 			end
 		end
-		if hook.Run( "UCS_CanCraft", ply, self, recipe ) == false then return end
+		if hook.Run( "UCS_CanCraft", self, ply, recipe ) == false then return end
 		if recipe.SpawnOverride then
 			local e = recipe.SpawnOverride( ply, self )
-			hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
+			hook.Run( "UCS_OnCrafted", self, ply, recipe, e )
 		else
 			local e = ents.Create( item )
 			e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
 			e:Spawn()
 			e:Activate()
 			self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
-			hook.Run( "UCS_OnCrafted", ply, self, recipe, e )
+			hook.Run( "UCS_OnCrafted", self, ply, recipe, e )
 		end
 		for k,v in pairs( recipe.Materials ) do
 			self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v )
@@ -163,8 +162,8 @@ function ENT:Touch( ent )
 			effectdata:SetOrigin( ent:GetPos() )
 			effectdata:SetScale( 2 )
 			util.Effect( "ManhackSparks", effectdata )
+			hook.Run( "UCS_OnAddIngredient", self, ent )
 			ent:Remove()
-			hook.Run( "Craft_OnIngredientTouch", self, ent )
 			self.TouchCooldown = CurTime() + 0.1 --Small cooldown since ent:Touch runs multiple times before the for loop has time to break
 			break
 		end
@@ -172,8 +171,6 @@ function ENT:Touch( ent )
 end
 
 function ENT:OnTakeDamage( dmg )
-	local candmg = hook.Run( "Craft_OnTakeDamage", self, dmg )
-	if candmg == false then return end
 	if self:Health() <= 0 and !self.Exploding then
 		local tbl = self:GetData()
 		if tbl.ShouldExplode then
@@ -184,7 +181,6 @@ function ENT:OnTakeDamage( dmg )
 			e:SetKeyValue( "iMagnitude", 200 )
 			e:Fire( "Explode", 0, 0 )
 			self:Remove()
-			hook.Run( "Craft_OnExplode", self )
 		else
 			self:EmitSound( tbl.DestroySound or "physics/metal/metal_box_break1.wav" )
 			self:Remove()
