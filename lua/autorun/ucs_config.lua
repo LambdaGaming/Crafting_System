@@ -102,6 +102,9 @@ CraftingIngredient["ucs_wood"] = {
 			["ucs_iron"] = 2,
 			["ucs_wood"] = 1
 		},
+		SpawnCheck = function( ply, self ) --Optional. Return false to prevent the player from crafting the item. Runs after the UCS_CanCraft hook
+			return ply:IsAdmin(), "Optional fail message"
+		end,
 		SpawnOverride = function( ply, self ) --Optional. Entity class above will be ignored if this function is present
 			local e = ents.Create( "weapon_crowbar" )
 			e:SetPos( self:GetPos() )

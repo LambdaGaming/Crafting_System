@@ -58,6 +58,17 @@ local function StartCrafting( len, ply )
 		end
 	end
 	if hook.Run( "UCS_CanCraft", self, ply, recipe ) == false then return end
+	if recipe.SpawnCheck then
+		local check, msg = recipe.SpawnCheck( ply, self )
+		if check == false then
+			if msg then
+				net.Start( "CraftMessage" )
+				net.WriteString( msg )
+				net.Send( ply )
+			end
+			return
+		end
+	end
 	if recipe.SpawnOverride then
 		local e = recipe.SpawnOverride( ply, self )
 		hook.Run( "UCS_OnCrafted", self, ply, recipe, e )
@@ -121,6 +132,17 @@ local function StartAutomate( len, ply )
 			end
 		end
 		if hook.Run( "UCS_CanCraft", self, ply, recipe ) == false then return end
+		if recipe.SpawnCheck then
+			local check, msg = recipe.SpawnCheck( ply, self )
+			if check == false then
+				if msg then
+					net.Start( "CraftMessage" )
+					net.WriteString( msg )
+					net.Send( ply )
+				end
+				return
+			end
+		end
 		if recipe.SpawnOverride then
 			local e = recipe.SpawnOverride( ply, self )
 			hook.Run( "UCS_OnCrafted", self, ply, recipe, e )
