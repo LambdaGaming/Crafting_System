@@ -4,7 +4,11 @@ Below is a list of resources developers can use to modify or tap into core funct
 | Name | Scope | Arguments | Returns | Description |
 |------|-------|-----------|---------|-------------|
 |CraftingTable:AddItem|Server|String `ingredient`, Number `amount`|N/A|Add the specified ingredient to the table. Set amount as negative to subtract.|
+|CraftingTable:GetData|Shared|N/A|Table `data`|Returns the table that defines all of the crafting table's properties.|
 |CraftingTable:GetItemAmount|Server|String `ingredient`|Number `amount`|Returns the number of the specified ingredient currently on the table.|
+|CraftingTable:GetTableType|Shared|N/A|String `type`|Returns the type assigned to the table.|
+|MineableEntity:GetData|Shared|N/A|Table `data`|Returns the table that defines all of the mineable entity's properties.|
+|MineableEntity:GetMineableType|Shared|N/A|String `type`|Returns the type assigned to the mineable entity.|
 |MineableEntity:Hide|Server|N/A|N/A|Makes the entity invisible and non-solid, and starts a timer to respawn it.|
 |MineableEntity:Show|Server|N/A|N/A|Makes the entity visible and solid again, and calls the `UCS_OnMineableRespawned` hook.|
 
