@@ -7,10 +7,10 @@ function ENT:SpawnFunction( ply, tr, name )
 	local SpawnPos = tr.HitPos + tr.HitNormal
 	local ent = ents.Create( name )
 	ent:SetPos( SpawnPos )
-	ent:SetTableType( 1 )
+	ent:SetTableType( "hl2" )
 	ent:Spawn()
 	ent:Activate()
-	ply:ChatPrint( "Note: Crafting tables created from the spawn menu will always be set to type 1." )
+	--TODO: Popup menu asking what type the entity should be set to
 	return ent
 end
 

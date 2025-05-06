@@ -6,9 +6,9 @@ ENT.AdminOnly = true
 ENT.Category = "Universal Crafting System"
 
 function ENT:SetupDataTables()
-    self:NetworkVar( "Int", "MineableType" )
+    self:NetworkVar( "String", "MineableType" )
     if SERVER then
-        self:SetMineableType( 0 )
+        self:SetMineableType( "" )
     end
 end
 

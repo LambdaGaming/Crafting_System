@@ -7,10 +7,10 @@ function ENT:SpawnFunction( ply, tr, name )
 	local SpawnPos = tr.HitPos + tr.HitNormal
 	local ent = ents.Create( name )
 	ent:SetPos( SpawnPos )
-	ent:SetMineableType( 1 )
+	ent:SetMineableType( "rock" )
 	ent:Spawn()
 	ent:Activate()
-	ply:ChatPrint( "Note: Mineable entities created from the spawn menu will always be set to type 1." )
+	--TODO: Popup menu asking what type the entity should be set to
 	return ent
 end
 

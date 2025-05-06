@@ -5,9 +5,9 @@ ENT.Spawnable = true
 ENT.Category = "Universal Crafting System"
 
 function ENT:SetupDataTables()
-	self:NetworkVar( "Int", "TableType" )
+	self:NetworkVar( "String", "TableType" )
 	if SERVER then
-		self:SetTableType( 0 )
+		self:SetTableType( "" )
 	end
 end
 

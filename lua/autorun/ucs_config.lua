@@ -12,7 +12,7 @@ do something that isn't possible through the in-game config.
 
 --Template mining entity; The Health, Respawn, MinSpawn, and MaxSpawn options have fallbacks and are not required
 --[[
-	MineableEntity[1] = {
+	MineableEntity["rock"] = {
 		Name = "Rock",
 		Models = {
 			"models/props_debris/barricade_short01a.mdl",
@@ -28,7 +28,7 @@ do something that isn't possible through the in-game config.
 	}
 ]]
 
-MineableEntity[1] = {
+MineableEntity["rock"] = {
     Name = "Rock",
     Models = {
         "models/props_debris/barricade_short01a.mdl",
@@ -41,7 +41,7 @@ MineableEntity[1] = {
 
 --Template crafting table; All options except name and model have fallbacks and are not required
 --[[
-	CraftingTable[1] = {
+	CraftingTable["example"] = {
 		Name = "Example Table",
 		Model = "models/props_wasteland/controlroom_desk001b.mdl",
 		Health = 500,
@@ -63,7 +63,7 @@ MineableEntity[1] = {
 	}
 ]]
 
-CraftingTable[1] = {
+CraftingTable["hl2"] = {
     Name = "HL2 Weapons Table",
     Model = "models/props_wasteland/controlroom_desk001b.mdl"
 }
