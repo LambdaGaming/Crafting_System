@@ -91,7 +91,7 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 				net.WriteString( k )
 				net.SendToServer() --Sends the net message to drop the specified item and remove it from the table
 				timer.Simple( 0.3, function() --Small timer to let the net message go through
-					main:Close()
+					mainframe:Close()
 					DrawItems( ent ) --Refreshes the panel so it updates the number of materials
 				end )
 				MenuReloadCooldown = CurTime() + 1
@@ -104,6 +104,7 @@ end
 DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	local ply = LocalPlayer()
 	local tbl = ent:GetData()
+	local typ = ent:GetTableType()
 	local mainframe = vgui.Create( "DFrame" )
 	mainframe:SetTitle( "Choose an item to craft:" )
 	mainframe:SetSize( 500, 500 )
@@ -169,7 +170,7 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
 				SelectedCraftingItem = tostring( k )
 				surface.PlaySound( tbl.SelectSound or "buttons/lightswitch2.wav" )
-				main:Close()
+				mainframe:Close()
 				DrawRecipes( ent )
 			end
 

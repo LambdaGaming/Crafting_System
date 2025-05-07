@@ -119,6 +119,7 @@ CraftingRecipe["weapon_pistol"] = {
 	Name = "9mm Pistol",
 	Description = "Requires 1 iron.",
 	Category = "Pistols",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 1
 	}
@@ -128,6 +129,7 @@ CraftingRecipe["weapon_357"] = {
 	Name = ".357 Revolver",
 	Description = "Requires 2 iron.",
 	Category = "Pistols",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 2
 	}
@@ -137,6 +139,7 @@ CraftingRecipe["weapon_smg1"] = {
 	Name = "SMG",
 	Description = "Requires 3 iron.",
 	Category = "SMGs",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 3
 	}
@@ -146,6 +149,7 @@ CraftingRecipe["weapon_ar2"] = {
 	Name = "Pulse Rifle",
 	Description = "Requires 4 iron.",
 	Category = "Rifles",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 4
 	}
@@ -155,6 +159,7 @@ CraftingRecipe["weapon_shotgun"] = {
 	Name = "Shotgun",
 	Description = "Requires 4 iron.",
 	Category = "Shotguns",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 4
 	}
@@ -164,6 +169,7 @@ CraftingRecipe["weapon_crossbow"] = {
 	Name = "Crossbow",
 	Description = "Requires 5 iron and 2 wood.",
 	Category = "Rifles",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 5,
         ["ucs_wood"] = 2
@@ -174,6 +180,7 @@ CraftingRecipe["weapon_rpg"] = {
 	Name = "RPG",
 	Description = "Requires 6 iron.",
 	Category = "Explosives",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 6
 	}
@@ -183,6 +190,7 @@ CraftingRecipe["weapon_frag"] = {
 	Name = "Frag Grenade",
 	Description = "Requires 5 iron.",
 	Category = "Explosives",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 5
 	}
@@ -192,6 +200,7 @@ CraftingRecipe["weapon_slam"] = {
 	Name = "S.L.A.M.",
 	Description = "Requires 6 iron.",
 	Category = "Explosives",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 6
 	}
@@ -201,6 +210,7 @@ CraftingRecipe["weapon_crowbar"] = {
 	Name = "Crowbar",
 	Description = "Requires 1 iron.",
 	Category = "Tools",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 1
 	}
@@ -210,6 +220,7 @@ CraftingRecipe["weapon_stunstick"] = {
 	Name = "Stunstick",
 	Description = "Requires 2 iron.",
 	Category = "Tools",
+	Types = { ["hl2"] = true },
 	Materials = {
 		["ucs_iron"] = 2
 	}
