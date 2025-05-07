@@ -6,111 +6,7 @@ local CAT_COLOR = Color( 49, 53, 61, 255 )
 local BUT_COLOR = Color( 230, 93, 80, 255 )
 local SelectedCraftingItem
 
-local function DrawRecipeButtons( k, v, ply, ent, main, scroll, nocat )
-	local tbl = ent:GetData()
-	local mainbuttons = vgui.Create( "DButton", scroll )
-	mainbuttons:SetText( v.Name )
-	mainbuttons:SetTextColor( tbl.TextColor or color_white )
-	if nocat then
-		mainbuttons:Dock( TOP )
-		mainbuttons:DockMargin( 5, 5, 5, 5 )
-	end
-	mainbuttons.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
-	end
-	mainbuttons.DoClick = function()
-		chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
-		SelectedCraftingItem = tostring( k )
-		surface.PlaySound( tbl.SelectSound or "buttons/lightswitch2.wav" )
-		main:Close()
-		DrawRecipes( ent )
-	end
-
-	local totalrequired = 0
-	local totalamount = 0
-	local amountimage = vgui.Create( "DImage", mainbuttons )
-	amountimage:SetSize( 16, 16 )
-	amountimage:CenterVertical()
-	for c,d in pairs( v.Materials ) do
-		if ent:GetNWInt( "Craft_"..c ) >= d then
-			totalamount = totalamount + 1
-		end
-		totalrequired = totalrequired + 1
-	end
-	if totalamount >= totalrequired then
-		amountimage:SetImage( "icon16/accept.png" )
-	elseif math.Round( totalamount / totalrequired ) >= 0.50 then
-		amountimage:SetImage( "icon16/error.png" )
-	else
-		amountimage:SetImage( "icon16/delete.png" )
-	end
-
-	if tbl.AllowAutomation then
-		local automatecheck = vgui.Create( "DCheckBox", mainbuttons )
-		automatecheck:SetPos( 20, 3 )
-		if ent:GetNWBool( "CraftAutomate"..k ) then
-			automatecheck:SetChecked( true )
-		end
-		automatecheck.OnChange = function()
-			if automatecheck:GetChecked() then
-				net.Start( "StartAutomate" )
-				net.WriteEntity( ent )
-				net.WriteString( k )
-				net.SendToServer()
-				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will now automate production of the "..v.Name.."." )
-			else
-				net.Start( "StopAutomate" )
-				net.WriteEntity( ent )
-				net.WriteString( k )
-				net.SendToServer()
-				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will no longer automate production of the "..v.Name.."." )
-			end
-			surface.PlaySound( tbl.SelectSound or "buttons/lightswitch2.wav" )
-		end
-	end
-	return mainbuttons
-end
-
-local function DrawIngredientButtons( k, v, ent, main, scroll, nocat )
-	local MenuReloadCooldown = 0
-	local tbl = ent:GetData()
-	local scrollbutton = vgui.Create( "DButton", scroll )
-	if ent:GetNWInt( "Craft_"..v.Name ) == nil then --If networked int doesn't exist then just set it's value to 0 until it does
-		scrollbutton:SetText( v.Name..": 0" )
-	else
-		scrollbutton:SetText( v.Name..": "..ent:GetNWInt( "Craft_"..k ) )
-	end
-	scrollbutton:SetTextColor( tbl.TextColor or color_white )
-	scrollbutton:Dock( TOP )
-	if nocat then
-		scrollbutton:DockMargin( 5, 5, 5, 5 )
-	else
-		scrollbutton:DockMargin( 0, 0, 0, 5 )
-	end
-	scrollbutton.Paint = function( self, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
-	end
-	scrollbutton.DoClick = function()
-		if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
-			surface.PlaySound( tbl.FailSound or "buttons/button2.wav" )
-			return --Prevents players from having negative ingredients
-		end
-		if MenuReloadCooldown > CurTime() then return end
-		net.Start( "DropItem" )
-		net.WriteEntity( ent )
-		net.WriteString( k )
-		net.SendToServer() --Sends the net message to drop the specified item and remove it from the table
-		timer.Simple( 0.3, function() --Small timer to let the net message go through
-			main:Close()
-			DrawItems( ent ) --Refreshes the panel so it updates the number of materials
-		end )
-		MenuReloadCooldown = CurTime() + 1
-	end
-	return scrollbutton
-end
-
 DrawItems = function( ent ) --Panel that draws the list of materials that are on the table
-	local nocategory = {}
 	local categories = {}
 	local tbl = ent:GetData()
 	local typ = ent:GetTableType()
@@ -140,12 +36,13 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 
 	--Read categories from ingredients
 	for k,v in pairs( CraftingIngredient ) do
-		if v.Category and !table.HasValue( categories, v.Category ) then
+		local cat = v.Category or "Uncategorized"
+		if !table.HasValue( categories, v.Category ) then
 			table.insert( categories, v.Category )
 		end
 	end
 
-	--Generate ingredient list with categories
+	--Generate ingredient list
 	for a,b in pairs( categories ) do
 		local mainlist = vgui.Create( "DPanelList" )
 		mainlist:SetSpacing( 5 )
@@ -163,21 +60,44 @@ DrawItems = function( ent ) --Panel that draws the list of materials that are on
 
 		for k,v in pairs( CraftingIngredient ) do --Looks over the keys inside the materials table
 			if !v.Types or !v.Types[typ] then continue end
-			if !v.Category and !table.HasValue( nocategory, v ) then
-				table.insert( nocategory, v )
+			
+			local cat = v.Category or "Uncategorized"
+			if cat != b then --Puts items into their respective categories
 				continue
 			end
-			if v.Category and v.Category != b or !v.Category then --Puts items into their respective categories
-				continue
-			end
-			local mainbuttons = DrawIngredientButtons( k, v, ent, mainframe, mainframescroll )
-			mainlist:AddItem( mainbuttons )
-		end
-	end
 
-	--Generate ingredients that don't have a category
-	for k,v in pairs( nocategory ) do
-		DrawIngredientButtons( k, v, ent, mainframe, mainframescroll, true )
+			local MenuReloadCooldown = 0
+			local tbl = ent:GetData()
+			local scrollbutton = vgui.Create( "DButton", scroll )
+			if ent:GetNWInt( "Craft_"..v.Name ) == nil then --If networked int doesn't exist then just set it's value to 0 until it does
+				scrollbutton:SetText( v.Name..": 0" )
+			else
+				scrollbutton:SetText( v.Name..": "..ent:GetNWInt( "Craft_"..k ) )
+			end
+			scrollbutton:SetTextColor( tbl.TextColor or color_white )
+			scrollbutton:Dock( TOP )
+			scrollbutton:DockMargin( 0, 0, 0, 5 )
+			scrollbutton.Paint = function( self, w, h )
+				draw.RoundedBox( 0, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
+			end
+			scrollbutton.DoClick = function()
+				if ent:GetNWInt( "Craft_"..k ) == nil or ent:GetNWInt( "Craft_"..k ) == 0 then
+					surface.PlaySound( tbl.FailSound or "buttons/button2.wav" )
+					return --Prevents players from having negative ingredients
+				end
+				if MenuReloadCooldown > CurTime() then return end
+				net.Start( "DropItem" )
+				net.WriteEntity( ent )
+				net.WriteString( k )
+				net.SendToServer() --Sends the net message to drop the specified item and remove it from the table
+				timer.Simple( 0.3, function() --Small timer to let the net message go through
+					main:Close()
+					DrawItems( ent ) --Refreshes the panel so it updates the number of materials
+				end )
+				MenuReloadCooldown = CurTime() + 1
+			end
+			mainlist:AddItem( scrollbutton )
+		end
 	end
 end
 
@@ -208,12 +128,11 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 	local mainframescroll = vgui.Create( "DScrollPanel", mainframe )
 	mainframescroll:Dock( FILL )
 
-	local nocategory = {}
-	local categories = {}
-
 	--Read categories from recipes
+	local categories = {}
 	for k,v in pairs( CraftingRecipe ) do
-		if v.Category and !table.HasValue( categories, v.Category ) then
+		local cat = v.Category or "Uncategorized"
+		if !table.HasValue( categories, v.Category ) then
 			table.insert( categories, v.Category )
 		end
 	end
@@ -234,20 +153,70 @@ DrawRecipes = function( ent ) --Panel that draws the list of recipes
 		end
 		for k,v in pairs( CraftingRecipe ) do --Looks over all recipes
 			if !v.Types or !v.Types[typ] then continue end
-			if !v.Category and !table.HasValue( nocategory, v ) then
-				table.insert( nocategory, v )
+
+			local cat = v.Category or "Uncategorized"
+			if cat != b then --Puts items into their respective categories
 				continue
 			end
-			if v.Category and v.Category != b or !v.Category then --Puts items into their respective categories
-				continue
+
+			local mainbuttons = vgui.Create( "DButton", scroll )
+			mainbuttons:SetText( v.Name )
+			mainbuttons:SetTextColor( tbl.TextColor or color_white )
+			mainbuttons.Paint = function( self, w, h )
+				draw.RoundedBox( 0, 0, 0, w, h, tbl.ButtonColor or BUT_COLOR )
 			end
-			local mainbuttons = DrawRecipeButtons( k, v, ply, ent, mainframe, mainframescroll )
+			mainbuttons.DoClick = function()
+				chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", Color( 100, 255, 100 ), "<"..v.Name.."> ", color_white, v.Description )
+				SelectedCraftingItem = tostring( k )
+				surface.PlaySound( tbl.SelectSound or "buttons/lightswitch2.wav" )
+				main:Close()
+				DrawRecipes( ent )
+			end
+
+			local totalrequired = 0
+			local totalamount = 0
+			local amountimage = vgui.Create( "DImage", mainbuttons )
+			amountimage:SetSize( 16, 16 )
+			amountimage:CenterVertical()
+			for c,d in pairs( v.Materials ) do
+				if ent:GetNWInt( "Craft_"..c ) >= d then
+					totalamount = totalamount + 1
+				end
+				totalrequired = totalrequired + 1
+			end
+			if totalamount >= totalrequired then
+				amountimage:SetImage( "icon16/accept.png" )
+			elseif math.Round( totalamount / totalrequired ) >= 0.50 then
+				amountimage:SetImage( "icon16/error.png" )
+			else
+				amountimage:SetImage( "icon16/delete.png" )
+			end
+
+			if tbl.AllowAutomation then
+				local automatecheck = vgui.Create( "DCheckBox", mainbuttons )
+				automatecheck:SetPos( 20, 3 )
+				if ent:GetNWBool( "CraftAutomate"..k ) then
+					automatecheck:SetChecked( true )
+				end
+				automatecheck.OnChange = function()
+					if automatecheck:GetChecked() then
+						net.Start( "StartAutomate" )
+						net.WriteEntity( ent )
+						net.WriteString( k )
+						net.SendToServer()
+						chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will now automate production of the "..v.Name.."." )
+					else
+						net.Start( "StopAutomate" )
+						net.WriteEntity( ent )
+						net.WriteString( k )
+						net.SendToServer()
+						chat.AddText( Color( 100, 100, 255 ), "[Crafting Table]: ", color_white, "The table will no longer automate production of the "..v.Name.."." )
+					end
+					surface.PlaySound( tbl.SelectSound or "buttons/lightswitch2.wav" )
+				end
+			end
 			mainlist:AddItem( mainbuttons )
 		end
-	end
-
-	for k,v in pairs( nocategory ) do
-		DrawRecipeButtons( k, v, ply, ent, mainframe, mainframescroll, true )
 	end
 
 	local name = CraftingRecipe[SelectedCraftingItem] and CraftingRecipe[SelectedCraftingItem].Name or "N/A"
