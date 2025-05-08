@@ -101,7 +101,7 @@ CraftingIngredient["ucs_wood"] = {
 --[[
 CraftingRecipe["weapon_crowbar"] = { --Entity class of the item being crafted
 	Name = "Crowbar", --Name of the item, different from the item's entity name
-	Description = "Requires 2 iron and 1 wood.", --Description of the item
+	Description = "Requires 2 iron and 1 wood.", --Description of the item. Required ingredients should be listed here
 	Category = "Tools", --Optional. Category the item shows up in, has to match the name of a category created above
 	Types = { --List of table types that this recipe will show up in
 		["example"] = true

@@ -255,7 +255,7 @@ end
 DrawMainMenu = function( ent )
 	local tbl = ent:GetData()
 	local mainframe = vgui.Create( "DFrame" )
-	mainframe:SetTitle( "Crafting Table - Main Menu" )
+	mainframe:SetTitle( tbl.Name )
 	mainframe:SetSize( 300, 150 )
 	mainframe:Center()
 	mainframe:MakePopup()
