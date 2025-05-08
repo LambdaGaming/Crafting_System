@@ -10,7 +10,6 @@ function ENT:SpawnFunction( ply, tr, name )
 	ent:SetTableType( "hl2" )
 	ent:Spawn()
 	ent:Activate()
-	--TODO: Popup menu asking what type the entity should be set to
 	return ent
 end
 
@@ -84,7 +83,7 @@ local function StartCrafting( len, ply )
 	net.WriteString( "Successfully crafted a "..recipe.Name.."." )
 	net.Send( ply )
 	for k,v in pairs( recipe.Materials ) do
-		self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v ) --Only removes required materials
+		self:SetNWInt( "Craft_"..k, self:GetNWInt( "Craft_"..k ) - v )
 	end
 end
 net.Receive( "StartCrafting", StartCrafting )

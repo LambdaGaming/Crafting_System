@@ -10,7 +10,6 @@ function ENT:SpawnFunction( ply, tr, name )
 	ent:SetMineableType( "rock" )
 	ent:Spawn()
 	ent:Activate()
-	--TODO: Popup menu asking what type the entity should be set to
 	return ent
 end
 
