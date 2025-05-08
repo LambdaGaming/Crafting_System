@@ -10,7 +10,7 @@ the addon. You can use any file as long as it automatically runs and has a share
 the global tables not being declared early enough, put your code inside an Initialize hook.
 ]]
 
---Template mining entity; The Health, Respawn, MinSpawn, and MaxSpawn options have fallbacks and are not required
+--Template mining entity; The Health, Respawn, MinSpawn, MaxSpawn, and TextOffset options have fallbacks and are not required
 --[[
 MineableEntity["rock"] = { --Name must be unique
 	Name = "Rock", --Name that will float above the entity. Does not need to be unique
@@ -29,7 +29,8 @@ MineableEntity["rock"] = { --Name must be unique
 	Health = 100, --Max health that the entity spawns with
 	Respawn = 300, --Time in seconds that it takes for the entity to respawn after being mined
 	MinSpawn = 2, --Minimum amount of drops that the entity will provide when mined
-	MaxSpawn = 6 --Max amount of drops, must be higher or equal to MinSpawn
+	MaxSpawn = 6, --Max amount of drops, must be higher or equal to MinSpawn
+	TextOffset = Vector( 0, 0, 5 ) --Vector offset for the text that floats above the entity
 }
 ]]
 
@@ -64,7 +65,8 @@ CraftingTable["example"] = { --Name must be unique
 	MenuColor = Color( 49, 53, 61, 200 ), --Color of the menu background
 	CategoryColor = Color( 49, 53, 61, 255 ), --Color of the categories
 	ButtonColor = Color( 230, 93, 80, 255 ), --Color of the buttons
-	TextColor = color_white --Color of the text
+	TextColor = color_white, --Color of the text,
+	TextOffset = Vector( 0, 0, 5 ) --Vector offset for the text that floats above the entity
 }
 ]]
 

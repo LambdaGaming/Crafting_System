@@ -1,5 +1,11 @@
 include( "shared.lua" )
 
+surface.CreateFont( "UCSOverheadText", {
+	font = "Arial",
+	size = 200,
+	weight = 800
+} )
+
 local DrawItems, DrawRecipes, DrawMainMenu --Initialize these early so the client can see them when using the back buttons
 local MENU_COLOR = Color( 49, 53, 61, 200 )
 local CAT_COLOR = Color( 49, 53, 61, 255 )
@@ -308,3 +314,27 @@ net.Receive( "CraftMessage", function( len, ply )
 		surface.PlaySound( snd )
 	end
 end )
+
+function ENT:Draw()
+	self:DrawModel()
+	local origin = self:GetPos()
+	local ply = LocalPlayer()
+	if ply:GetPos():DistToSqr( origin ) >= 589824 then return end
+
+	local typ = self:GetTableType()
+	local data = self:GetData()
+	local offset = data.TextOffset or vector_origin
+	local name = data.Name or "Unnamed Crafting Table"
+	local health = self:Health()
+	local maxHealth = self:GetMaxHealth()
+	local pos = origin + offset
+	local ang = ( ply:EyePos() - pos ):Angle()
+	ang.p = 0
+	ang:RotateAroundAxis( ang:Right(), 90 )
+	ang:RotateAroundAxis( ang:Up(), 90 )
+	ang:RotateAroundAxis( ang:Forward(), 180 )
+	cam.Start3D2D( pos, ang, 0.035 )
+		draw.SimpleText( name, "UCSOverheadText", 0, 0, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+		draw.SimpleText( "Health: "..health.."/"..maxHealth, "UCSOverheadText", 0, -20, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	cam.End3D2D()
+end
