@@ -10,7 +10,7 @@ function ENT:SpawnFunction( ply, tr, name )
 	ent:SetMineableType( "rock" )
 	ent:Spawn()
 	ent:Activate()
-	ply:ChatPrint( "Note: Mineable entities created from the spawn menu will always be set to the default Rock type." )
+	ply:ChatPrint( "Note: You can change the type by right clicking the entity in the context menu." )
 	return ent
 end
 

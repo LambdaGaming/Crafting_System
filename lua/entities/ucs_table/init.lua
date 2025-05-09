@@ -10,7 +10,7 @@ function ENT:SpawnFunction( ply, tr, name )
 	ent:SetTableType( "hl2" )
 	ent:Spawn()
 	ent:Activate()
-	ply:ChatPrint( "Note: Crafting tables created from the spawn menu will always be set to the default HL2 Weapon type." )
+	ply:ChatPrint( "Note: You can change the type by right clicking the entity in the context menu." )
 	return ent
 end
 
