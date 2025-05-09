@@ -35,14 +35,15 @@ MineableEntity["rock"] = { --Name must be unique
 ]]
 
 MineableEntity["rock"] = {
-    Name = "Rock",
-    Models = {
-        "models/props_debris/barricade_short01a.mdl",
-        "models/props_debris/barricade_short02a.mdl",
-        "models/props_debris/barricade_tall01a.mdl"
-    },
-    Tools = { ["weapon_crowbar"] = 5 },
-    Drops = { ["ucs_iron"] = 100 }
+	Name = "Rock",
+	Models = {
+		"models/props_debris/barricade_short01a.mdl",
+		"models/props_debris/barricade_short02a.mdl",
+		"models/props_debris/barricade_tall01a.mdl"
+	},
+	Tools = { ["weapon_crowbar"] = 5 },
+	Drops = { ["ucs_iron"] = 100 },
+	TextOffset = Vector( 20, 0, 0 )
 }
 
 --Template crafting table; All options except name and model have fallbacks and are not required
@@ -71,8 +72,11 @@ CraftingTable["example"] = { --Name must be unique
 ]]
 
 CraftingTable["hl2"] = {
-    Name = "HL2 Weapons Table",
-    Model = "models/props_wasteland/controlroom_desk001b.mdl"
+	Name = "HL2 Weapons Table",
+	Model = "models/props_wasteland/controlroom_desk001b.mdl",
+	ShouldExplode = true,
+	AllowAutomation = true,
+	TextOffset = Vector( 0, 0, 30 )
 }
 
 --Template Ingredient

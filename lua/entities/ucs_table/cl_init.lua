@@ -335,6 +335,6 @@ function ENT:Draw()
 	ang:RotateAroundAxis( ang:Forward(), 180 )
 	cam.Start3D2D( pos, ang, 0.035 )
 		draw.SimpleText( name, "UCSOverheadText", 0, 0, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-		draw.SimpleText( "Health: "..health.."/"..maxHealth, "UCSOverheadText", 0, -20, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+		draw.SimpleText( "Health: "..health.."/"..maxHealth, "UCSOverheadText", 0, 160, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 	cam.End3D2D()
 end

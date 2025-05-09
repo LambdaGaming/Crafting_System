@@ -22,6 +22,7 @@ function ENT:Initialize()
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType( SIMPLE_USE )
 	self:SetHealth( tbl.Health or 100 )
+	self:SetMaxHealth( tbl.Health or 100 )
 	self:SetTrigger( true )
 	self:SetMaterial( tbl.Material or "" )
 	self.AutomationTimers = {}
@@ -191,6 +192,8 @@ function ENT:StartTouch( ent )
 end
 
 function ENT:OnTakeDamage( dmg )
+	local damage = dmg:GetDamage()
+	self:SetHealth( self:Health() - damage )
 	if self:Health() <= 0 and !self.Exploding then
 		local tbl = self:GetData()
 		if tbl.ShouldExplode then
@@ -207,8 +210,6 @@ function ENT:OnTakeDamage( dmg )
 		end
 		return
 	end
-	local damage = dmg:GetDamage()
-	self:SetHealth( self:Health() - damage )
 end
 
 function ENT:OnRemove()
