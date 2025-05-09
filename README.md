@@ -18,6 +18,8 @@ This is a simple but highly customizable crafting and mining system made to work
 - Once the entity is mined, it will drop a certain amount of specified entities, and will respawn after a certain amount of time. All of these parameters are defined in the ucs_config.lua file.
 ## Other Features
 - Iron and wood ingredient entities
+- Built-in persistence system to save crafting tables and mineable entities to the map, accessible by holding C and right clicking them. (Normal persistence systems won't work due to the nature of the entities.)
+- You can also change the type of crafting table or mineable entity through the same menu.
 - [Developer functions and hooks](dev.md)
 
 # FAQs
@@ -26,11 +28,6 @@ Press your use key on the table, click the View Recipes button in the menu, and 
 
 ## How do I create new crafting tables, mineable entities, recipes, ingredients, etc?
 Read through the [ucs_config.lua file](lua/autorun/ucs_config.lua). It tells you everything you need to know and gives examples.
-
-## Why do mineable entities spawn invisible after a map change?
-This can happen when you save them with a perma prop system that saves their color and other data that tracks whether or not the entity has been mined. You can prevent this by using a more simplistic perma-prop system that doesn't save this data, or by writing a script that spawns the entities at hard-coded coordinates.
-
-It's also possible for this to happen if you set an invalid or corrupted model for the entity.
 
 # Issues & Pull Requests
  If you would like to contribute to this repository by creating an issue or pull request, please refer to the [contributing guidelines.](https://lambdagaming.github.io/contributing.html)
