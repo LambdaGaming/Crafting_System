@@ -1,5 +1,7 @@
 # Universal Crafting System
-This is a simple but highly customizable crafting and mining system made to work with all gamemodes. The workshop version can be found [here.](https://steamcommunity.com/sharedfiles/filedetails/?id=1793133869)
+This is a simple but highly customizable crafting and mining system made to work with all gamemodes. Please note that this addon requires custom Lua scripting for it to be used to it's full potential. It only comes with a basic configuration by default. See the FAQ for more info.
+
+The workshop version can be found [here.](https://steamcommunity.com/sharedfiles/filedetails/?id=1793133869) If you're looking for the old version of the addon, it can be found [here.](https://github.com/LambdaGaming/Crafting_System/releases/tag/v1.20.3)
 
 # Features
 ## Crafting Table
