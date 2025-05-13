@@ -12,6 +12,13 @@ function ENT:Draw()
 	local name = data.Name or "Unnamed Mineable Entity"
 	local health = self:Health()
 	local maxHealth = self:GetMaxHealth()
+
+	local min,max = self:GetHitBoxBounds( 0, 0 )
+	if max then
+		local converted = self:LocalToWorld( max )
+		origin.z = converted.z + 15
+	end
+
 	local pos = origin + offset
 	local ang = ( ply:EyePos() - pos ):Angle()
 	ang.p = 0

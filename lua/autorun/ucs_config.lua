@@ -42,8 +42,7 @@ MineableEntity["rock"] = {
 		"models/props_debris/barricade_tall01a.mdl"
 	},
 	Tools = { ["weapon_crowbar"] = 5 },
-	Drops = { ["ucs_iron"] = 100 },
-	TextOffset = Vector( 20, 0, 0 )
+	Drops = { ["ucs_iron"] = 100 }
 }
 
 --Template crafting table; All options except name and model have fallbacks and are not required
@@ -75,8 +74,7 @@ CraftingTable["hl2"] = {
 	Name = "HL2 Weapons Table",
 	Model = "models/props_wasteland/controlroom_desk001b.mdl",
 	ShouldExplode = true,
-	AllowAutomation = true,
-	TextOffset = Vector( 0, 0, 30 )
+	AllowAutomation = true
 }
 
 --Template Ingredient
