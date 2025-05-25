@@ -20,5 +20,5 @@ function ENT:GetData()
 	return CraftingTable[typ]
 end
 
-local version = "2.0.1"
+local version = "2.0.2"
 print( "Universal Crafting System v"..version.." by OPGman successfully loaded.\n" )

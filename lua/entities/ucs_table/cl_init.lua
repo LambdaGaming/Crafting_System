@@ -42,6 +42,7 @@ DrawItems = function( ent )
 
 	--Read categories from ingredients
 	for k,v in pairs( CraftingIngredient ) do
+		if !v.Types or !v.Types[typ] then continue end
 		local cat = v.Category or "Uncategorized"
 		if !table.HasValue( categories, v.Category ) then
 			table.insert( categories, v.Category )
@@ -137,6 +138,7 @@ DrawRecipes = function( ent )
 
 	local categories = {}
 	for k,v in pairs( CraftingRecipe ) do
+		if !v.Types or !v.Types[typ] then continue end
 		local cat = v.Category or "Uncategorized"
 		if !table.HasValue( categories, v.Category ) then
 			table.insert( categories, v.Category )
