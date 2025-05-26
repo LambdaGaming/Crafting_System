@@ -31,10 +31,9 @@ end
 function ENT:Show()
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
-	self:SetColor( color_white )
 	self:SetNWBool( "IsHidden", false )
 	self:SetHealth( self:GetMaxHealth() )
-	self:DrawShadow( true )
+	self:SetNoDraw( false )
 	local phys = self:GetPhysicsObject()
 	if phys:IsValid() then
 		phys:EnableMotion( false )
@@ -44,12 +43,10 @@ end
 
 function ENT:Hide()
 	local tbl = self:GetData()
-	local color = self:GetColor()
 	self:SetSolid( SOLID_NONE )
 	self:SetMoveType( MOVETYPE_NONE )
-	self:SetColor( ColorAlpha( color, 0 ) )
 	self:SetNWBool( "IsHidden", true )
-	self:DrawShadow( false )
+	self:SetNoDraw( true )
 	timer.Create( "Hidden_"..self:EntIndex(), tbl.Respawn or 300, 1, function()
 		if IsValid( self ) then self:Show() end
 	end )
