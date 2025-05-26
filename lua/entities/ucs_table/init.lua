@@ -75,7 +75,7 @@ local function StartCrafting( len, ply )
 		hook.Run( "UCS_OnCrafted", self, ply, recipe, e )
 	else
 		local e = ents.Create( item )
-		e:SetPos( self:GetPos() + Vector( 0, 0, -5 ) )
+		e:SetPos( self:GetPos() + Vector( 0, 0, 15 ) )
 		e:Spawn()
 		e:Activate()
 		self:EmitSound( tbl.CraftSound or "ambient/machines/catapult_throw.wav" )
