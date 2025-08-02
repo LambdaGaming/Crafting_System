@@ -117,7 +117,7 @@ if SERVER then
 				e:SetNWBool( "UCSPersist", true )
 				e:SetMoveType( MOVETYPE_NONE )
 			end
-			print( "Spawned "..#tbl.." UCS entities." )
+			print( "[Universal Crafting System] Spawned "..#tbl.." entities." )
 		end
 	end )
 end
