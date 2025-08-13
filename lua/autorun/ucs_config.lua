@@ -37,12 +37,21 @@ MineableEntity["rock"] = { --Name must be unique
 MineableEntity["rock"] = {
 	Name = "Rock",
 	Models = {
-		"models/props_debris/barricade_short01a.mdl",
-		"models/props_debris/barricade_short02a.mdl",
-		"models/props_debris/barricade_tall01a.mdl"
+		"models/props/cs_militia/militiarock05.mdl",
+        "models/props/cs_militia/militiarock03.mdl",
+        "models/props/cs_militia/militiarock02.mdl"
 	},
 	Tools = { ["weapon_crowbar"] = 5 },
 	Drops = { ["ucs_iron"] = 100 }
+}
+
+MineableEntity["tree"] = {
+	Name = "Tree",
+	Models = { "models/props/de_inferno/tree_small.mdl" },
+	Tools = { ["weapon_crowbar"] = 5 },
+	Drops = { ["ucs_wood"] = 100 },
+	MaxSpawn = 4,
+	TextOffset = Vector( 20, 0, -350 )
 }
 
 --Template crafting table; All options except name and model have fallbacks and are not required
