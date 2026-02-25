@@ -30,6 +30,3 @@ Press your use key on the table, click the View Recipes button in the menu, and 
 
 ## How do I create new crafting tables, mineable entities, recipes, ingredients, etc?
 Read through the [ucs_config.lua file](lua/autorun/ucs_config.lua). It tells you everything you need to know and gives examples.
-
-# Issues & Pull Requests
- If you would like to contribute to this repository by creating an issue or pull request, please refer to the [contributing guidelines.](https://lambdagaming.github.io/contributing.html)
