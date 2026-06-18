@@ -1,8 +1,8 @@
 --Global table initializations, don't touch
-CraftingTable = {}
-CraftingRecipe = {}
-CraftingIngredient = {}
-MineableEntity = {}
+CraftingTable = CraftingTable or {}
+CraftingRecipe = CraftingRecipe or {}
+CraftingIngredient = CraftingIngredient or {}
+MineableEntity = MineableEntity or {}
 
 --[[
 This file allows you to configure the addon with Lua tables. You don't necessarily need to use this file to configure
